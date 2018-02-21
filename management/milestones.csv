@@ -1,8 +1,8 @@
 MilestoneID,             Dependencies, EstimatedEffort, Lead,  Completed, Description
 DefineInitialMilestones,             ,1,lkn16,this, Come up with initial milestones for getting started
-LexLocalVariable,,2,lkn16,,set up lex file structure and identify tokens for variables
-ParseLocalVariable,LexLocalVariable,3,lkn16,,set up bison structure and parse tokens of variables
-TranslateLocalVariable,LexLocalVariable;ParseLocalVariable,2,lkn16,,set up cpp files and translate variables to python
+LexAssignOperator,,2,lkn16,this,set up lex file structure and identify tokens for variables
+ParseAssignOperator,LexAssignOperator,3,lkn16,this,set up bison structure and parse tokens of variables
+TranslateAssignOperator,LexAssignOperator;ParseAssignOperator,2,lkn16,this,set up cpp files and translate variables to python
 LexExperssions,,0.5,lkn16,,Identify tokens for Experssions
 ParseExperssions,LexExperssions,2,ms6616,,add Experssion declarations to AST
 TranslateExperssions,LexExperssions;ParseExperssions,1,ms6616,,Translate experssions to python

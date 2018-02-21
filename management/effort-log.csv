@@ -1,2 +1,3 @@
 Date,Effort,Developers,Milestones
 21.02,2,lkn16;ms6616,DefineInitialMilestones
+21.02,10,lkn16;ms6616,LexAssignOperator;ParseAssignOperator;TranslateAssignOperator
