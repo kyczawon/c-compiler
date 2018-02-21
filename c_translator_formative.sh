@@ -28,7 +28,7 @@ for i in ${input_dir}/*.c ; do
     REF_C_OUT=$?
     
     # Run the reference python version
-    python ${input_dir}/$base.py
+    python3 ${input_dir}/$base.py
     REF_P_OUT=$?
     
     if [[ ${have_compiler} -eq 0 ]] ; then
@@ -37,7 +37,7 @@ for i in ${input_dir}/*.c ; do
         $compiler --translate $i -o ${working}/$base-got.py
         
         # Run the DUT python version
-        python ${working}/$base-got.py
+        python3 ${working}/$base-got.py
         GOT_P_OUT=$?
     fi
     
