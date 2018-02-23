@@ -4,6 +4,7 @@
 #include <string>
 #include <iostream>
 #include <map>
+#include <unordered_map>
 
 #include <memory>
 
@@ -13,6 +14,8 @@ typedef const Expression *ExpressionPtr;
 
 class Expression
 {
+protected:
+    std::unordered_map<std::string,ExpressionPtr> stack;
 public:
     virtual ~Expression()
     {}

@@ -32,27 +32,36 @@ public:
         dst<<getOpcode();
         dst<<" ";
         right->print(0, dst);
-        dst<<std::endl;
     }
 };
 
 class AssignmentOperator
-    : public Operator
+    : public Expression
 {
 protected:
-    virtual const char *getOpcode() const override
+    std::string value;
+    ExpressionPtr right;
+
+    virtual const char *getOpcode() const
     { return "="; }
 public:
-    AssignmentOperator(ExpressionPtr _left, ExpressionPtr _right)
-        : Operator(_left, _right)
+    AssignmentOperator(std::string &_left, ExpressionPtr _right)
+        : value(_left),
+        right(_right)
     {}
 
     virtual double evaluate(
         const std::map<std::string,double> &bindings
-    ) const override
+    ) const
     {
         double vr=right->evaluate(bindings);
         return vr;
+    }
+    virtual void print(int level, std::ostream &dst) const override
+    {
+        dst<<value;
+        dst<<getOpcode();
+        right->print(0, dst);
     }
 };
 
