@@ -4,7 +4,7 @@
 // Avoid error "error: `fileno' was not declared in this scope"
 extern "C" int fileno(FILE *stream);
 
-#include "maths_parser.tab.hpp"
+#include "compiler_parser.tab.hpp"
 %}
 
 %%
@@ -18,8 +18,8 @@ int { yylval.string=new std::string(yytext); return T_INT;}
 %}
 return { return T_RETURN; }
 
-[;] { return T_SEMI; }
-[=] { return T_EQUALS; }
+[;]             { return T_SEMI; }
+[=]             { return T_EQUALS; }
 
 [*]             { return T_TIMES; }
 [/]             { return T_DIVIDE; }
@@ -31,6 +31,9 @@ return { return T_RETURN; }
 [{]             { return T_LCURLY;}
 [}]             { return T_RCURLY;}
 
+if              {return T_IF;    }
+else            {return T_ELSE;  }
+while           {return T_WHILE; }
 
 [0-9]+([.][0-9]*)? { yylval.number=strtod(yytext, 0); return T_NUMBER; }
 [a-z]+          { yylval.string=new std::string(yytext); return T_STRING; }

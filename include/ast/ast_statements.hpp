@@ -56,4 +56,62 @@ public:
     }
 };
 
+class ifStatement
+    : public Expression
+{
+protected:
+    ExpressionPtr condition, sequence;
+public:
+    ifStatement(ExpressionPtr _condition, ExpressionPtr _sequence)
+            : condition(_condition),
+            sequence(_sequence)
+        {}
+    virtual void print(int level, std::ostream &dst) const override
+    {
+        dst<<std::string(level,'\t') << "if (";
+        condition->print(0,dst);
+        dst<< "):" << std::endl;
+        sequence->print(level++, dst);
+        dst<<std::endl;
+    }
+};
+
+class whileStatement
+    : public Expression
+{
+protected:
+    ExpressionPtr condition, sequence;
+public:
+    whileStatement(ExpressionPtr _condition, ExpressionPtr _sequence)
+            : condition(_condition),
+            sequence(_sequence)
+        {}
+    virtual void print(int level, std::ostream &dst) const override
+    {
+        dst<<std::string(level,'\t') << "while (";
+        condition->print(0,dst);
+        dst<< "):" << std::endl;
+        sequence->print(level++, dst);
+        dst<<std::endl;
+    }
+};
+
+class elseStatement
+    : public Expression
+{
+protected:
+    ExpressionPtr sequence;
+public:
+    elseStatement(ExpressionPtr _sequence)
+            : sequence(_sequence)
+        {}
+    virtual void print(int level, std::ostream &dst) const override
+    {
+        dst<<std::string(level,'\t') << "else :" << std::endl;
+        sequence->print(level++, dst);
+        dst<<std::endl;
+    }
+};
+
+
 #endif
