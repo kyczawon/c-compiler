@@ -15,7 +15,7 @@ typedef const Expression *ExpressionPtr;
 class Expression
 {
 protected:
-    std::unordered_map<std::string,ExpressionPtr> stack;
+    static std::unordered_map<std::string,ExpressionPtr>& getStack()  { static std::unordered_map<std::string,ExpressionPtr> stack; return stack; }
 public:
     virtual ~Expression()
     {}
@@ -29,6 +29,5 @@ public:
     ) const
     { throw std::runtime_error("Not implemented."); }
 };
-
 
 #endif

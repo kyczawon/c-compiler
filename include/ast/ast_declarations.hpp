@@ -17,10 +17,11 @@ public:
         , identifier(_identifier)
         , sequence(_sequence)
     {
-        stack[identifier] = (ExpressionPtr) this;
+        getStack()[identifier] = (ExpressionPtr) this;
     }
     virtual void print(int level, std::ostream &dst) const override
     {
+        std::cout << getStack()["f"] << std::endl;
         dst<<std::string(level,'\t')<<"def "<<identifier<<"():"<<std::endl;
         sequence->print(level+1, dst);
     }
