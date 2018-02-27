@@ -71,7 +71,7 @@ public:
         dst<<std::string(level,'\t') << "if (";
         condition->print(0,dst);
         dst<< "):" << std::endl;
-        sequence->print(level++, dst);
+        sequence->print(level+1, dst);
         dst<<std::endl;
     }
 };
@@ -91,7 +91,7 @@ public:
         dst<<std::string(level,'\t') << "while (";
         condition->print(0,dst);
         dst<< "):" << std::endl;
-        sequence->print(level++, dst);
+        sequence->print(level+1, dst);
         dst<<std::endl;
     }
 };
@@ -108,7 +108,7 @@ public:
     virtual void print(int level, std::ostream &dst) const override
     {
         dst<<std::string(level,'\t') << "else :" << std::endl;
-        sequence->print(level++, dst);
+        sequence->print(level+1, dst);
         dst<<std::endl;
     }
 };

@@ -25,11 +25,13 @@
 %token T_INT T_IF T_ELSE T_WHILE
 %token T_RETURN
 %token T_NUMBER T_STRING
+%token T_EQUALS_EQUALS T_NOT_EQUALS T_GREATER T_SMALLER T_AND T_OR
 
 %type <expr> EXPR TERM FACTOR STATEMENT DECLARATION FUNCTION COMPOUND_STATEMENT SEQUENCE SEQUENCE_PROG
 %type <expr> CONDITIONAL_STATEMENT PARAMETER_LIST PARAMETER EXPR_LIST GLOBAL_DECLARATION
 %type <number> T_NUMBER
 %type <string> T_STRING T_INT TYPE T_IF T_ELSE T_WHILE T_COMMA
+%type <string> T_EQUALS_EQUALS T_NOT_EQUALS T_GREATER T_SMALLER T_AND T_OR
 
 %start PROGRAM
 
@@ -72,15 +74,21 @@ CONDITIONAL_STATEMENT
         | T_WHILE T_LBRACKET EXPR T_RBRACKET COMPOUND_STATEMENT { $$ = new whileStatement( $3, $5 ); }
         | T_ELSE COMPOUND_STATEMENT { $$ = new elseStatement( $2 );  }
 
+EXPR_LIST
+        : EXPR { $$ = $1;}
+        | EXPR_LIST T_COMMA EXPR { $$ = new ExpressionList($1,$3);}
+
 EXPR
         : TERM             { $$ = $1; }
         | T_STRING T_EQUALS TERM { $$ = new AssignmentOperator(*$1,$3);}
         | EXPR T_PLUS TERM { $$ = new AddOperator($1, $3); }
         | EXPR T_MINUS TERM { $$ = new SubOperator($1, $3); }
-
-EXPR_LIST
-        : EXPR { $$ = $1;}
-        | EXPR_LIST T_COMMA EXPR { $$ = new ExpressionList($1,$3);}
+        | EXPR T_EQUALS_EQUALS TERM { $$ = new EqualsOperator($1, $3); }
+        | EXPR T_NOT_EQUALS TERM { $$ = new NotEqualsOperator($1, $3); }
+        | EXPR T_GREATER TERM { $$ = new GreaterOperator($1, $3); }
+        | EXPR T_SMALLER TERM { $$ = new SmallerOperator($1, $3); }
+        | EXPR T_AND TERM { $$ = new AndOperator($1, $3); }
+        | EXPR T_OR TERM { $$ = new OrOperator($1, $3); }
 
 TERM
         : FACTOR              { $$ = $1; }

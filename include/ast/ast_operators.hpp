@@ -150,4 +150,130 @@ public:
     }
 };
 
+class EqualsOperator
+    : public Operator
+{
+protected:
+    virtual const char *getOpcode() const override
+    { return "=="; }
+public:
+    EqualsOperator(ExpressionPtr _left, ExpressionPtr _right)
+        : Operator(_left, _right)
+    {}
+
+    virtual double evaluate(
+        const std::map<std::string,double> &bindings
+    ) const override
+    {
+      double vl=left->evaluate(bindings);
+      double vr=right->evaluate(bindings);
+      return vl==vr;
+    }
+};
+
+class NotEqualsOperator
+    : public Operator
+{
+protected:
+    virtual const char *getOpcode() const override
+    { return "!="; }
+public:
+    NotEqualsOperator(ExpressionPtr _left, ExpressionPtr _right)
+        : Operator(_left, _right)
+    {}
+
+    virtual double evaluate(
+        const std::map<std::string,double> &bindings
+    ) const override
+    {
+      double vl=left->evaluate(bindings);
+      double vr=right->evaluate(bindings);
+      return vl!=vr;
+    }
+};
+
+class GreaterOperator
+    : public Operator
+{
+protected:
+    virtual const char *getOpcode() const override
+    { return ">"; }
+public:
+    GreaterOperator(ExpressionPtr _left, ExpressionPtr _right)
+        : Operator(_left, _right)
+    {}
+
+    virtual double evaluate(
+        const std::map<std::string,double> &bindings
+    ) const override
+    {
+      double vl=left->evaluate(bindings);
+      double vr=right->evaluate(bindings);
+      return vl>vr;
+    }
+};
+
+class SmallerOperator
+    : public Operator
+{
+protected:
+    virtual const char *getOpcode() const override
+    { return "<"; }
+public:
+    SmallerOperator(ExpressionPtr _left, ExpressionPtr _right)
+        : Operator(_left, _right)
+    {}
+
+    virtual double evaluate(
+        const std::map<std::string,double> &bindings
+    ) const override
+    {
+      double vl=left->evaluate(bindings);
+      double vr=right->evaluate(bindings);
+      return vl<vr;
+    }
+};
+
+class AndOperator
+    : public Operator
+{
+protected:
+    virtual const char *getOpcode() const override
+    { return "and"; }
+public:
+    AndOperator(ExpressionPtr _left, ExpressionPtr _right)
+        : Operator(_left, _right)
+    {}
+
+    virtual double evaluate(
+        const std::map<std::string,double> &bindings
+    ) const override
+    {
+      double vl=left->evaluate(bindings);
+      double vr=right->evaluate(bindings);
+      return vl&&vr;
+    }
+};
+
+class OrOperator
+    : public Operator
+{
+protected:
+    virtual const char *getOpcode() const override
+    { return "or"; }
+public:
+    OrOperator(ExpressionPtr _left, ExpressionPtr _right)
+        : Operator(_left, _right)
+    {}
+
+    virtual double evaluate(
+        const std::map<std::string,double> &bindings
+    ) const override
+    {
+      double vl=left->evaluate(bindings);
+      double vr=right->evaluate(bindings);
+      return vl||vr;
+    }
+};
+
 #endif

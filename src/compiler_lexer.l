@@ -33,6 +33,14 @@ return { return T_RETURN; }
 [+]             { return T_PLUS; }
 [-]             { return T_MINUS; }
 
+"&&"            { return T_AND; }
+"||"            { return T_OR; }
+
+"=="            { return T_EQUALS_EQUALS; }
+"!="            { return T_NOT_EQUALS; }
+">"            { return T_GREATER; }
+"<"            { return T_SMALLER; }
+
 [(]             { return T_LBRACKET;}
 [)]             { return T_RBRACKET;}
 [{]             { return T_LCURLY;}
