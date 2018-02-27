@@ -19,6 +19,7 @@ int { yylval.string=new std::string(yytext); return T_INT;}
 return { return T_RETURN; }
 
 [;]             { return T_SEMI; }
+[,]             { return T_COMMA; }
 [=]             { return T_EQUALS; }
 
 [*]             { return T_TIMES; }
