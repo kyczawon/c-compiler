@@ -77,8 +77,6 @@ EXPR
         | T_STRING T_EQUALS TERM { $$ = new AssignmentOperator(*$1,$3);}
         | EXPR T_PLUS TERM { $$ = new AddOperator($1, $3); }
         | EXPR T_MINUS TERM { $$ = new SubOperator($1, $3); }
-        | T_STRING T_LBRACKET T_RBRACKET { $$ = new UnaryFunctionInvocation(*$1);}
-        | T_STRING T_LBRACKET EXPR_LIST T_RBRACKET { $$ = new FunctionInvocation(*$1, $3);}
 
 EXPR_LIST
         : EXPR { $$ = $1;}
@@ -86,6 +84,8 @@ EXPR_LIST
 
 TERM
         : FACTOR              { $$ = $1; }
+        | T_STRING T_LBRACKET T_RBRACKET { $$ = new UnaryFunctionInvocation(*$1);}
+        | T_STRING T_LBRACKET EXPR_LIST T_RBRACKET { $$ = new FunctionInvocation(*$1, $3);}
         | TERM T_TIMES FACTOR { $$ = new MulOperator($1, $3); }
         | TERM T_DIVIDE FACTOR { $$ = new DivOperator($1, $3); }
 
