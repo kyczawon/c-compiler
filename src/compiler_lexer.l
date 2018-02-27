@@ -4,7 +4,10 @@
 // Avoid error "error: `fileno' was not declared in this scope"
 extern "C" int fileno(FILE *stream);
 
+#include <stdio.h>
 #include "compiler_parser.tab.hpp"
+
+void comment();
 %}
 
 %%
@@ -17,6 +20,9 @@ int { yylval.string=new std::string(yytext); return T_INT;}
 //keywords
 %}
 return { return T_RETURN; }
+
+"/"[/]+.*    {;}
+"/*"			{ comment(); }
 
 [;]             { return T_SEMI; }
 [,]             { return T_COMMA; }
@@ -48,4 +54,18 @@ void yyerror (char const *s)
 {
   fprintf (stderr, "Parse error : %s\n", s);
   exit(1);
+}
+
+void comment()
+{
+	char c, c1;
+
+loop:
+	while ((c = yyinput()) != '*' && c != 0){}
+
+	if ((c1 = yyinput()) != '/' && c != 0)
+	{
+		unput(c1);
+		goto loop;
+	}
 }
