@@ -16,6 +16,7 @@ class Expression
 {
 protected:
     static std::unordered_map<std::string,ExpressionPtr>& getStack()  { static std::unordered_map<std::string,ExpressionPtr> stack; return stack; }
+    static std::unordered_map<std::string,ExpressionPtr>& getGlobals()  { static std::unordered_map<std::string,ExpressionPtr> globals; return globals; }
 public:
     virtual ~Expression()
     {}

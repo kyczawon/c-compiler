@@ -27,7 +27,7 @@
 %token T_NUMBER T_STRING
 
 %type <expr> EXPR TERM FACTOR STATEMENT DECLARATION FUNCTION COMPOUND_STATEMENT SEQUENCE SEQUENCE_PROG
-%type <expr> CONDITIONAL_STATEMENT PARAMETER_LIST PARAMETER EXPR_LIST
+%type <expr> CONDITIONAL_STATEMENT PARAMETER_LIST PARAMETER EXPR_LIST GLOBAL_DECLARATION
 %type <number> T_NUMBER
 %type <string> T_STRING T_INT TYPE T_IF T_ELSE T_WHILE T_COMMA
 
@@ -39,9 +39,9 @@ PROGRAM : SEQUENCE_PROG { g_root = $1;}
 
 SEQUENCE_PROG
         : FUNCTION { $$ = $1; }
-        | DECLARATION { $$ = $1;}
+        | GLOBAL_DECLARATION { $$ = $1;}
         | SEQUENCE_PROG FUNCTION { $$ = new Sequence($1,$2);}
-        | SEQUENCE_PROG DECLARATION { $$ = new Sequence($1,$2);}
+        | SEQUENCE_PROG GLOBAL_DECLARATION { $$ = new Sequence($1,$2);}
 
 FUNCTION
         : TYPE T_STRING T_LBRACKET PARAMETER_LIST T_RBRACKET COMPOUND_STATEMENT { $$ = new Function(*$1, *$2, $4, $6);}
@@ -94,6 +94,9 @@ FACTOR
         | T_NUMBER          {$$ = new Number( $1 );}
         | T_STRING          {$$ = new Variable(*$1);}
         | T_LBRACKET EXPR T_RBRACKET { $$ = $2;}
+
+GLOBAL_DECLARATION
+        : TYPE T_STRING T_SEMI { $$ = new GlobalVariableDeclaration(*$1, *$2 );}
 
 DECLARATION
         : TYPE T_STRING T_SEMI    { $$ = new VariableDeclaration(*$1, *$2 );}

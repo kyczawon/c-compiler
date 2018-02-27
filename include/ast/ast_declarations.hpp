@@ -22,6 +22,10 @@ public:
     virtual void print(int level, std::ostream &dst) const override
     {
         dst<<std::string(level,'\t')<<"def "<<identifier<<"():"<<std::endl;
+        for (std::pair<std::string, ExpressionPtr> element : getGlobals())
+        {
+            dst<<std::string(level+1,'\t')<<"global "<<element.first<<std::endl;
+        }
         sequence->print(level+1, dst);
     }
 
@@ -76,6 +80,35 @@ public:
         : type(_type),
         id(_id)
     {}
+
+    const std::string getId() const
+    { return id; }
+
+    virtual void print(int level, std::ostream &dst) const override
+    {
+        dst<<std::string(level,'\t')<<id<<"=0"<<std::endl;
+    }
+
+    virtual double evaluate(
+        const std::map<std::string,double> &bindings
+    ) const override
+    {
+        return bindings.at(id);
+    }
+};
+
+class GlobalVariableDeclaration
+    : public Expression
+{
+private:
+    std::string type, id;
+public:
+    GlobalVariableDeclaration(const std::string &_type, const std::string &_id)
+        : type(_type),
+        id(_id)
+    {
+        getGlobals()[id] = (ExpressionPtr) this;
+    }
 
     const std::string getId() const
     { return id; }
