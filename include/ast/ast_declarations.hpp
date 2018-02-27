@@ -82,7 +82,7 @@ public:
 
     virtual void print(int level, std::ostream &dst) const override
     {
-        dst<<id<<"=0";
+        dst<<std::string(level,'\t')<<id<<"=0"<<std::endl;
     }
 
     virtual double evaluate(
