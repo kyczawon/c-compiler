@@ -66,30 +66,6 @@ public:
     }
 };
 
-class FunctionCall
-    : public Expression
-{
-protected:
-    std::string identifier;
-public:
-    FunctionCall(std::string &_identifier)
-        : identifier(_identifier)
-    {
-    }
-    virtual void print(int level, std::ostream &dst) const override
-    {
-        dst<<identifier<<"()";
-    }
-
-    virtual double evaluate(
-        const std::map<std::string,double> &bindings
-    ) const override
-    {
-        // NOTE : This should be implemented by the inheriting function nodes, e.g. LogFunction
-        throw std::runtime_error("FunctionOperator::evaluate is not implemented.");
-    }
-};
-
 class VariableDeclaration
     : public Expression
 {
@@ -130,7 +106,7 @@ public:
     virtual void print(int level, std::ostream &dst) const override
     {
         list->print(0,dst);
-        dst << ",";
+        dst << ", ";
         paramter->print(0,dst);
     }
 };

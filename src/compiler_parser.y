@@ -27,7 +27,7 @@
 %token T_NUMBER T_STRING
 
 %type <expr> EXPR TERM FACTOR STATEMENT VARIABLE FUNCTION COMPOUND_STATEMENT SEQUENCE SEQUENCE_FUNC
-%type <expr> CONDITIONAL_STATEMENT PARAMETER_LIST PARAMETER
+%type <expr> CONDITIONAL_STATEMENT PARAMETER_LIST PARAMETER EXPR_LIST
 %type <number> T_NUMBER
 %type <string> T_STRING T_INT TYPE T_IF T_ELSE T_WHILE T_COMMA
 
@@ -54,11 +54,6 @@ PARAMETER_LIST
 PARAMETER
         : TYPE T_STRING { $$ = new Parameter(*$1, *$2);}
 
-CONDITIONAL_STATEMENT
-        : T_IF T_LBRACKET EXPR T_RBRACKET COMPOUND_STATEMENT { $$ = new ifStatement( $3, $5 ); }
-        | T_WHILE T_LBRACKET EXPR T_RBRACKET COMPOUND_STATEMENT { $$ = new whileStatement( $3, $5 ); }
-        | T_ELSE COMPOUND_STATEMENT { $$ = new elseStatement( $2 );  }
-
 COMPOUND_STATEMENT
         : T_LCURLY SEQUENCE T_RCURLY { $$ = $2;}
 
@@ -71,13 +66,22 @@ STATEMENT
         | CONDITIONAL_STATEMENT { $$ = $1; }
         | T_RETURN EXPR T_SEMI { $$ = new ReturnStatement($2);}
 
+CONDITIONAL_STATEMENT
+        : T_IF T_LBRACKET EXPR T_RBRACKET COMPOUND_STATEMENT { $$ = new ifStatement( $3, $5 ); }
+        | T_WHILE T_LBRACKET EXPR T_RBRACKET COMPOUND_STATEMENT { $$ = new whileStatement( $3, $5 ); }
+        | T_ELSE COMPOUND_STATEMENT { $$ = new elseStatement( $2 );  }
 
 EXPR
         : TERM             { $$ = $1; }
         | T_STRING T_EQUALS TERM { $$ = new AssignmentOperator(*$1,$3);}
         | EXPR T_PLUS TERM { $$ = new AddOperator($1, $3); }
         | EXPR T_MINUS TERM { $$ = new SubOperator($1, $3); }
-        | T_STRING T_LBRACKET T_RBRACKET { $$ = new FunctionCall(*$1); }
+        | T_STRING T_LBRACKET T_RBRACKET { $$ = new UnaryFunctionInvocation(*$1);}
+        | T_STRING T_LBRACKET EXPR_LIST T_RBRACKET { $$ = new FunctionInvocation(*$1, $3);}
+
+EXPR_LIST
+        : EXPR { $$ = $1;}
+        | EXPR_LIST T_COMMA EXPR { $$ = new ExpressionList($1,$3);}
 
 TERM
         : FACTOR              { $$ = $1; }
