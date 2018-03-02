@@ -6,23 +6,23 @@
 #include <iostream>
 
 class Operator
-    : public Expression
+    : public Node
 {
 protected:
-    ExpressionPtr left;
-    ExpressionPtr right;
+    NodePtr left;
+    NodePtr right;
 
-    Operator(ExpressionPtr _left, ExpressionPtr _right)
+    Operator(NodePtr _left, NodePtr _right)
         : left(_left)
         , right(_right)
     {}
 public:
     virtual const char *getOpcode() const =0;
 
-    ExpressionPtr getLeft() const
+    NodePtr getLeft() const
     { return left; }
 
-    ExpressionPtr getRight() const
+    NodePtr getRight() const
     { return right; }
 
     virtual void print(int level, std::ostream &dst) const override
@@ -36,16 +36,16 @@ public:
 };
 
 class AssignmentOperator
-    : public Expression
+    : public Node
 {
 protected:
     std::string value;
-    ExpressionPtr right;
+    NodePtr right;
 
     virtual const char *getOpcode() const
     { return "="; }
 public:
-    AssignmentOperator(std::string &_left, ExpressionPtr _right)
+    AssignmentOperator(std::string &_left, NodePtr _right)
         : value(_left),
         right(_right)
     {}
@@ -72,7 +72,7 @@ protected:
     virtual const char *getOpcode() const override
     { return "+"; }
 public:
-    AddOperator(ExpressionPtr _left, ExpressionPtr _right)
+    AddOperator(NodePtr _left, NodePtr _right)
         : Operator(_left, _right)
     {}
 
@@ -93,7 +93,7 @@ protected:
     virtual const char *getOpcode() const override
     { return "-"; }
 public:
-    SubOperator(ExpressionPtr _left, ExpressionPtr _right)
+    SubOperator(NodePtr _left, NodePtr _right)
         : Operator(_left, _right)
     {}
 
@@ -115,7 +115,7 @@ protected:
     virtual const char *getOpcode() const override
     { return "*"; }
 public:
-    MulOperator(ExpressionPtr _left, ExpressionPtr _right)
+    MulOperator(NodePtr _left, NodePtr _right)
         : Operator(_left, _right)
     {}
 
@@ -136,7 +136,7 @@ protected:
     virtual const char *getOpcode() const override
     { return "/"; }
 public:
-    DivOperator(ExpressionPtr _left, ExpressionPtr _right)
+    DivOperator(NodePtr _left, NodePtr _right)
         : Operator(_left, _right)
     {}
 
@@ -157,7 +157,7 @@ protected:
     virtual const char *getOpcode() const override
     { return "=="; }
 public:
-    EqualsOperator(ExpressionPtr _left, ExpressionPtr _right)
+    EqualsOperator(NodePtr _left, NodePtr _right)
         : Operator(_left, _right)
     {}
 
@@ -178,7 +178,7 @@ protected:
     virtual const char *getOpcode() const override
     { return "!="; }
 public:
-    NotEqualsOperator(ExpressionPtr _left, ExpressionPtr _right)
+    NotEqualsOperator(NodePtr _left, NodePtr _right)
         : Operator(_left, _right)
     {}
 
@@ -199,7 +199,7 @@ protected:
     virtual const char *getOpcode() const override
     { return ">"; }
 public:
-    GreaterOperator(ExpressionPtr _left, ExpressionPtr _right)
+    GreaterOperator(NodePtr _left, NodePtr _right)
         : Operator(_left, _right)
     {}
 
@@ -220,7 +220,7 @@ protected:
     virtual const char *getOpcode() const override
     { return "<"; }
 public:
-    SmallerOperator(ExpressionPtr _left, ExpressionPtr _right)
+    SmallerOperator(NodePtr _left, NodePtr _right)
         : Operator(_left, _right)
     {}
 
@@ -241,7 +241,7 @@ protected:
     virtual const char *getOpcode() const override
     { return "and"; }
 public:
-    AndOperator(ExpressionPtr _left, ExpressionPtr _right)
+    AndOperator(NodePtr _left, NodePtr _right)
         : Operator(_left, _right)
     {}
 
@@ -262,7 +262,7 @@ protected:
     virtual const char *getOpcode() const override
     { return "or"; }
 public:
-    OrOperator(ExpressionPtr _left, ExpressionPtr _right)
+    OrOperator(NodePtr _left, NodePtr _right)
         : Operator(_left, _right)
     {}
 

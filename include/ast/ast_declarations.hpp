@@ -1,28 +1,28 @@
 #ifndef ast_functions_hpp
 #define ast_functions_hpp
 
-#include "ast_expression.hpp"
+#include "ast_node.hpp"
 
 #include <cmath>
 
 class NullaryFunction
-    : public Expression
+    : public Node
 {
 protected:
-    ExpressionPtr sequence;
+    NodePtr sequence;
     std::string type, identifier;
 public:
-    NullaryFunction(std::string &_type, std::string &_identifier, ExpressionPtr _sequence)
+    NullaryFunction(std::string &_type, std::string &_identifier, NodePtr _sequence)
         : type(_type)
         , identifier(_identifier)
         , sequence(_sequence)
     {
-        getStack()[identifier] = (ExpressionPtr) this;
+        getStack()[identifier] = (NodePtr) this;
     }
     virtual void print(int level, std::ostream &dst) const override
     {
         dst<<std::string(level,'\t')<<"def "<<identifier<<"():"<<std::endl;
-        for (std::pair<std::string, ExpressionPtr> element : getGlobals())
+        for (std::pair<std::string, NodePtr> element : getGlobals())
         {
             dst<<std::string(level+1,'\t')<<"global "<<element.first<<std::endl;
         }
@@ -39,19 +39,19 @@ public:
 };
 
 class Function
-    : public Expression
+    : public Node
 {
 protected:
-    ExpressionPtr sequence, parameter_list;
+    NodePtr sequence, parameter_list;
     std::string type, identifier;
 public:
-    Function(std::string &_type, std::string &_identifier, ExpressionPtr _parameter_list, ExpressionPtr _sequence)
+    Function(std::string &_type, std::string &_identifier, NodePtr _parameter_list, NodePtr _sequence)
         : type(_type)
         , identifier(_identifier)
         , parameter_list(_parameter_list)
         , sequence(_sequence)
     {
-        getStack()[identifier] = (ExpressionPtr) this;
+        getStack()[identifier] = (NodePtr) this;
     }
     virtual void print(int level, std::ostream &dst) const override
     {
@@ -71,7 +71,7 @@ public:
 };
 
 class VariableDeclaration
-    : public Expression
+    : public Node
 {
 private:
     std::string type, id;
@@ -98,7 +98,7 @@ public:
 };
 
 class GlobalVariableDeclaration
-    : public Expression
+    : public Node
 {
 private:
     std::string type, id;
@@ -107,7 +107,7 @@ public:
         : type(_type),
         id(_id)
     {
-        getGlobals()[id] = (ExpressionPtr) this;
+        getGlobals()[id] = (NodePtr) this;
     }
 
     const std::string getId() const
@@ -127,12 +127,12 @@ public:
 };
 
 class ParameterList
-    : public Expression
+    : public Node
 {
 protected:
-    ExpressionPtr list, paramter;
+    NodePtr list, paramter;
 public:
-    ParameterList (ExpressionPtr _list, ExpressionPtr _paramter)
+    ParameterList (NodePtr _list, NodePtr _paramter)
             : list(_list),
             paramter(_paramter)
         {}
@@ -145,7 +145,7 @@ public:
 };
 
 class Parameter
-    : public Expression
+    : public Node
 {
 private:
     std::string type, id;

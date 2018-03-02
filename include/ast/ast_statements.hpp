@@ -6,12 +6,12 @@
 #include <iostream>
 
 class ReturnStatement
-    : public Expression
+    : public Node
 {
 protected:
-    ExpressionPtr expr;
+    NodePtr expr;
 public:
-    ReturnStatement(ExpressionPtr _expr)
+    ReturnStatement(NodePtr _expr)
             : expr(_expr)
         {}
     virtual void print(int level, std::ostream &dst) const override
@@ -23,12 +23,12 @@ public:
 };
 
 class Sequence
-    : public Expression
+    : public Node
 {
 protected:
-    ExpressionPtr sequence_nest, next;
+    NodePtr sequence_nest, next;
 public:
-    Sequence(ExpressionPtr _sequence_nest, ExpressionPtr _next)
+    Sequence(NodePtr _sequence_nest, NodePtr _next)
             : sequence_nest(_sequence_nest),
             next(_next)
         {}
@@ -40,12 +40,12 @@ public:
 };
 
 class Statement
-    : public Expression
+    : public Node
 {
 protected:
-    ExpressionPtr statement;
+    NodePtr statement;
 public:
-    Statement(ExpressionPtr _statement)
+    Statement(NodePtr _statement)
             : statement(_statement)
         {}
     virtual void print(int level, std::ostream &dst) const override
@@ -57,12 +57,12 @@ public:
 };
 
 class ifStatement
-    : public Expression
+    : public Node
 {
 protected:
-    ExpressionPtr condition, sequence;
+    NodePtr condition, sequence;
 public:
-    ifStatement(ExpressionPtr _condition, ExpressionPtr _sequence)
+    ifStatement(NodePtr _condition, NodePtr _sequence)
             : condition(_condition),
             sequence(_sequence)
         {}
@@ -77,12 +77,12 @@ public:
 };
 
 class whileStatement
-    : public Expression
+    : public Node
 {
 protected:
-    ExpressionPtr condition, sequence;
+    NodePtr condition, sequence;
 public:
-    whileStatement(ExpressionPtr _condition, ExpressionPtr _sequence)
+    whileStatement(NodePtr _condition, NodePtr _sequence)
             : condition(_condition),
             sequence(_sequence)
         {}
@@ -97,12 +97,12 @@ public:
 };
 
 class elseStatement
-    : public Expression
+    : public Node
 {
 protected:
-    ExpressionPtr sequence;
+    NodePtr sequence;
 public:
-    elseStatement(ExpressionPtr _sequence)
+    elseStatement(NodePtr _sequence)
             : sequence(_sequence)
         {}
     virtual void print(int level, std::ostream &dst) const override

@@ -3,7 +3,7 @@
 
   #include <cassert>
 
-  extern const Expression *g_root; // A way of getting the AST out
+  extern const Node *g_root; // A way of getting the AST out
 
   //! This is to fix problems when generating C++
   // We are declaring the functions provided by Flex, so
@@ -15,7 +15,7 @@
 // Represents the value associated with any kind of
 // AST node.
 %union{
-  const Expression *expr;
+  const Node *expr;
   double number;
   std::string *string;
 }
@@ -76,7 +76,7 @@ CONDITIONAL_STATEMENT
 
 EXPR_LIST
         : EXPR { $$ = $1;}
-        | EXPR_LIST T_COMMA EXPR { $$ = new ExpressionList($1,$3);}
+        | EXPR_LIST T_COMMA EXPR { $$ = new NodeList($1,$3);}
 
 EXPR
         : TERM             { $$ = $1; }
@@ -115,9 +115,9 @@ TYPE
 
 %%
 
-const Expression *g_root; // Definition of variable (to match declaration earlier)
+const Node *g_root; // Definition of variable (to match declaration earlier)
 
-const Expression *parseAST()
+const Node *parseAST()
 {
   g_root=0;
   yyparse();

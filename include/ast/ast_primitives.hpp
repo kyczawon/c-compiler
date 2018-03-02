@@ -5,7 +5,7 @@
 #include <iostream>
 
 class Variable
-    : public Expression
+    : public Node
 {
 private:
     std::string id;
@@ -31,7 +31,7 @@ public:
 };
 
 class Number
-    : public Expression
+    : public Node
 {
 private:
     double value;
@@ -57,7 +57,7 @@ public:
 };
 
 class NegativeNumber
-    : public Expression
+    : public Node
 {
 private:
     double value;

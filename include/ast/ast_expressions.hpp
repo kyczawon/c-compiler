@@ -1,16 +1,16 @@
-#ifndef ast_expressions_hpp
-#define ast_expressions_hpp
+#ifndef ast_nodes_hpp
+#define ast_nodes_hpp
 
-#include "ast_expression.hpp"
+#include "ast_node.hpp"
 
 class FunctionInvocation
-    : public Expression
+    : public Node
 {
 protected:
-    ExpressionPtr input_args;
+    NodePtr input_args;
     std::string identifier;
 public:
-    FunctionInvocation(std::string &_identifier, ExpressionPtr _input_args)
+    FunctionInvocation(std::string &_identifier, NodePtr _input_args)
         : identifier(_identifier)
         , input_args(_input_args)
     {
@@ -32,7 +32,7 @@ public:
 };
 
 class UnaryFunctionInvocation
-    : public Expression
+    : public Node
 {
 protected:
     std::string identifier;
@@ -55,13 +55,13 @@ public:
     }
 };
 
-class ExpressionList
-    : public Expression
+class NodeList
+    : public Node
 {
 protected:
-    ExpressionPtr expr_list, expr;
+    NodePtr expr_list, expr;
 public:
-    ExpressionList(ExpressionPtr _expr_list, ExpressionPtr _expr)
+    NodeList(NodePtr _expr_list, NodePtr _expr)
             : expr_list(_expr_list),
             expr(_expr)
         {}

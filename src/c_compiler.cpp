@@ -12,7 +12,7 @@ int main(int argc, char *argv[])
     {
         //debugging mode
         if (argc == 2 && strcmp(argv[1],"-d")==0) {
-            const Expression *ast=parseAST();
+            const Node *ast=parseAST();
             ast->print(0, std::cout);
         } else {
             printf("%s","Wrong number of arguments.");
@@ -51,7 +51,7 @@ int main(int argc, char *argv[])
 
 void print_python(FILE* is, std::ostream &os) {
         yyin = is;
-        const Expression *ast=parseAST();
+        const Node *ast=parseAST();
         ast->print(0, os);
 
         os << std::endl << "# Boilerplat" << std::endl
