@@ -49,19 +49,17 @@ public:
         : value(_left),
         right(_right)
     {}
-
-    virtual double code_gen(
-        const std::map<std::string,double> &bindings
-    ) const
-    {
-        double vr=right->code_gen(bindings);
-        return vr;
-    }
+    
     virtual void translate(int level, std::ostream &dst) const override
     {
         dst<<value;
         dst<<getOpcode();
         right->translate(0, dst);
+    }
+
+    virtual void code_gen(std::ostream &dst) const
+    {
+        
     }
 };
 
@@ -76,13 +74,9 @@ public:
         : Operator(_left, _right)
     {}
 
-    virtual double code_gen(
-        const std::map<std::string,double> &bindings
-    ) const override
+    virtual void code_gen(std::ostream &dst) const
     {
-        double vl=left->code_gen(bindings);
-        double vr=right->code_gen(bindings);
-        return vl+vr;
+        
     }
 };
 
@@ -97,13 +91,9 @@ public:
         : Operator(_left, _right)
     {}
 
-    virtual double code_gen(
-        const std::map<std::string,double> &bindings
-    ) const override
+    virtual void code_gen(std::ostream &dst) const
     {
-      double vl=left->code_gen(bindings);
-      double vr=right->code_gen(bindings);
-      return vl-vr;
+        
     }
 };
 
@@ -119,13 +109,9 @@ public:
         : Operator(_left, _right)
     {}
 
-    virtual double code_gen(
-        const std::map<std::string,double> &bindings
-    ) const override
+    virtual void code_gen(std::ostream &dst) const
     {
-      double vl=left->code_gen(bindings);
-      double vr=right->code_gen(bindings);
-      return vl*vr;
+        
     }
 };
 
@@ -140,13 +126,9 @@ public:
         : Operator(_left, _right)
     {}
 
-    virtual double code_gen(
-        const std::map<std::string,double> &bindings
-    ) const override
+    virtual void code_gen(std::ostream &dst) const
     {
-      double vl=left->code_gen(bindings);
-      double vr=right->code_gen(bindings);
-      return vl/vr;
+        
     }
 };
 
@@ -161,13 +143,9 @@ public:
         : Operator(_left, _right)
     {}
 
-    virtual double code_gen(
-        const std::map<std::string,double> &bindings
-    ) const override
+    virtual void code_gen(std::ostream &dst) const
     {
-      double vl=left->code_gen(bindings);
-      double vr=right->code_gen(bindings);
-      return vl==vr;
+        
     }
 };
 
@@ -182,13 +160,9 @@ public:
         : Operator(_left, _right)
     {}
 
-    virtual double code_gen(
-        const std::map<std::string,double> &bindings
-    ) const override
+    virtual void code_gen(std::ostream &dst) const
     {
-      double vl=left->code_gen(bindings);
-      double vr=right->code_gen(bindings);
-      return vl!=vr;
+        
     }
 };
 
@@ -203,13 +177,9 @@ public:
         : Operator(_left, _right)
     {}
 
-    virtual double code_gen(
-        const std::map<std::string,double> &bindings
-    ) const override
+    virtual void code_gen(std::ostream &dst) const
     {
-      double vl=left->code_gen(bindings);
-      double vr=right->code_gen(bindings);
-      return vl>vr;
+        
     }
 };
 
@@ -224,13 +194,9 @@ public:
         : Operator(_left, _right)
     {}
 
-    virtual double code_gen(
-        const std::map<std::string,double> &bindings
-    ) const override
+    virtual void code_gen(std::ostream &dst) const
     {
-      double vl=left->code_gen(bindings);
-      double vr=right->code_gen(bindings);
-      return vl<vr;
+        
     }
 };
 
@@ -245,13 +211,9 @@ public:
         : Operator(_left, _right)
     {}
 
-    virtual double code_gen(
-        const std::map<std::string,double> &bindings
-    ) const override
+    virtual void code_gen(std::ostream &dst) const
     {
-      double vl=left->code_gen(bindings);
-      double vr=right->code_gen(bindings);
-      return vl&&vr;
+        
     }
 };
 
@@ -266,13 +228,9 @@ public:
         : Operator(_left, _right)
     {}
 
-    virtual double code_gen(
-        const std::map<std::string,double> &bindings
-    ) const override
+    virtual void code_gen(std::ostream &dst) const
     {
-      double vl=left->code_gen(bindings);
-      double vr=right->code_gen(bindings);
-      return vl||vr;
+        
     }
 };
 

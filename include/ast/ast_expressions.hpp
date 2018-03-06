@@ -22,9 +22,7 @@ public:
         dst<<")";
     }
 
-    virtual double code_gen(
-        const std::map<std::string,double> &bindings
-    ) const override
+    virtual void code_gen(std::ostream &dst) const override
     {
         // NOTE : This should be implemented by the inheriting function nodes, e.g. LogFunction
         throw std::runtime_error("FunctionOperator::code_gen is not implemented.");
@@ -46,9 +44,7 @@ public:
         dst<<identifier<<"()";
     }
 
-    virtual double code_gen(
-        const std::map<std::string,double> &bindings
-    ) const override
+    virtual void code_gen(std::ostream &dst) const override
     {
         // NOTE : This should be implemented by the inheriting function nodes, e.g. LogFunction
         throw std::runtime_error("FunctionOperator::code_gen is not implemented.");

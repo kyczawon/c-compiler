@@ -25,9 +25,7 @@ public:
     virtual void translate(int level, std::ostream &dst) const =0;
 
     //! Evaluate the tree using the given mapping of variables to numbers
-    virtual double code_gen(
-        const std::map<std::string,double> &bindings
-    ) const
+    virtual void code_gen(std::ostream &dst) const
     { throw std::runtime_error("Not implemented."); }
 };
 

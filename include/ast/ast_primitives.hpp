@@ -22,11 +22,9 @@ public:
         dst<<std::string(level,'\t')<<id;
     }
 
-    virtual double code_gen(
-        const std::map<std::string,double> &bindings
-    ) const override
+    virtual void code_gen(std::ostream &dst) const override
     {
-        return bindings.at(id);
+
     }
 };
 
@@ -48,11 +46,8 @@ public:
         dst<<std::string(level,'\t')<<value;
     }
 
-    virtual double code_gen(
-        const std::map<std::string,double> &bindings
-    ) const override
+    virtual void code_gen(std::ostream &dst) const override
     {
-        return value;
     }
 };
 
@@ -74,11 +69,8 @@ public:
         dst<<std::string(level,'\t')<<value;
     }
 
-    virtual double code_gen(
-        const std::map<std::string,double> &bindings
-    ) const override
+    virtual void code_gen(std::ostream &dst) const override
     {
-        return value;
     }
 };
 

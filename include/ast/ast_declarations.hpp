@@ -32,9 +32,7 @@ public:
         sequence->translate(level+1, dst);
     }
 
-    virtual double code_gen(
-        const std::map<std::string,double> &bindings
-    ) const override
+    virtual void code_gen(std::ostream &dst) const override
     {
         // NOTE : This should be implemented by the inheriting function nodes, e.g. LogFunction
         throw std::runtime_error("FunctionOperator::code_gen is not implemented.");
@@ -60,11 +58,8 @@ public:
         dst<<std::string(level,'\t')<<id<<"=0"<<std::endl;
     }
 
-    virtual double code_gen(
-        const std::map<std::string,double> &bindings
-    ) const override
+    virtual void code_gen(std::ostream &dst) const override
     {
-        return bindings.at(id);
     }
 };
 
@@ -89,11 +84,8 @@ public:
         dst<<std::string(level,'\t')<<id<<"=0"<<std::endl;
     }
 
-    virtual double code_gen(
-        const std::map<std::string,double> &bindings
-    ) const override
+    virtual void code_gen(std::ostream &dst) const override
     {
-        return bindings.at(id);
     }
 };
 
@@ -134,11 +126,8 @@ public:
         dst<<id;
     }
 
-    virtual double code_gen(
-        const std::map<std::string,double> &bindings
-    ) const override
+    virtual void code_gen(std::ostream &dst) const override
     {
-        return bindings.at(id);
     }
 };
 
