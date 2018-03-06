@@ -5,39 +5,6 @@
 
 #include <cmath>
 
-class NullaryFunction
-    : public Node
-{
-protected:
-    NodePtr sequence;
-    std::string type, identifier;
-public:
-    NullaryFunction(std::string &_type, std::string &_identifier, NodePtr _sequence)
-        : type(_type)
-        , identifier(_identifier)
-        , sequence(_sequence)
-    {
-        getStack()[identifier] = (NodePtr) this;
-    }
-    virtual void print(int level, std::ostream &dst) const override
-    {
-        dst<<std::string(level,'\t')<<"def "<<identifier<<"():"<<std::endl;
-        for (std::pair<std::string, NodePtr> element : getGlobals())
-        {
-            dst<<std::string(level+1,'\t')<<"global "<<element.first<<std::endl;
-        }
-        sequence->print(level+1, dst);
-    }
-
-    virtual double evaluate(
-        const std::map<std::string,double> &bindings
-    ) const override
-    {
-        // NOTE : This should be implemented by the inheriting function nodes, e.g. LogFunction
-        throw std::runtime_error("FunctionOperator::evaluate is not implemented.");
-    }
-};
-
 class Function
     : public Node
 {
@@ -56,8 +23,12 @@ public:
     virtual void print(int level, std::ostream &dst) const override
     {
         dst<<std::string(level,'\t')<<"def "<<identifier<<"(";
-        parameter_list->print(0, dst);
+        if (parameter_list != nullptr) parameter_list->print(0, dst);
         dst<<"):"<<std::endl;
+        for (std::pair<std::string, NodePtr> element : getGlobals())
+        {
+            dst<<std::string(level+1,'\t')<<"global "<<element.first<<std::endl;
+        }
         sequence->print(level+1, dst);
     }
 
