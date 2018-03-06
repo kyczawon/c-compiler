@@ -25,13 +25,13 @@ public:
     NodePtr getRight() const
     { return right; }
 
-    virtual void print(int level, std::ostream &dst) const override
+    virtual void translate(int level, std::ostream &dst) const override
     {
-        left->print(level, dst);
+        left->translate(level, dst);
         dst<<" ";
         dst<<getOpcode();
         dst<<" ";
-        right->print(0, dst);
+        right->translate(0, dst);
     }
 };
 
@@ -50,18 +50,18 @@ public:
         right(_right)
     {}
 
-    virtual double evaluate(
+    virtual double code_gen(
         const std::map<std::string,double> &bindings
     ) const
     {
-        double vr=right->evaluate(bindings);
+        double vr=right->code_gen(bindings);
         return vr;
     }
-    virtual void print(int level, std::ostream &dst) const override
+    virtual void translate(int level, std::ostream &dst) const override
     {
         dst<<value;
         dst<<getOpcode();
-        right->print(0, dst);
+        right->translate(0, dst);
     }
 };
 
@@ -76,12 +76,12 @@ public:
         : Operator(_left, _right)
     {}
 
-    virtual double evaluate(
+    virtual double code_gen(
         const std::map<std::string,double> &bindings
     ) const override
     {
-        double vl=left->evaluate(bindings);
-        double vr=right->evaluate(bindings);
+        double vl=left->code_gen(bindings);
+        double vr=right->code_gen(bindings);
         return vl+vr;
     }
 };
@@ -97,12 +97,12 @@ public:
         : Operator(_left, _right)
     {}
 
-    virtual double evaluate(
+    virtual double code_gen(
         const std::map<std::string,double> &bindings
     ) const override
     {
-      double vl=left->evaluate(bindings);
-      double vr=right->evaluate(bindings);
+      double vl=left->code_gen(bindings);
+      double vr=right->code_gen(bindings);
       return vl-vr;
     }
 };
@@ -119,12 +119,12 @@ public:
         : Operator(_left, _right)
     {}
 
-    virtual double evaluate(
+    virtual double code_gen(
         const std::map<std::string,double> &bindings
     ) const override
     {
-      double vl=left->evaluate(bindings);
-      double vr=right->evaluate(bindings);
+      double vl=left->code_gen(bindings);
+      double vr=right->code_gen(bindings);
       return vl*vr;
     }
 };
@@ -140,12 +140,12 @@ public:
         : Operator(_left, _right)
     {}
 
-    virtual double evaluate(
+    virtual double code_gen(
         const std::map<std::string,double> &bindings
     ) const override
     {
-      double vl=left->evaluate(bindings);
-      double vr=right->evaluate(bindings);
+      double vl=left->code_gen(bindings);
+      double vr=right->code_gen(bindings);
       return vl/vr;
     }
 };
@@ -161,12 +161,12 @@ public:
         : Operator(_left, _right)
     {}
 
-    virtual double evaluate(
+    virtual double code_gen(
         const std::map<std::string,double> &bindings
     ) const override
     {
-      double vl=left->evaluate(bindings);
-      double vr=right->evaluate(bindings);
+      double vl=left->code_gen(bindings);
+      double vr=right->code_gen(bindings);
       return vl==vr;
     }
 };
@@ -182,12 +182,12 @@ public:
         : Operator(_left, _right)
     {}
 
-    virtual double evaluate(
+    virtual double code_gen(
         const std::map<std::string,double> &bindings
     ) const override
     {
-      double vl=left->evaluate(bindings);
-      double vr=right->evaluate(bindings);
+      double vl=left->code_gen(bindings);
+      double vr=right->code_gen(bindings);
       return vl!=vr;
     }
 };
@@ -203,12 +203,12 @@ public:
         : Operator(_left, _right)
     {}
 
-    virtual double evaluate(
+    virtual double code_gen(
         const std::map<std::string,double> &bindings
     ) const override
     {
-      double vl=left->evaluate(bindings);
-      double vr=right->evaluate(bindings);
+      double vl=left->code_gen(bindings);
+      double vr=right->code_gen(bindings);
       return vl>vr;
     }
 };
@@ -224,12 +224,12 @@ public:
         : Operator(_left, _right)
     {}
 
-    virtual double evaluate(
+    virtual double code_gen(
         const std::map<std::string,double> &bindings
     ) const override
     {
-      double vl=left->evaluate(bindings);
-      double vr=right->evaluate(bindings);
+      double vl=left->code_gen(bindings);
+      double vr=right->code_gen(bindings);
       return vl<vr;
     }
 };
@@ -245,12 +245,12 @@ public:
         : Operator(_left, _right)
     {}
 
-    virtual double evaluate(
+    virtual double code_gen(
         const std::map<std::string,double> &bindings
     ) const override
     {
-      double vl=left->evaluate(bindings);
-      double vr=right->evaluate(bindings);
+      double vl=left->code_gen(bindings);
+      double vr=right->code_gen(bindings);
       return vl&&vr;
     }
 };
@@ -266,12 +266,12 @@ public:
         : Operator(_left, _right)
     {}
 
-    virtual double evaluate(
+    virtual double code_gen(
         const std::map<std::string,double> &bindings
     ) const override
     {
-      double vl=left->evaluate(bindings);
-      double vr=right->evaluate(bindings);
+      double vl=left->code_gen(bindings);
+      double vr=right->code_gen(bindings);
       return vl||vr;
     }
 };

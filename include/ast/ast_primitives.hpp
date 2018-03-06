@@ -17,12 +17,12 @@ public:
     const std::string getId() const
     { return id; }
 
-    virtual void print(int level, std::ostream &dst) const override
+    virtual void translate(int level, std::ostream &dst) const override
     {
         dst<<std::string(level,'\t')<<id;
     }
 
-    virtual double evaluate(
+    virtual double code_gen(
         const std::map<std::string,double> &bindings
     ) const override
     {
@@ -43,12 +43,12 @@ public:
     double getValue() const
     { return value; }
 
-    virtual void print(int level, std::ostream &dst) const override
+    virtual void translate(int level, std::ostream &dst) const override
     {
         dst<<std::string(level,'\t')<<value;
     }
 
-    virtual double evaluate(
+    virtual double code_gen(
         const std::map<std::string,double> &bindings
     ) const override
     {
@@ -69,12 +69,12 @@ public:
     double getValue() const
     { return value; }
 
-    virtual void print(int level, std::ostream &dst) const override
+    virtual void translate(int level, std::ostream &dst) const override
     {
         dst<<std::string(level,'\t')<<value;
     }
 
-    virtual double evaluate(
+    virtual double code_gen(
         const std::map<std::string,double> &bindings
     ) const override
     {

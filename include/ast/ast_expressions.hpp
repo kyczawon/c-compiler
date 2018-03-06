@@ -15,19 +15,19 @@ public:
         , input_args(_input_args)
     {
     }
-    virtual void print(int level, std::ostream &dst) const override
+    virtual void translate(int level, std::ostream &dst) const override
     {
         dst<<identifier<<"(";
-        input_args->print(0,dst);
+        input_args->translate(0,dst);
         dst<<")";
     }
 
-    virtual double evaluate(
+    virtual double code_gen(
         const std::map<std::string,double> &bindings
     ) const override
     {
         // NOTE : This should be implemented by the inheriting function nodes, e.g. LogFunction
-        throw std::runtime_error("FunctionOperator::evaluate is not implemented.");
+        throw std::runtime_error("FunctionOperator::code_gen is not implemented.");
     }
 };
 
@@ -41,17 +41,17 @@ public:
         : identifier(_identifier)
     {
     }
-    virtual void print(int level, std::ostream &dst) const override
+    virtual void translate(int level, std::ostream &dst) const override
     {
         dst<<identifier<<"()";
     }
 
-    virtual double evaluate(
+    virtual double code_gen(
         const std::map<std::string,double> &bindings
     ) const override
     {
         // NOTE : This should be implemented by the inheriting function nodes, e.g. LogFunction
-        throw std::runtime_error("FunctionOperator::evaluate is not implemented.");
+        throw std::runtime_error("FunctionOperator::code_gen is not implemented.");
     }
 };
 
@@ -65,11 +65,11 @@ public:
             : expr_list(_expr_list),
             expr(_expr)
         {}
-    virtual void print(int level, std::ostream &dst) const override
+    virtual void translate(int level, std::ostream &dst) const override
     {
-        expr_list->print(level,dst);
+        expr_list->translate(level,dst);
         dst << ", ";
-        expr->print(level,dst);
+        expr->translate(level,dst);
     }
 };
 

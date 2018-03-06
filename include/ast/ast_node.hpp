@@ -21,11 +21,11 @@ public:
     virtual ~Node()
     {}
 
-    //! Tell and node to print itself to the given stream
-    virtual void print(int level, std::ostream &dst) const =0;
+    //! Tell and node to translate itself to the given stream
+    virtual void translate(int level, std::ostream &dst) const =0;
 
     //! Evaluate the tree using the given mapping of variables to numbers
-    virtual double evaluate(
+    virtual double code_gen(
         const std::map<std::string,double> &bindings
     ) const
     { throw std::runtime_error("Not implemented."); }

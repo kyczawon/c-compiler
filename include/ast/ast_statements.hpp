@@ -14,10 +14,10 @@ public:
     ReturnStatement(NodePtr _expr)
             : expr(_expr)
         {}
-    virtual void print(int level, std::ostream &dst) const override
+    virtual void translate(int level, std::ostream &dst) const override
     {
         dst<<std::string(level,'\t')<<"return ";
-        expr->print(0,dst);
+        expr->translate(0,dst);
         dst<<std::endl;
     }
 };
@@ -32,10 +32,10 @@ public:
             : sequence_nest(_sequence_nest),
             next(_next)
         {}
-    virtual void print(int level, std::ostream &dst) const override
+    virtual void translate(int level, std::ostream &dst) const override
     {
-        sequence_nest->print(level,dst);
-        next->print(level,dst);
+        sequence_nest->translate(level,dst);
+        next->translate(level,dst);
     }
 };
 
@@ -48,10 +48,10 @@ public:
     Statement(NodePtr _statement)
             : statement(_statement)
         {}
-    virtual void print(int level, std::ostream &dst) const override
+    virtual void translate(int level, std::ostream &dst) const override
     {
         dst<<std::string(level,'\t');
-        statement->print(level,dst);
+        statement->translate(level,dst);
         dst<<std::endl;
     }
 };
@@ -66,12 +66,12 @@ public:
             : condition(_condition),
             sequence(_sequence)
         {}
-    virtual void print(int level, std::ostream &dst) const override
+    virtual void translate(int level, std::ostream &dst) const override
     {
         dst<<std::string(level,'\t') << "if (";
-        condition->print(0,dst);
+        condition->translate(0,dst);
         dst<< "):" << std::endl;
-        sequence->print(level+1, dst);
+        sequence->translate(level+1, dst);
         dst<<std::endl;
     }
 };
@@ -86,12 +86,12 @@ public:
             : condition(_condition),
             sequence(_sequence)
         {}
-    virtual void print(int level, std::ostream &dst) const override
+    virtual void translate(int level, std::ostream &dst) const override
     {
         dst<<std::string(level,'\t') << "while (";
-        condition->print(0,dst);
+        condition->translate(0,dst);
         dst<< "):" << std::endl;
-        sequence->print(level+1, dst);
+        sequence->translate(level+1, dst);
         dst<<std::endl;
     }
 };
@@ -105,10 +105,10 @@ public:
     elseStatement(NodePtr _sequence)
             : sequence(_sequence)
         {}
-    virtual void print(int level, std::ostream &dst) const override
+    virtual void translate(int level, std::ostream &dst) const override
     {
         dst<<std::string(level,'\t') << "else :" << std::endl;
-        sequence->print(level+1, dst);
+        sequence->translate(level+1, dst);
         dst<<std::endl;
     }
 };

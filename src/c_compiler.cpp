@@ -4,6 +4,7 @@
 #include <cstddef>
 
 void print_python(FILE* is, std::ostream &os);
+void check_files_opened(FILE *source_file, std::ofstream &out_file, char *argv[]);
 
 int main(int argc, char *argv[])
 {
@@ -13,33 +14,26 @@ int main(int argc, char *argv[])
         //debugging mode
         if (argc == 2 && strcmp(argv[1],"-d")==0) {
             const Node *ast=parseAST();
-            ast->print(0, std::cout);
+            ast->translate(0, std::cout);
         } else {
             printf("%s","Wrong number of arguments.");
             exit(EXIT_FAILURE);
         }
     }
 
-    if (strcmp(argv[1],"--translate")==0 && strcmp(argv[3],"-o")==0) {
-
+    if (strcmp(argv[1],"-S")==0 && strcmp(argv[3],"-o")==0) {
         FILE *source_file =fopen(argv[2], "r");
-
-        
-        if (source_file == NULL)
-        {
-            std::string message = "source_file '" + std::string(argv[2]) + "' could not be opened.\n";
-            printf("%s",message.c_str());
-            exit(EXIT_FAILURE);
-        }
-
-
         std::ofstream out_file(argv[4]);
-        if (!out_file.is_open())
-        {
-            std::string message = "out_file `" + std::string(argv[4]) + "' could not be opened.\n";
-                printf("%s",message.c_str());
-            exit(EXIT_FAILURE);
-        }
+        check_files_opened(source_file, out_file, argv);
+
+    }
+
+    //translation
+    if (strcmp(argv[1],"--translate")==0 && strcmp(argv[3],"-o")==0) {
+        FILE *source_file =fopen(argv[2], "r");
+        std::ofstream out_file(argv[4]);
+
+        check_files_opened(source_file, out_file, argv);
 
         print_python(source_file, out_file);
 
@@ -49,10 +43,31 @@ int main(int argc, char *argv[])
     return 0;
 }
 
+void check_files_opened(FILE *source_file, std::ofstream &out_file, char *argv[]) {
+    if (source_file == NULL)
+        {
+            std::string message = "source_file '" + std::string(argv[2]) + "' could not be opened.\n";
+            printf("%s",message.c_str());
+            exit(EXIT_FAILURE);
+        }
+    if (!out_file.is_open())
+    {
+        std::string message = "out_file `" + std::string(argv[4]) + "' could not be opened.\n";
+            printf("%s",message.c_str());
+        exit(EXIT_FAILURE);
+    }
+}
+
+void print_code_gen(FILE* is, std::ostream &os) {
+        yyin = is;
+        const Node *ast=parseAST();
+        ast->code_gen(0, os);
+}
+
 void print_python(FILE* is, std::ostream &os) {
         yyin = is;
         const Node *ast=parseAST();
-        ast->print(0, os);
+        ast->translate(0, os);
 
         os << std::endl << "# Boilerplat" << std::endl
         << "if __name__ == \"__main__\":" << std::endl

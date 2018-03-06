@@ -20,24 +20,24 @@ public:
     {
         getStack()[identifier] = (NodePtr) this;
     }
-    virtual void print(int level, std::ostream &dst) const override
+    virtual void translate(int level, std::ostream &dst) const override
     {
         dst<<std::string(level,'\t')<<"def "<<identifier<<"(";
-        if (parameter_list != nullptr) parameter_list->print(0, dst);
+        if (parameter_list != nullptr) parameter_list->translate(0, dst);
         dst<<"):"<<std::endl;
         for (std::pair<std::string, NodePtr> element : getGlobals())
         {
             dst<<std::string(level+1,'\t')<<"global "<<element.first<<std::endl;
         }
-        sequence->print(level+1, dst);
+        sequence->translate(level+1, dst);
     }
 
-    virtual double evaluate(
+    virtual double code_gen(
         const std::map<std::string,double> &bindings
     ) const override
     {
         // NOTE : This should be implemented by the inheriting function nodes, e.g. LogFunction
-        throw std::runtime_error("FunctionOperator::evaluate is not implemented.");
+        throw std::runtime_error("FunctionOperator::code_gen is not implemented.");
     }
 };
 
@@ -55,12 +55,12 @@ public:
     const std::string getId() const
     { return id; }
 
-    virtual void print(int level, std::ostream &dst) const override
+    virtual void translate(int level, std::ostream &dst) const override
     {
         dst<<std::string(level,'\t')<<id<<"=0"<<std::endl;
     }
 
-    virtual double evaluate(
+    virtual double code_gen(
         const std::map<std::string,double> &bindings
     ) const override
     {
@@ -84,12 +84,12 @@ public:
     const std::string getId() const
     { return id; }
 
-    virtual void print(int level, std::ostream &dst) const override
+    virtual void translate(int level, std::ostream &dst) const override
     {
         dst<<std::string(level,'\t')<<id<<"=0"<<std::endl;
     }
 
-    virtual double evaluate(
+    virtual double code_gen(
         const std::map<std::string,double> &bindings
     ) const override
     {
@@ -107,11 +107,11 @@ public:
             : list(_list),
             paramter(_paramter)
         {}
-    virtual void print(int level, std::ostream &dst) const override
+    virtual void translate(int level, std::ostream &dst) const override
     {
-        list->print(0,dst);
+        list->translate(0,dst);
         dst << ", ";
-        paramter->print(0,dst);
+        paramter->translate(0,dst);
     }
 };
 
@@ -129,12 +129,12 @@ public:
     const std::string getId() const
     { return id; }
 
-    virtual void print(int level, std::ostream &dst) const override
+    virtual void translate(int level, std::ostream &dst) const override
     {
         dst<<id;
     }
 
-    virtual double evaluate(
+    virtual double code_gen(
         const std::map<std::string,double> &bindings
     ) const override
     {
