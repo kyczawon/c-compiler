@@ -8,7 +8,7 @@
 #include "ast/ast_statements.hpp"
 #include "ast/ast_expressions.hpp"
 
-extern const Node *parseAST();
+extern Node *parseAST();
 extern FILE * yyin;
 extern FILE * yyout;
 

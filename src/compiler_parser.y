@@ -3,7 +3,7 @@
 
   #include <cassert>
 
-  extern const Node *g_root; // A way of getting the AST out
+  extern Node *g_root; // A way of getting the AST out
 
   //! This is to fix problems when generating C++
   // We are declaring the functions provided by Flex, so
@@ -15,7 +15,7 @@
 // Represents the value associated with any kind of
 // AST node.
 %union{
-  const Node *expr;
+  Node *expr;
   double number;
   std::string *string;
 }
@@ -122,9 +122,9 @@ TYPE
 
 %%
 
-const Node *g_root; // Definition of variable (to match declaration earlier)
+Node *g_root; // Definition of variable (to match declaration earlier)
 
-const Node *parseAST()
+Node *parseAST()
 {
   g_root=0;
   yyparse();

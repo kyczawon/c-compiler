@@ -14,7 +14,9 @@ protected:
 public:
     ReturnStatement(NodePtr _expr)
             : expr(_expr)
-        {}
+    {
+        expr->setParent(this);
+    }
     virtual void translate(int level, std::ostream &dst) const override
     {
         dst<<"return ";
@@ -29,7 +31,9 @@ protected:
 public:
     CompoundStatement(NodePtr _seq)
             : seq(_seq)
-        {}
+    {
+        seq->setParent(this);
+    }
     virtual void translate(int level, std::ostream &dst) const override
     {
         for (std::pair<std::string, NodePtr> element : getGlobals())
@@ -50,7 +54,10 @@ public:
     Sequence(NodePtr _sequence_nest, NodePtr _next)
             : sequence_nest(_sequence_nest),
             next(_next)
-        {}
+    {
+        sequence_nest->setParent(this);
+        next->setParent(this);
+    }
     virtual void translate(int level, std::ostream &dst) const override
     {
         if (sequence_nest != nullptr) { //sequence could be only 1 statement
@@ -61,8 +68,7 @@ public:
     }
 };
 
-class ifStatement
-    : public Node
+class ifStatement : public Node
 {
 protected:
     NodePtr condition, sequence;
@@ -70,7 +76,10 @@ public:
     ifStatement(NodePtr _condition, NodePtr _sequence)
             : condition(_condition),
             sequence(_sequence)
-        {}
+    {
+        condition->setParent(this);
+        sequence->setParent(this);
+    }
     virtual void translate(int level, std::ostream &dst) const override
     {
         dst<<"if (";
@@ -80,8 +89,7 @@ public:
     }
 };
 
-class whileStatement
-    : public Node
+class whileStatement : public Node
 {
 protected:
     NodePtr condition, sequence;
@@ -89,7 +97,10 @@ public:
     whileStatement(NodePtr _condition, NodePtr _sequence)
             : condition(_condition),
             sequence(_sequence)
-        {}
+    {
+        condition->setParent(this);
+        sequence->setParent(this);
+    }
     virtual void translate(int level, std::ostream &dst) const override
     {
         dst<<"while (";
@@ -100,15 +111,16 @@ public:
     }
 };
 
-class elseStatement
-    : public Node
+class elseStatement : public Node
 {
 protected:
     NodePtr sequence;
 public:
     elseStatement(NodePtr _sequence)
             : sequence(_sequence)
-        {}
+    {
+        sequence->setParent(this);
+    }
     virtual void translate(int level, std::ostream &dst) const override
     {
         dst<< "else :";

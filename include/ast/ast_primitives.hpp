@@ -21,7 +21,7 @@ public:
 
     virtual void translate(int level, std::ostream &dst) const override
     {
-        dst<<std::string(level,'\t')<<id;
+        dst<<id;
     }
 
     virtual void code_gen(std::ostream &dst) const override
@@ -45,7 +45,7 @@ public:
 
     virtual void translate(int level, std::ostream &dst) const override
     {
-        dst<<std::string(level,'\t')<<value;
+        dst<<value;
     }
 
     virtual void code_gen(std::ostream &dst) const override
@@ -68,7 +68,7 @@ public:
 
     virtual void translate(int level, std::ostream &dst) const override
     {
-        dst<<std::string(level,'\t')<<value;
+        dst<<value;
     }
 
     virtual void code_gen(std::ostream &dst) const override

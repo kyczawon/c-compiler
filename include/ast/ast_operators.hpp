@@ -7,8 +7,7 @@
 #include <cmath>
 #include <iostream>
 
-class Operator
-    : public Node
+class Operator : public Node
 {
 protected:
     NodePtr left;
@@ -17,7 +16,10 @@ protected:
     Operator(NodePtr _left, NodePtr _right)
         : left(_left)
         , right(_right)
-    {}
+    {
+        left->setParent(this);
+        right->setParent(this);
+    }
 public:
     virtual const char *getOpcode() const =0;
 
@@ -37,8 +39,7 @@ public:
     }
 };
 
-class AssignmentOperator
-    : public Node
+class AssignmentOperator : public Node
 {
 protected:
     std::string value;
@@ -50,7 +51,9 @@ public:
     AssignmentOperator(std::string &_left, NodePtr _right)
         : value(_left),
         right(_right)
-    {}
+    {
+        right->setParent(this);
+    }
     
     virtual void translate(int level, std::ostream &dst) const override
     {
@@ -65,8 +68,7 @@ public:
     }
 };
 
-class AddOperator
-    : public Operator
+class AddOperator : public Operator
 {
 protected:
     virtual const char *getOpcode() const override
@@ -74,7 +76,8 @@ protected:
 public:
     AddOperator(NodePtr _left, NodePtr _right)
         : Operator(_left, _right)
-    {}
+    {
+    }
 
     virtual void code_gen(std::ostream &dst) const
     {
@@ -82,8 +85,7 @@ public:
     }
 };
 
-class SubOperator
-    : public Operator
+class SubOperator : public Operator
 {
 protected:
     virtual const char *getOpcode() const override
@@ -91,7 +93,10 @@ protected:
 public:
     SubOperator(NodePtr _left, NodePtr _right)
         : Operator(_left, _right)
-    {}
+    {
+        left->setParent(this);
+        right->setParent(this);
+    }
 
     virtual void code_gen(std::ostream &dst) const
     {
@@ -100,8 +105,7 @@ public:
 };
 
 
-class MulOperator
-    : public Operator
+class MulOperator : public Operator
 {
 protected:
     virtual const char *getOpcode() const override
@@ -109,7 +113,8 @@ protected:
 public:
     MulOperator(NodePtr _left, NodePtr _right)
         : Operator(_left, _right)
-    {}
+    {
+    }
 
     virtual void code_gen(std::ostream &dst) const
     {
@@ -117,8 +122,7 @@ public:
     }
 };
 
-class DivOperator
-    : public Operator
+class DivOperator : public Operator
 {
 protected:
     virtual const char *getOpcode() const override
@@ -126,7 +130,8 @@ protected:
 public:
     DivOperator(NodePtr _left, NodePtr _right)
         : Operator(_left, _right)
-    {}
+    {
+    }
 
     virtual void code_gen(std::ostream &dst) const
     {
@@ -134,8 +139,7 @@ public:
     }
 };
 
-class EqualsOperator
-    : public Operator
+class EqualsOperator : public Operator
 {
 protected:
     virtual const char *getOpcode() const override
@@ -151,8 +155,7 @@ public:
     }
 };
 
-class NotEqualsOperator
-    : public Operator
+class NotEqualsOperator : public Operator
 {
 protected:
     virtual const char *getOpcode() const override
@@ -164,12 +167,10 @@ public:
 
     virtual void code_gen(std::ostream &dst) const
     {
-        
     }
 };
 
-class GreaterOperator
-    : public Operator
+class GreaterOperator : public Operator
 {
 protected:
     virtual const char *getOpcode() const override
@@ -181,12 +182,10 @@ public:
 
     virtual void code_gen(std::ostream &dst) const
     {
-        
     }
 };
 
-class SmallerOperator
-    : public Operator
+class SmallerOperator : public Operator
 {
 protected:
     virtual const char *getOpcode() const override
@@ -198,12 +197,10 @@ public:
 
     virtual void code_gen(std::ostream &dst) const
     {
-        
     }
 };
 
-class AndOperator
-    : public Operator
+class AndOperator : public Operator
 {
 protected:
     virtual const char *getOpcode() const override
@@ -215,12 +212,10 @@ public:
 
     virtual void code_gen(std::ostream &dst) const
     {
-        
     }
 };
 
-class OrOperator
-    : public Operator
+class OrOperator : public Operator
 {
 protected:
     virtual const char *getOpcode() const override
@@ -232,7 +227,6 @@ public:
 
     virtual void code_gen(std::ostream &dst) const
     {
-        
     }
 };
 

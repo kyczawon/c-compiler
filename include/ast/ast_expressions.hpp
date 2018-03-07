@@ -13,6 +13,7 @@ public:
         : identifier(_identifier)
         , input_args(_input_args)
     {
+        input_args->setParent(this);
     }
     virtual void translate(int level, std::ostream &dst) const override
     {
@@ -57,7 +58,10 @@ public:
     NodeList(NodePtr _expr_list, NodePtr _expr)
             : expr_list(_expr_list),
             expr(_expr)
-        {}
+        {
+            expr_list->setParent(this);
+            expr->setParent(this);
+        }
     virtual void translate(int level, std::ostream &dst) const override
     {
         expr_list->translate(level,dst);

@@ -13,7 +13,7 @@ int main(int argc, char *argv[])
     {
         //debugging mode
         if (argc == 2 && strcmp(argv[1],"-d")==0) {
-            const Node *ast=parseAST();
+            Node *ast=parseAST();
             ast->translate(0, std::cout);
         } else {
             printf("%s","Wrong number of arguments.");
@@ -60,13 +60,13 @@ void check_files_opened(FILE *source_file, std::ofstream &out_file, char *argv[]
 
 void print_code_gen(FILE* is, std::ostream &os) {
         yyin = is;
-        const Node *ast=parseAST();
+        Node *ast=parseAST();
         ast->code_gen(os);
 }
 
 void print_python(FILE* is, std::ostream &os) {
         yyin = is;
-        const Node *ast=parseAST();
+        Node *ast=parseAST();
         ast->translate(0, os);
 
         os << std::endl << "# Boilerplat" << std::endl

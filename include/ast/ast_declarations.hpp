@@ -18,7 +18,8 @@ public:
         , parameter_list(_parameter_list)
         , compound(_compound)
     {
-        getStack()[identifier] = (NodePtr) this;
+        parameter_list->setParent(this);
+        compound->setParent(this);
     }
     virtual void translate(int level, std::ostream &dst) const override
     {
@@ -89,17 +90,20 @@ class ParameterList
     : public Node
 {
 protected:
-    NodePtr list, paramter;
+    NodePtr list, parameter;
 public:
-    ParameterList (NodePtr _list, NodePtr _paramter)
+    ParameterList (NodePtr _list, NodePtr _parameter)
             : list(_list),
-            paramter(_paramter)
-        {}
+            parameter(_parameter)
+        {
+            list->setParent(this);
+            parameter->setParent(this);
+        }
     virtual void translate(int level, std::ostream &dst) const override
     {
         list->translate(0,dst);
         dst << ", ";
-        paramter->translate(0,dst);
+        parameter->translate(0,dst);
     }
 };
 
