@@ -4,3 +4,6 @@ Date,Effort,Developers,Milestones
 23.02,8,lkn16;ms6616,"ParseStatements, ParseExpressions, TranslateStatements, TranslateExpressions"
 26.02,4,lkn16;ms6617,"AddStack,SupportConditionals"
 27.02,4,lkn16,"SupportFunctions,SupportOperators, SupportGlobalVariables,SupportFunctionCalls"
+6.03,6,lkn16;ms6617,"CreateCodeGenStructure, SetUpTestsuite"
+7.03,5,ms6616,SetUpTestsuite
+7.03,6,lkn16,ImplementStackForScopes
