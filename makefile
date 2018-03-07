@@ -17,9 +17,9 @@ bin/eval_expr : src/eval_expr.o src/compiler_parser.tab.o src/compiler_lexer.yy.
 	mkdir -p bin
 	g++ $(CPPFLAGS) -o bin/eval_expr $^
 
-test/test : test/test.cpp
-	mkdir -p test
-	g++ $(CPPFLAGS) -o test/test $^
+# test/test : test/test.cpp
+# 	mkdir -p test
+# 	g++ $(CPPFLAGS) -o test/test $^
 
 clean :
 	rm src/*.o
