@@ -27,8 +27,9 @@
 %token T_NUMBER T_STRING
 %token T_EQUALS_EQUALS T_NOT_EQUALS T_GREATER T_SMALLER T_AND T_OR
 
-%type <expr> EXPR TERM FACTOR STATEMENT DECLARATION FUNCTION COMPOUND_STATEMENT SEQUENCE SEQUENCE_PROG
-%type <expr> CONDITIONAL_STATEMENT PARAMETER_LIST PARAMETER EXPR_LIST GLOBAL_DECLARATION
+%type <expr> EXPR TERM FACTOR STATEMENT DECLARATION FUNCTION_DECLARATION COMPOUND_STATEMENT SEQUENCE SEQUENCE_PROG
+%type <expr> CONDITIONAL_STATEMENT PARAMETER_LIST PARAMETER EXPR_LIST GLOBAL_DECLARATION GLOBAL_VARIABLE_DECLARATION
+%type <expr> EMPTY
 %type <number> T_NUMBER
 %type <string> T_STRING T_INT TYPE T_IF T_ELSE T_WHILE T_COMMA
 %type <string> T_EQUALS_EQUALS T_NOT_EQUALS T_GREATER T_SMALLER T_AND T_OR
@@ -40,31 +41,37 @@
 PROGRAM : SEQUENCE_PROG { g_root = $1;}
 
 SEQUENCE_PROG
-        : FUNCTION { $$ = $1; }
-        | GLOBAL_DECLARATION { $$ = $1;}
-        | SEQUENCE_PROG FUNCTION { $$ = new Sequence($1,$2);}
+        : EMPTY GLOBAL_DECLARATION { $$ = new Sequence($1,$2);}
         | SEQUENCE_PROG GLOBAL_DECLARATION { $$ = new Sequence($1,$2);}
 
-FUNCTION
+GLOBAL_DECLARATION
+        : GLOBAL_VARIABLE_DECLARATION { $$ = $1;}
+        | FUNCTION_DECLARATION { $$ = $1;}       
+
+FUNCTION_DECLARATION
         : TYPE T_STRING T_LBRACKET PARAMETER_LIST T_RBRACKET COMPOUND_STATEMENT { $$ = new Function(*$1, *$2, $4, $6);}
-        | TYPE T_STRING T_LBRACKET T_RBRACKET COMPOUND_STATEMENT { $$ = new NullaryFunction(*$1, *$2, $5);}
 
 PARAMETER_LIST
         : PARAMETER { $$ = $1;}
         | PARAMETER_LIST T_COMMA PARAMETER { $$ = new ParameterList($1,$3);}
+        | EMPTY {$$ = $1;}
 
 PARAMETER
         : TYPE T_STRING { $$ = new Parameter(*$1, *$2);}
 
 COMPOUND_STATEMENT
-        : T_LCURLY SEQUENCE T_RCURLY { $$ = $2;}
+        : T_LCURLY SEQUENCE T_RCURLY { $$ = new CompoundStatement($2);}
 
 SEQUENCE
-        : STATEMENT { $$ = $1; }
-        | SEQUENCE STATEMENT { $$ = new Sequence($1,$2);}
+        : SEQUENCE STATEMENT { $$ = new Sequence($1,$2);}
+        | EMPTY STATEMENT { $$ = new Sequence($1,$2);}
+        | EMPTY {$$ = $1;}
+
+EMPTY
+        : %empty {$$ = nullptr;}
 
 STATEMENT
-        : EXPR T_SEMI { $$ = new Statement($1);}
+        : EXPR T_SEMI { $$ = $1;}
         | CONDITIONAL_STATEMENT { $$ = $1; }
         | T_RETURN EXPR T_SEMI { $$ = new ReturnStatement($2);}
         | DECLARATION { $$ = $1; }
@@ -103,7 +110,7 @@ FACTOR
         | T_STRING          {$$ = new Variable(*$1);}
         | T_LBRACKET EXPR T_RBRACKET { $$ = $2;}
 
-GLOBAL_DECLARATION
+GLOBAL_VARIABLE_DECLARATION
         : TYPE T_STRING T_SEMI { $$ = new GlobalVariableDeclaration(*$1, *$2 );}
 
 DECLARATION

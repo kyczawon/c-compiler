@@ -1,6 +1,8 @@
 #ifndef ast_primitives_hpp
 #define ast_primitives_hpp
 
+#include "ast_nodes.hpp"
+
 #include <string>
 #include <iostream>
 
@@ -17,16 +19,14 @@ public:
     const std::string getId() const
     { return id; }
 
-    virtual void print(int level, std::ostream &dst) const override
+    virtual void translate(int level, std::ostream &dst) const override
     {
         dst<<std::string(level,'\t')<<id;
     }
 
-    virtual double evaluate(
-        const std::map<std::string,double> &bindings
-    ) const override
+    virtual void code_gen(std::ostream &dst) const override
     {
-        return bindings.at(id);
+
     }
 };
 
@@ -43,16 +43,13 @@ public:
     double getValue() const
     { return value; }
 
-    virtual void print(int level, std::ostream &dst) const override
+    virtual void translate(int level, std::ostream &dst) const override
     {
         dst<<std::string(level,'\t')<<value;
     }
 
-    virtual double evaluate(
-        const std::map<std::string,double> &bindings
-    ) const override
+    virtual void code_gen(std::ostream &dst) const override
     {
-        return value;
     }
 };
 
@@ -69,16 +66,13 @@ public:
     double getValue() const
     { return value; }
 
-    virtual void print(int level, std::ostream &dst) const override
+    virtual void translate(int level, std::ostream &dst) const override
     {
         dst<<std::string(level,'\t')<<value;
     }
 
-    virtual double evaluate(
-        const std::map<std::string,double> &bindings
-    ) const override
+    virtual void code_gen(std::ostream &dst) const override
     {
-        return value;
     }
 };
 

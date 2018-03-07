@@ -1,12 +1,13 @@
 #ifndef ast_statements_hpp
 #define ast_statements_hpp
 
+#include "ast_nodes.hpp"
+
 #include <string>
 #include <cmath>
 #include <iostream>
 
-class ReturnStatement
-    : public Node
+class ReturnStatement : public Statement2
 {
 protected:
     NodePtr expr;
@@ -14,16 +15,34 @@ public:
     ReturnStatement(NodePtr _expr)
             : expr(_expr)
         {}
-    virtual void print(int level, std::ostream &dst) const override
+    virtual void translate(int level, std::ostream &dst) const override
     {
-        dst<<std::string(level,'\t')<<"return ";
-        expr->print(0,dst);
-        dst<<std::endl;
+        dst<<"return ";
+        expr->translate(0,dst);
     }
 };
 
-class Sequence
-    : public Node
+class CompoundStatement : public Node
+{
+protected:
+    NodePtr seq;
+public:
+    CompoundStatement(NodePtr _seq)
+            : seq(_seq)
+        {}
+    virtual void translate(int level, std::ostream &dst) const override
+    {
+        for (std::pair<std::string, NodePtr> element : getGlobals())
+        {
+            dst<<std::endl<<std::string(level+1,'\t')<<"global "<<element.first;
+        }
+        if (seq != nullptr) { //compound statement could be empty
+            seq->translate(level+1,dst);
+        }
+    }
+};
+
+class Sequence : public Node
 {
 protected:
     NodePtr sequence_nest, next;
@@ -32,27 +51,13 @@ public:
             : sequence_nest(_sequence_nest),
             next(_next)
         {}
-    virtual void print(int level, std::ostream &dst) const override
+    virtual void translate(int level, std::ostream &dst) const override
     {
-        sequence_nest->print(level,dst);
-        next->print(level,dst);
-    }
-};
-
-class Statement
-    : public Node
-{
-protected:
-    NodePtr statement;
-public:
-    Statement(NodePtr _statement)
-            : statement(_statement)
-        {}
-    virtual void print(int level, std::ostream &dst) const override
-    {
-        dst<<std::string(level,'\t');
-        statement->print(level,dst);
-        dst<<std::endl;
+        if (sequence_nest != nullptr) { //sequence could be only 1 statement
+            sequence_nest->translate(level,dst);
+        }
+        dst<<std::endl<<std::string(level,'\t');
+        next->translate(level,dst);
     }
 };
 
@@ -66,13 +71,12 @@ public:
             : condition(_condition),
             sequence(_sequence)
         {}
-    virtual void print(int level, std::ostream &dst) const override
+    virtual void translate(int level, std::ostream &dst) const override
     {
-        dst<<std::string(level,'\t') << "if (";
-        condition->print(0,dst);
-        dst<< "):" << std::endl;
-        sequence->print(level+1, dst);
-        dst<<std::endl;
+        dst<<"if (";
+        condition->translate(0,dst);
+        dst<< "):";
+        sequence->translate(level, dst);
     }
 };
 
@@ -86,12 +90,12 @@ public:
             : condition(_condition),
             sequence(_sequence)
         {}
-    virtual void print(int level, std::ostream &dst) const override
+    virtual void translate(int level, std::ostream &dst) const override
     {
-        dst<<std::string(level,'\t') << "while (";
-        condition->print(0,dst);
-        dst<< "):" << std::endl;
-        sequence->print(level+1, dst);
+        dst<<"while (";
+        condition->translate(0,dst);
+        dst<< "):";
+        sequence->translate(level, dst);
         dst<<std::endl;
     }
 };
@@ -105,10 +109,10 @@ public:
     elseStatement(NodePtr _sequence)
             : sequence(_sequence)
         {}
-    virtual void print(int level, std::ostream &dst) const override
+    virtual void translate(int level, std::ostream &dst) const override
     {
-        dst<<std::string(level,'\t') << "else :" << std::endl;
-        sequence->print(level+1, dst);
+        dst<< "else :";
+        sequence->translate(level, dst);
         dst<<std::endl;
     }
 };

@@ -1,10 +1,9 @@
-#ifndef ast_nodes_hpp
-#define ast_nodes_hpp
+#ifndef ast_expressions_hpp
+#define ast_expressions_hpp
 
-#include "ast_node.hpp"
+#include "ast_nodes.hpp"
 
-class FunctionInvocation
-    : public Node
+class FunctionInvocation : public Node
 {
 protected:
     NodePtr input_args;
@@ -15,24 +14,21 @@ public:
         , input_args(_input_args)
     {
     }
-    virtual void print(int level, std::ostream &dst) const override
+    virtual void translate(int level, std::ostream &dst) const override
     {
         dst<<identifier<<"(";
-        input_args->print(0,dst);
+        input_args->translate(0,dst);
         dst<<")";
     }
 
-    virtual double evaluate(
-        const std::map<std::string,double> &bindings
-    ) const override
+    virtual void code_gen(std::ostream &dst) const override
     {
         // NOTE : This should be implemented by the inheriting function nodes, e.g. LogFunction
-        throw std::runtime_error("FunctionOperator::evaluate is not implemented.");
+        throw std::runtime_error("FunctionOperator::code_gen is not implemented.");
     }
 };
 
-class UnaryFunctionInvocation
-    : public Node
+class UnaryFunctionInvocation : public Node
 {
 protected:
     std::string identifier;
@@ -41,22 +37,19 @@ public:
         : identifier(_identifier)
     {
     }
-    virtual void print(int level, std::ostream &dst) const override
+    virtual void translate(int level, std::ostream &dst) const override
     {
         dst<<identifier<<"()";
     }
 
-    virtual double evaluate(
-        const std::map<std::string,double> &bindings
-    ) const override
+    virtual void code_gen(std::ostream &dst) const override
     {
         // NOTE : This should be implemented by the inheriting function nodes, e.g. LogFunction
-        throw std::runtime_error("FunctionOperator::evaluate is not implemented.");
+        throw std::runtime_error("FunctionOperator::code_gen is not implemented.");
     }
 };
 
-class NodeList
-    : public Node
+class NodeList : public Node
 {
 protected:
     NodePtr expr_list, expr;
@@ -65,11 +58,11 @@ public:
             : expr_list(_expr_list),
             expr(_expr)
         {}
-    virtual void print(int level, std::ostream &dst) const override
+    virtual void translate(int level, std::ostream &dst) const override
     {
-        expr_list->print(level,dst);
+        expr_list->translate(level,dst);
         dst << ", ";
-        expr->print(level,dst);
+        expr->translate(level,dst);
     }
 };
 
