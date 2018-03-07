@@ -1,12 +1,13 @@
 #ifndef ast_statements_hpp
 #define ast_statements_hpp
 
+#include "ast_nodes.hpp"
+
 #include <string>
 #include <cmath>
 #include <iostream>
 
-class ReturnStatement
-    : public Node
+class ReturnStatement : public Statement2
 {
 protected:
     NodePtr expr;
@@ -16,14 +17,32 @@ public:
         {}
     virtual void translate(int level, std::ostream &dst) const override
     {
-        dst<<std::string(level,'\t')<<"return ";
+        dst<<"return ";
         expr->translate(0,dst);
-        dst<<std::endl;
     }
 };
 
-class Sequence
-    : public Node
+class CompoundStatement : public Node
+{
+protected:
+    NodePtr seq;
+public:
+    CompoundStatement(NodePtr _seq)
+            : seq(_seq)
+        {}
+    virtual void translate(int level, std::ostream &dst) const override
+    {
+        for (std::pair<std::string, NodePtr> element : getGlobals())
+        {
+            dst<<std::endl<<std::string(level+1,'\t')<<"global "<<element.first;
+        }
+        if (seq != nullptr) { //compound statement could be empty
+            seq->translate(level+1,dst);
+        }
+    }
+};
+
+class Sequence : public Node
 {
 protected:
     NodePtr sequence_nest, next;
@@ -34,25 +53,11 @@ public:
         {}
     virtual void translate(int level, std::ostream &dst) const override
     {
-        sequence_nest->translate(level,dst);
+        if (sequence_nest != nullptr) { //sequence could be only 1 statement
+            sequence_nest->translate(level,dst);
+        }
+        dst<<std::endl<<std::string(level,'\t');
         next->translate(level,dst);
-    }
-};
-
-class Statement
-    : public Node
-{
-protected:
-    NodePtr statement;
-public:
-    Statement(NodePtr _statement)
-            : statement(_statement)
-        {}
-    virtual void translate(int level, std::ostream &dst) const override
-    {
-        dst<<std::string(level,'\t');
-        statement->translate(level,dst);
-        dst<<std::endl;
     }
 };
 
@@ -68,11 +73,10 @@ public:
         {}
     virtual void translate(int level, std::ostream &dst) const override
     {
-        dst<<std::string(level,'\t') << "if (";
+        dst<<"if (";
         condition->translate(0,dst);
-        dst<< "):" << std::endl;
-        sequence->translate(level+1, dst);
-        dst<<std::endl;
+        dst<< "):";
+        sequence->translate(level, dst);
     }
 };
 
@@ -88,10 +92,10 @@ public:
         {}
     virtual void translate(int level, std::ostream &dst) const override
     {
-        dst<<std::string(level,'\t') << "while (";
+        dst<<"while (";
         condition->translate(0,dst);
-        dst<< "):" << std::endl;
-        sequence->translate(level+1, dst);
+        dst<< "):";
+        sequence->translate(level, dst);
         dst<<std::endl;
     }
 };
@@ -107,8 +111,8 @@ public:
         {}
     virtual void translate(int level, std::ostream &dst) const override
     {
-        dst<<std::string(level,'\t') << "else :" << std::endl;
-        sequence->translate(level+1, dst);
+        dst<< "else :";
+        sequence->translate(level, dst);
         dst<<std::endl;
     }
 };

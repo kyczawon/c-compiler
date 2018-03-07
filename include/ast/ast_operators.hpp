@@ -1,6 +1,8 @@
 #ifndef ast_operators_hpp
 #define ast_operators_hpp
 
+#include "ast_nodes.hpp"
+
 #include <string>
 #include <cmath>
 #include <iostream>

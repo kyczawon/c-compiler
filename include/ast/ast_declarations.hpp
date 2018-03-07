@@ -1,7 +1,7 @@
 #ifndef ast_functions_hpp
 #define ast_functions_hpp
 
-#include "ast_node.hpp"
+#include "ast_nodes.hpp"
 
 #include <cmath>
 
@@ -9,27 +9,23 @@ class Function
     : public Node
 {
 protected:
-    NodePtr sequence, parameter_list;
+    NodePtr compound, parameter_list;
     std::string type, identifier;
 public:
-    Function(std::string &_type, std::string &_identifier, NodePtr _parameter_list, NodePtr _sequence)
+    Function(std::string &_type, std::string &_identifier, NodePtr _parameter_list, NodePtr _compound)
         : type(_type)
         , identifier(_identifier)
         , parameter_list(_parameter_list)
-        , sequence(_sequence)
+        , compound(_compound)
     {
         getStack()[identifier] = (NodePtr) this;
     }
     virtual void translate(int level, std::ostream &dst) const override
     {
-        dst<<std::string(level,'\t')<<"def "<<identifier<<"(";
+        dst<<"def "<<identifier<<"(";
         if (parameter_list != nullptr) parameter_list->translate(0, dst);
-        dst<<"):"<<std::endl;
-        for (std::pair<std::string, NodePtr> element : getGlobals())
-        {
-            dst<<std::string(level+1,'\t')<<"global "<<element.first<<std::endl;
-        }
-        sequence->translate(level+1, dst);
+        dst<<"):";
+        compound->translate(level, dst);
     }
 
     virtual void code_gen(std::ostream &dst) const override
@@ -55,7 +51,7 @@ public:
 
     virtual void translate(int level, std::ostream &dst) const override
     {
-        dst<<std::string(level,'\t')<<id<<"=0"<<std::endl;
+        dst<<id<<"=0"<<std::endl;
     }
 
     virtual void code_gen(std::ostream &dst) const override
@@ -81,7 +77,7 @@ public:
 
     virtual void translate(int level, std::ostream &dst) const override
     {
-        dst<<std::string(level,'\t')<<id<<"=0"<<std::endl;
+        dst<<id<<"=0"<<std::endl;
     }
 
     virtual void code_gen(std::ostream &dst) const override

@@ -61,7 +61,7 @@ void check_files_opened(FILE *source_file, std::ofstream &out_file, char *argv[]
 void print_code_gen(FILE* is, std::ostream &os) {
         yyin = is;
         const Node *ast=parseAST();
-        ast->code_gen(0, os);
+        ast->code_gen(os);
 }
 
 void print_python(FILE* is, std::ostream &os) {

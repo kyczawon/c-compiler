@@ -1,10 +1,9 @@
-#ifndef ast_nodes_hpp
-#define ast_nodes_hpp
+#ifndef ast_expressions_hpp
+#define ast_expressions_hpp
 
-#include "ast_node.hpp"
+#include "ast_nodes.hpp"
 
-class FunctionInvocation
-    : public Node
+class FunctionInvocation : public Node
 {
 protected:
     NodePtr input_args;
@@ -29,8 +28,7 @@ public:
     }
 };
 
-class UnaryFunctionInvocation
-    : public Node
+class UnaryFunctionInvocation : public Node
 {
 protected:
     std::string identifier;
@@ -51,8 +49,7 @@ public:
     }
 };
 
-class NodeList
-    : public Node
+class NodeList : public Node
 {
 protected:
     NodePtr expr_list, expr;
