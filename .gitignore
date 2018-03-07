@@ -10,7 +10,14 @@ bin/*
 *.stackdump
 
 *.DS_Store
+/test/test_results/*
+/tmp/*
 
 .vagrant
 
 .vscode/settings.json
+tmp/formative/f1-got.py
+tmp/formative/f2-got.py
+tmp/formative/f4-got.py
+tmp/formative/f5-got.py
+tmp/formative/f6-got.py
