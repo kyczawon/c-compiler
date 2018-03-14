@@ -10,3 +10,7 @@ AddStack,,0.5,lkn16,c22849329ad33bb4cfca6d33ac708c4dc88ede7c,add a stack that ca
 SupportConditionals,,1.5,ms6616,5a157c9fbeb63c804df61b947ea1f67ec94eabff,"add suport for if, while and else"
 SupportFunctions,SupportUnaryFunctions,1.5,lkn16,ffe92b5b1a7eb009ff5636dc8841960513e6bf0a,Add support for functions with many input parameters
 SupportFunctionCalls,SupportFunctions,1,lkn16,7d61b885e419b77aa1463af5276c774480350c97,add suport for function calls
+ImplementContext,,2,lkn16,66e429357455515cf7a5465e88a42a57980bd456,Implement scoping by creating a context class and passing it in code_gen
+CreateCodeGenStructure,,2,lkn16,0384f84e21081df8c6762612b523b880dceb77fd,Set up the code stucture so that code gen funcions can be easily implemented
+SetUpTestsuite,,3,ms6616,b3eebfc6b953dfaf7ff42782b9d79a6810b26cd2,Write an automated system for running test cases
+WriteTests,,5,ms6616,,Write the tests required for the testsuite
