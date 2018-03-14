@@ -64,7 +64,8 @@ public:
 
     virtual void code_gen(std::ostream &dst) const
     {
-        
+        left->get_binding();
+        right->get_binding();
     }
 };
 

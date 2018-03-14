@@ -22,10 +22,16 @@ public:
         dst<<"return ";
         expr->translate(0,dst);
     }
+    virtual void code_gen(std::ostream &dst) const override
+    {
+
+    }
 };
 
 class CompoundStatement : public Node
 {
+private:
+    std::unordered_map<std::string,NodePtr> bindings;
 protected:
     NodePtr seq;
 public:
@@ -34,6 +40,25 @@ public:
     {
         seq->setParent(this);
     }
+
+    virtual NodePtr get_binding(std::string key) const override {
+        std::unordered_map<std::string,NodePtr>::iterator it = bindings.find(key);
+            
+            if (it == bindings.end())
+                mparent->get_binding();
+            else
+                return it->second;
+    }
+
+    virtual void set_binding(std::string key, NodePtr node) const override {
+        std::unordered_map<std::string,NodePtr>::iterator it = bindings.find(key);
+            
+            if (it == bindings.end())
+                bindings[key] = node;
+            else
+                std::cout<<"redefinition of '"<<key<<"'";
+    }
+
     virtual void translate(int level, std::ostream &dst) const override
     {
         for (std::pair<std::string, NodePtr> element : getGlobals())
@@ -43,6 +68,10 @@ public:
         if (seq != nullptr) { //compound statement could be empty
             seq->translate(level+1,dst);
         }
+    }
+    virtual void code_gen(std::ostream &dst) const override
+    {
+
     }
 };
 
@@ -65,6 +94,10 @@ public:
         }
         dst<<std::endl<<std::string(level,'\t');
         next->translate(level,dst);
+    }
+    virtual void code_gen(std::ostream &dst) const override
+    {
+
     }
 };
 
@@ -109,6 +142,10 @@ public:
         sequence->translate(level, dst);
         dst<<std::endl;
     }
+    virtual void code_gen(std::ostream &dst) const override
+    {
+
+    }
 };
 
 class elseStatement : public Node
@@ -126,6 +163,10 @@ public:
         dst<< "else :";
         sequence->translate(level, dst);
         dst<<std::endl;
+    }
+    virtual void code_gen(std::ostream &dst) const override
+    {
+
     }
 };
 

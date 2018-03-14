@@ -26,7 +26,7 @@ public:
 
     virtual void code_gen(std::ostream &dst) const override
     {
-
+        get_binding(id);
     }
 };
 

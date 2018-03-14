@@ -84,6 +84,7 @@ CONDITIONAL_STATEMENT
 EXPR_LIST
         : EXPR { $$ = $1;}
         | EXPR_LIST T_COMMA EXPR { $$ = new NodeList($1,$3);}
+        | EMPTY { $$ = $1;}
 
 EXPR
         : TERM             { $$ = $1; }
@@ -99,7 +100,6 @@ EXPR
 
 TERM
         : FACTOR              { $$ = $1; }
-        | T_STRING T_LBRACKET T_RBRACKET { $$ = new UnaryFunctionInvocation(*$1);}
         | T_STRING T_LBRACKET EXPR_LIST T_RBRACKET { $$ = new FunctionInvocation(*$1, $3);}
         | TERM T_TIMES FACTOR { $$ = new MulOperator($1, $3); }
         | TERM T_DIVIDE FACTOR { $$ = new DivOperator($1, $3); }

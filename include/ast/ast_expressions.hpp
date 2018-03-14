@@ -18,35 +18,13 @@ public:
     virtual void translate(int level, std::ostream &dst) const override
     {
         dst<<identifier<<"(";
-        input_args->translate(0,dst);
+        if (input_args != nullptr) input_args->translate(0,dst); //input_args could be empty
         dst<<")";
     }
 
     virtual void code_gen(std::ostream &dst) const override
     {
-        // NOTE : This should be implemented by the inheriting function nodes, e.g. LogFunction
-        throw std::runtime_error("FunctionOperator::code_gen is not implemented.");
-    }
-};
-
-class UnaryFunctionInvocation : public Node
-{
-protected:
-    std::string identifier;
-public:
-    UnaryFunctionInvocation(std::string &_identifier)
-        : identifier(_identifier)
-    {
-    }
-    virtual void translate(int level, std::ostream &dst) const override
-    {
-        dst<<identifier<<"()";
-    }
-
-    virtual void code_gen(std::ostream &dst) const override
-    {
-        // NOTE : This should be implemented by the inheriting function nodes, e.g. LogFunction
-        throw std::runtime_error("FunctionOperator::code_gen is not implemented.");
+        get_binding(identifier);
     }
 };
 

@@ -5,8 +5,7 @@
 
 #include <cmath>
 
-class Function
-    : public Node
+class Function : public Node
 {
 protected:
     NodePtr compound, parameter_list;
@@ -18,6 +17,7 @@ public:
         , parameter_list(_parameter_list)
         , compound(_compound)
     {
+        set_binding(id, this);
         parameter_list->setParent(this);
         compound->setParent(this);
     }
@@ -36,19 +36,25 @@ public:
     }
 };
 
-class VariableDeclaration
-    : public Node
+class VariableDeclaration : public Node
 {
 private:
     std::string type, id;
+    int value;
 public:
     VariableDeclaration(const std::string &_type, const std::string &_id)
         : type(_type),
         id(_id)
-    {}
+    {
+        set_binding(id, this);
+    }
 
     const std::string getId() const
     { return id; }
+
+    void setValue(int _value){
+        value = _value;
+    }
 
     virtual void translate(int level, std::ostream &dst) const override
     {

@@ -42,6 +42,21 @@ public:
     //! Generate the mips code to the given stream
     virtual void code_gen(std::ostream &dst) const
     { throw std::runtime_error("Not implemented."); }
+
+    virtual NodePtr get_binding(std::string key) const
+    {
+        if (m_parent = 0) {//we've reached the top of the program
+            std::unordered_map<std::string,NodePtr>::iterator it = getGlobals().find(key);
+             if (it == bindings.end())
+                std::cout<<"use of undeclared identifier '"<<key<<"'";
+            else
+                return it->second;
+        }
+        else mparent->get_binding();
+    }
+
+    virtual void create_binding(std::string key, NodePtr node)
+    { mparent->get_binding(); }
 };
 
 class Statement2 : public Node
