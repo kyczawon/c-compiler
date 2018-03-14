@@ -21,7 +21,7 @@ public:
         dst<<")";
     }
 
-    virtual void code_gen(std::ostream &dst) const override
+    virtual void code_gen(std::ostream &dst, Context &context) const override
     {
         // NOTE : This should be implemented by the inheriting function nodes, e.g. LogFunction
         throw std::runtime_error("FunctionOperator::code_gen is not implemented.");
@@ -42,7 +42,7 @@ public:
         dst<<identifier<<"()";
     }
 
-    virtual void code_gen(std::ostream &dst) const override
+    virtual void code_gen(std::ostream &dst, Context &context) const override
     {
         // NOTE : This should be implemented by the inheriting function nodes, e.g. LogFunction
         throw std::runtime_error("FunctionOperator::code_gen is not implemented.");
