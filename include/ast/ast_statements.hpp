@@ -20,6 +20,10 @@ public:
         dst<<"return ";
         expr->translate(0,dst);
     }
+    virtual void code_gen(std::ostream &dst, Context &context) const override
+    {
+        throw std::runtime_error("ReturnStatement::code_gen is not implemented.");
+    }
 };
 
 class CompoundStatement : public Node
@@ -38,6 +42,12 @@ public:
         }
         if (seq != nullptr) { //compound statement could be empty
             seq->translate(level+1,dst);
+        }
+    }
+    virtual void code_gen(std::ostream &dst, Context &context) const override
+    {
+        if (seq != nullptr) { //compound statement could be empty
+            seq->code_gen(dst,context);
         }
     }
 };
@@ -59,6 +69,13 @@ public:
         dst<<std::endl<<std::string(level,'\t');
         next->translate(level,dst);
     }
+    virtual void code_gen(std::ostream &dst, Context &context) const override
+    {
+        if (sequence_nest != nullptr) { //sequence could be only 1 statement
+            sequence_nest->code_gen(dst,context);
+        }
+        next->code_gen(dst,context);
+    }
 };
 
 class ifStatement
@@ -77,6 +94,10 @@ public:
         condition->translate(0,dst);
         dst<< "):";
         sequence->translate(level, dst);
+    }
+    virtual void code_gen(std::ostream &dst, Context &context) const override
+    {
+        throw std::runtime_error("ifStatement::code_gen is not implemented.");
     }
 };
 
@@ -98,6 +119,10 @@ public:
         sequence->translate(level, dst);
         dst<<std::endl;
     }
+    virtual void code_gen(std::ostream &dst, Context &context) const override
+    {
+        throw std::runtime_error("whileStatement::code_gen is not implemented.");
+    }
 };
 
 class elseStatement
@@ -114,6 +139,10 @@ public:
         dst<< "else :";
         sequence->translate(level, dst);
         dst<<std::endl;
+    }
+    virtual void code_gen(std::ostream &dst, Context &context) const override
+    {
+        throw std::runtime_error("elseStatement::code_gen is not implemented.");
     }
 };
 

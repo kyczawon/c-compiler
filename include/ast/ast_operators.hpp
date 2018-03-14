@@ -61,7 +61,7 @@ public:
 
     virtual void code_gen(std::ostream &dst, Context &context) const
     {
-        
+        throw std::runtime_error("AssignmentOperator::code_gen is not implemented.");
     }
 };
 
@@ -78,7 +78,7 @@ public:
 
     virtual void code_gen(std::ostream &dst, Context &context) const
     {
-        
+        throw std::runtime_error("AddOperator::code_gen is not implemented.");
     }
 };
 
@@ -95,7 +95,7 @@ public:
 
     virtual void code_gen(std::ostream &dst, Context &context) const
     {
-        
+        throw std::runtime_error("SubOperator:code_gen is not implemented.");
     }
 };
 
@@ -113,7 +113,7 @@ public:
 
     virtual void code_gen(std::ostream &dst, Context &context) const
     {
-        
+        throw std::runtime_error("MulOperator::code_gen is not implemented.");
     }
 };
 
@@ -130,7 +130,7 @@ public:
 
     virtual void code_gen(std::ostream &dst, Context &context) const
     {
-        
+        throw std::runtime_error("DivOperator::code_gen is not implemented.");
     }
 };
 
@@ -147,7 +147,7 @@ public:
 
     virtual void code_gen(std::ostream &dst, Context &context) const
     {
-        
+        throw std::runtime_error("EqualsOperator::code_gen is not implemented.");
     }
 };
 
@@ -164,7 +164,7 @@ public:
 
     virtual void code_gen(std::ostream &dst, Context &context) const
     {
-        
+        throw std::runtime_error("NotEqualsOperator::code_gen is not implemented.");
     }
 };
 
@@ -181,7 +181,7 @@ public:
 
     virtual void code_gen(std::ostream &dst, Context &context) const
     {
-        
+        throw std::runtime_error("GreaterOperator::code_gen is not implemented.");
     }
 };
 
@@ -198,7 +198,7 @@ public:
 
     virtual void code_gen(std::ostream &dst, Context &context) const
     {
-        
+        throw std::runtime_error("SmallerOperator::code_gen is not implemented.");
     }
 };
 
@@ -215,7 +215,7 @@ public:
 
     virtual void code_gen(std::ostream &dst, Context &context) const
     {
-        
+        throw std::runtime_error("AndOperator::code_gen is not implemented.");
     }
 };
 
@@ -232,7 +232,7 @@ public:
 
     virtual void code_gen(std::ostream &dst, Context &context) const
     {
-        
+        throw std::runtime_error("OrOperator::code_gen is not implemented.");
     }
 };
 

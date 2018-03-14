@@ -63,6 +63,7 @@ public:
 
 class Context {
 private:
+    int _size = 0;
     std::unordered_map<std::string,int> bindings;
     Context* parent;
 public:
@@ -79,13 +80,19 @@ public:
             return it->second;
     }
 
-    void add_binding(std::string key) {
+    void add_binding(std::string key, int bytes) {
         std::unordered_map<std::string,int>::iterator it = bindings.find(key);
             
-        if (it == bindings.end())
-            bindings[key] = bindings.size();
+        if (it == bindings.end()) {
+            bindings[key] = _size;
+            _size += bytes;
+        }
         else
             std::cout<<"redefinition of '"<<key<<"'";
+    }
+
+    int size() {
+        return _size;
     }
 };
 

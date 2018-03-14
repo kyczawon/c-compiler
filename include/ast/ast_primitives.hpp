@@ -26,7 +26,7 @@ public:
 
     virtual void code_gen(std::ostream &dst, Context &context) const override
     {
-
+        throw std::runtime_error("Variable::code_gen is not implemented.");
     }
 };
 
@@ -50,6 +50,7 @@ public:
 
     virtual void code_gen(std::ostream &dst, Context &context) const override
     {
+        throw std::runtime_error("Number::code_gen is not implemented.");
     }
 };
 
@@ -73,6 +74,7 @@ public:
 
     virtual void code_gen(std::ostream &dst, Context &context) const override
     {
+        throw std::runtime_error("NegativeNumber::code_gen is not implemented.");
     }
 };
 

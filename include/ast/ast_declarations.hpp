@@ -4,6 +4,7 @@
 #include "ast_nodes.hpp"
 
 #include <cmath>
+#include <sstream>
 
 class Function
     : public Node
@@ -29,8 +30,12 @@ public:
 
     virtual void code_gen(std::ostream &dst, Context &context) const override
     {
-        // NOTE : This should be implemented by the inheriting function nodes, e.g. LogFunction
-        throw std::runtime_error("FunctionOperator::code_gen is not implemented.");
+        dst<<identifier<<":"<<std::endl;
+        std::stringstream inner_compiled; 
+        Context inner_context = new Context(context);
+        compound->code_gen(inner_compiled, inner_context);
+        dst << "\taddiu	$sp,$sp," << inner_context.size();
+        dst<<inner_compiled.str()<<std::endl;
     }
 };
 
@@ -55,6 +60,7 @@ public:
 
     virtual void code_gen(std::ostream &dst, Context &context) const override
     {
+        context.add_binding(id,4);
     }
 };
 
@@ -81,6 +87,7 @@ public:
 
     virtual void code_gen(std::ostream &dst, Context &context) const override
     {
+        context.add_binding(id, 4);
     }
 };
 
