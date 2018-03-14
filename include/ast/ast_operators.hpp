@@ -59,7 +59,7 @@ public:
         right->translate(0, dst);
     }
 
-    virtual void code_gen(std::ostream &dst) const
+    virtual void code_gen(std::ostream &dst, Context &context) const
     {
         
     }
@@ -76,7 +76,7 @@ public:
         : Operator(_left, _right)
     {}
 
-    virtual void code_gen(std::ostream &dst) const
+    virtual void code_gen(std::ostream &dst, Context &context) const
     {
         
     }
@@ -93,7 +93,7 @@ public:
         : Operator(_left, _right)
     {}
 
-    virtual void code_gen(std::ostream &dst) const
+    virtual void code_gen(std::ostream &dst, Context &context) const
     {
         
     }
@@ -111,7 +111,7 @@ public:
         : Operator(_left, _right)
     {}
 
-    virtual void code_gen(std::ostream &dst) const
+    virtual void code_gen(std::ostream &dst, Context &context) const
     {
         
     }
@@ -128,7 +128,7 @@ public:
         : Operator(_left, _right)
     {}
 
-    virtual void code_gen(std::ostream &dst) const
+    virtual void code_gen(std::ostream &dst, Context &context) const
     {
         
     }
@@ -145,7 +145,7 @@ public:
         : Operator(_left, _right)
     {}
 
-    virtual void code_gen(std::ostream &dst) const
+    virtual void code_gen(std::ostream &dst, Context &context) const
     {
         
     }
@@ -162,7 +162,7 @@ public:
         : Operator(_left, _right)
     {}
 
-    virtual void code_gen(std::ostream &dst) const
+    virtual void code_gen(std::ostream &dst, Context &context) const
     {
         
     }
@@ -179,7 +179,7 @@ public:
         : Operator(_left, _right)
     {}
 
-    virtual void code_gen(std::ostream &dst) const
+    virtual void code_gen(std::ostream &dst, Context &context) const
     {
         
     }
@@ -196,7 +196,7 @@ public:
         : Operator(_left, _right)
     {}
 
-    virtual void code_gen(std::ostream &dst) const
+    virtual void code_gen(std::ostream &dst, Context &context) const
     {
         
     }
@@ -213,7 +213,7 @@ public:
         : Operator(_left, _right)
     {}
 
-    virtual void code_gen(std::ostream &dst) const
+    virtual void code_gen(std::ostream &dst, Context &context) const
     {
         
     }
@@ -230,7 +230,7 @@ public:
         : Operator(_left, _right)
     {}
 
-    virtual void code_gen(std::ostream &dst) const
+    virtual void code_gen(std::ostream &dst, Context &context) const
     {
         
     }

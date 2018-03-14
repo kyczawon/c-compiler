@@ -10,6 +10,7 @@
 #include <regex>
 
 class Node;
+class Context;
 
 typedef const Node *NodePtr;
 static const std::regex reNum("^-?[0-9]+$");
@@ -34,7 +35,7 @@ public:
     virtual void translate(int level, std::ostream &dst) const =0;
 
     //! Generate the mips code to the given stream
-    virtual void code_gen(std::ostream &dst) const
+    virtual void code_gen(std::ostream &dst, Context &context) const
     { throw std::runtime_error("Not implemented."); }
 };
 
@@ -45,7 +46,7 @@ public:
     virtual void translate(int level, std::ostream &dst) const =0;
 
     //! Generate the mips code to the given stream
-    virtual void code_gen(std::ostream &dst) const override
+    virtual void code_gen(std::ostream &dst, Context &context) const override
     { throw std::runtime_error("Statement Not implemented."); }
 };
 
@@ -56,7 +57,7 @@ public:
     virtual void translate(int level, std::ostream &dst) const =0;
 
     //! Generate the mips code to the given stream
-    virtual void code_gen(std::ostream &dst) const override
+    virtual void code_gen(std::ostream &dst, Context &context) const override
     { throw std::runtime_error("Expressions Not implemented."); }
 };
 
@@ -65,24 +66,24 @@ private:
     std::unordered_map<std::string,int> bindings;
     Context* parent;
 public:
-    AssignmentOperator(Context _parent)
-        : parent(_PTHREAD_SWIFT_IMPORTER_NULLABILITY_COMPAT)
+    Context(Context* _parent)
+        : parent(_parent)
     {}
     
-    int get_binding(std::string key) const override {
-    std::unordered_map<std::string,int>::iterator it = bindings.find(key);
+    int get_binding(std::string key) {
+        std::unordered_map<std::string,int>::iterator it = bindings.find(key);
         
         if (it == bindings.end())
-            parent->get_binding();
+            parent->get_binding(key);
         else
             return it->second;
     }
 
-    void add_binding(std::string key) const override {
+    void add_binding(std::string key) {
         std::unordered_map<std::string,int>::iterator it = bindings.find(key);
             
         if (it == bindings.end())
-            bindings[key] = unordered_map.size();
+            bindings[key] = bindings.size();
         else
             std::cout<<"redefinition of '"<<key<<"'";
     }

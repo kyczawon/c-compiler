@@ -24,7 +24,7 @@ public:
         dst<<std::string(level,'\t')<<id;
     }
 
-    virtual void code_gen(std::ostream &dst) const override
+    virtual void code_gen(std::ostream &dst, Context &context) const override
     {
 
     }
@@ -48,7 +48,7 @@ public:
         dst<<std::string(level,'\t')<<value;
     }
 
-    virtual void code_gen(std::ostream &dst) const override
+    virtual void code_gen(std::ostream &dst, Context &context) const override
     {
     }
 };
@@ -71,7 +71,7 @@ public:
         dst<<std::string(level,'\t')<<value;
     }
 
-    virtual void code_gen(std::ostream &dst) const override
+    virtual void code_gen(std::ostream &dst, Context &context) const override
     {
     }
 };
