@@ -1,3 +1,10 @@
-int f() {
-    return 11;
+int f();
+
+int main(){
+    
+    if (f() == 11)
+        return 0;
+    return 1;
+    
+
 }

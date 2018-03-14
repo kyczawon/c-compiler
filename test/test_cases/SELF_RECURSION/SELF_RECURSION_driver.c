@@ -1,8 +1,8 @@
-int f();
+int f(int* x);
 
 int main(){
-    
-    if (f() == 11)
+    int x = 0;
+    if (f(&x) == 3)
         return 0;
     return 1;
     

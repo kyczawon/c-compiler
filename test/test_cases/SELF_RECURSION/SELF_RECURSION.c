@@ -1,3 +1,8 @@
-int f() {
-    return 11;
+int f(int* x) {
+    (*x)++;
+    if(*x < 3){
+        f(x);
+        // printf("recursion");
+    }
+    return *x;
 }
