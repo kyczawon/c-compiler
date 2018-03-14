@@ -1,3 +1,7 @@
 int f() {
-    return 11;
+    int j = 0;
+    for(int i = 0; i < 5; i++){
+        j = i + j;
+    }
+    return j;
 }
