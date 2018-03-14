@@ -25,7 +25,6 @@ static std::string makeName(std::string base)
 class Node
 {
 protected:
-    static std::unordered_map<std::string,NodePtr>& getStack()  { static std::unordered_map<std::string,NodePtr> stack; return stack; }
     static std::unordered_map<std::string,NodePtr>& getGlobals()  { static std::unordered_map<std::string,NodePtr> globals; return globals; }
 public:
     virtual ~Node()
@@ -61,5 +60,32 @@ public:
     { throw std::runtime_error("Expressions Not implemented."); }
 };
 
+class Context {
+private:
+    std::unordered_map<std::string,int> bindings;
+    Context* parent;
+public:
+    AssignmentOperator(Context _parent)
+        : parent(_PTHREAD_SWIFT_IMPORTER_NULLABILITY_COMPAT)
+    {}
+    
+    int get_binding(std::string key) const override {
+    std::unordered_map<std::string,int>::iterator it = bindings.find(key);
+        
+        if (it == bindings.end())
+            parent->get_binding();
+        else
+            return it->second;
+    }
+
+    void add_binding(std::string key) const override {
+        std::unordered_map<std::string,int>::iterator it = bindings.find(key);
+            
+        if (it == bindings.end())
+            bindings[key] = unordered_map.size();
+        else
+            std::cout<<"redefinition of '"<<key<<"'";
+    }
+};
 
 #endif
