@@ -8,10 +8,11 @@ fi
 
 cases="./test/test_cases"
 results="./test/test_results"
+rmdir -p "$results"
 mkdir -p "$results"
 
-echo "    -----   Force Builidng Compiler    -----    "
 echo " "
+echo "    -----   Force Builidng Compiler    -----    "
 make -B all
 echo " "
 
@@ -23,7 +24,7 @@ for testfile in ${cases}/* ; do
 
     echo "  --   Performing ${testname} Test   --  "
 
-    mips-linux-gnu-gcc -S ${testfile}/${testname}.c -o ${testdir}/${testname}.s
+    $compiler -S ${testfile}/${testname}.c -o ${testdir}/${testname}.s
     
     mips-linux-gnu-gcc -static -o ${testdir}/${testname} ${testdir}/${testname}.s ${cases}/${testname}/${testname}_driver.c
     
