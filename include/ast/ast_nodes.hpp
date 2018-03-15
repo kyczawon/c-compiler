@@ -63,6 +63,8 @@ public:
 
 class Context {
 private:
+    int _size = 0;
+    unsigned int current_register = 1;
     std::unordered_map<std::string,int> bindings;
     Context* parent;
 public:
@@ -79,13 +81,32 @@ public:
             return it->second;
     }
 
-    void add_binding(std::string key) {
+    void add_binding(std::string key, int bytes) {
         std::unordered_map<std::string,int>::iterator it = bindings.find(key);
             
-        if (it == bindings.end())
-            bindings[key] = bindings.size();
+        if (it == bindings.end()) {
+            bindings[key] = _size;
+            _size += bytes;
+        }
         else
             std::cout<<"redefinition of '"<<key<<"'";
+    }
+
+    int size() {
+        return _size;
+    }
+
+    unsigned int next_register() {
+        current_register++;
+        return current_register;
+    }
+
+    unsigned int get_currnet_register() {
+        return current_register;
+    }
+
+    void reset_registers() {
+        current_register = 1;
     }
 };
 

@@ -5,6 +5,7 @@
 
 void print_python(FILE* is, std::ostream &os);
 void check_files_opened(FILE *source_file, std::ofstream &out_file, char *argv[]);
+void print_code_gen(FILE* is, std::ostream &os);
 
 int main(int argc, char *argv[])
 {
@@ -26,6 +27,7 @@ int main(int argc, char *argv[])
         std::ofstream out_file(argv[4]);
         check_files_opened(source_file, out_file, argv);
 
+        print_code_gen(source_file, out_file);
     }
 
     //translation
@@ -62,6 +64,7 @@ void print_code_gen(FILE* is, std::ostream &os) {
         yyin = is;
         const Node *ast=parseAST();
         Context context = new Context(nullptr);
+        os<<"\t.text"<<std::endl;
         ast->code_gen(os, context);
 }
 

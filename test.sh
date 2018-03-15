@@ -1,0 +1,39 @@
+#!/bin/bash
+
+if [[ "$1" != "" ]] ; then
+    compiler="$1"
+else
+    compiler="bin/c_compiler"
+fi
+
+
+echo "    -----   Force Builidng Compiler    -----    "
+echo " "
+make -B all
+echo " "
+
+    echo "  --   Performing Test   --  "
+
+    $compiler -S ./test/test.c -o ./test/test.s
+    
+    mips-linux-gnu-gcc -static -o test/tmp test/test.s ./test/test_driver.c
+    
+    qemu-mips test/tmp
+
+    GOT=$?
+
+    if [[ $GOT -eq 0 ]] ; then 
+        echo "Test, Pass"
+    else 
+        echo "Test, Fail, Expected 0, got $GOT"
+    fi 
+
+    echo " "
+    
+
+    
+
+        
+
+
+     

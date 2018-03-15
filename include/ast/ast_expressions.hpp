@@ -23,8 +23,7 @@ public:
 
     virtual void code_gen(std::ostream &dst, Context &context) const override
     {
-        // NOTE : This should be implemented by the inheriting function nodes, e.g. LogFunction
-        throw std::runtime_error("FunctionOperator::code_gen is not implemented.");
+        throw std::runtime_error("FunctionInvocation::code_gen is not implemented.");
     }
 };
 
@@ -44,8 +43,7 @@ public:
 
     virtual void code_gen(std::ostream &dst, Context &context) const override
     {
-        // NOTE : This should be implemented by the inheriting function nodes, e.g. LogFunction
-        throw std::runtime_error("FunctionOperator::code_gen is not implemented.");
+        throw std::runtime_error("UnaryFunctionInvocation::code_gen is not implemented.");
     }
 };
 

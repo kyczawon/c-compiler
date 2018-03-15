@@ -21,3 +21,7 @@ tmp/formative/f2-got.py
 tmp/formative/f4-got.py
 tmp/formative/f5-got.py
 tmp/formative/f6-got.py
+
+test/*.c
+test/*.s
+test/tmp
