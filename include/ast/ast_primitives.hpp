@@ -26,7 +26,7 @@ public:
 
     virtual void code_gen(std::ostream &dst, Context &context) const override
     {
-        throw std::runtime_error("Variable::code_gen is not implemented.");
+        dst << "\tli\t$s"<<context.next_register()<<","<<context.get_binding(id)<<"($fp)"<<std::endl;
     }
 };
 
@@ -50,7 +50,7 @@ public:
 
     virtual void code_gen(std::ostream &dst, Context &context) const override
     {
-        throw std::runtime_error("Number::code_gen is not implemented.");
+        dst << "\tli\t$s"<<context.next_register()<<","<<value<<std::endl;
     }
 };
 

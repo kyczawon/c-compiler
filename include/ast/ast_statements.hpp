@@ -22,7 +22,10 @@ public:
     }
     virtual void code_gen(std::ostream &dst, Context &context) const override
     {
-        throw std::runtime_error("ReturnStatement::code_gen is not implemented.");
+        expr->code_gen(dst,context);
+        dst<<"\taddi\t$v0,$s"<<context.get_currnet_register()<<","<<std::hex<<0<<std::endl;
+        dst<<"\tj\t$31"<<std::endl;
+        context.reset_registers();	
     }
 };
 
