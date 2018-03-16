@@ -64,7 +64,7 @@ public:
 class Context {
 private:
     int _size = 0;
-    unsigned int current_register = 1;
+    int current_register = -1;
     std::unordered_map<std::string,int> bindings;
     Context* parent;
 public:
@@ -96,17 +96,17 @@ public:
         return _size;
     }
 
-    unsigned int next_register() {
+    int next_register() {
         current_register++;
         return current_register;
     }
 
-    unsigned int get_currnet_register() {
+    int get_current_register() {
         return current_register;
     }
 
     void reset_registers() {
-        current_register = 1;
+        current_register = -1;
     }
 };
 
