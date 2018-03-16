@@ -1,6 +1,6 @@
 double atof(char* x);
 
-double f(char* x) {
-    double y = atof(x);
+double f() {
+    double y = atof("11.25");
     return y;
 }

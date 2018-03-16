@@ -1,9 +1,9 @@
 #include <stdlib.h>
 
-double f(char* x);
+double f();
 
 int main(){
-    int y = f("11.25") - 11.25;
+    int y = f() - 11.25;
     if (!y)
         return 0;
     return 1;
