@@ -39,7 +39,7 @@ return { return T_RETURN; }
 "=="            { return T_EQUALS_EQUALS; }
 "!="            { return T_NOT_EQUALS; }
 ">"            { return T_GREATER; }
-"<"            { return T_SMALLER; }
+"<"            { return T_LESS; }
 
 [(]             { return T_LBRACKET;}
 [)]             { return T_RBRACKET;}

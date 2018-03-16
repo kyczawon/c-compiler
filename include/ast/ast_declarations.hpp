@@ -172,26 +172,6 @@ public:
     }
 };
 
-
-
-class ParameterList
-    : public Node
-{
-protected:
-    NodePtr list, paramter;
-public:
-    ParameterList (NodePtr _list, NodePtr _paramter)
-            : list(_list),
-            paramter(_paramter)
-        {}
-    virtual void translate(int level, std::ostream &dst) const override
-    {
-        list->translate(0,dst);
-        dst << ", ";
-        paramter->translate(0,dst);
-    }
-};
-
 class Parameter
     : public Node
 {

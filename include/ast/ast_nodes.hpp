@@ -18,9 +18,9 @@ static const std::regex reId("^[a-z][a-z0-9]*$");
 
 static int NameUnq=0;
 
-static std::string makeName(std::string base)
+static std::string make_name(std::string base)
 {
-    return "_"+base+"_"+std::to_string(NameUnq++);
+    return "$"+base+std::to_string(NameUnq++);
 }
 
 class Node

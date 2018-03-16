@@ -208,14 +208,14 @@ public:
     }
 };
 
-class SmallerOperator
+class LessOperator
     : public Operator
 {
 protected:
     virtual const char *getOpcode() const override
     { return "<"; }
 public:
-    SmallerOperator(NodePtr _left, NodePtr _right)
+    LessOperator(NodePtr _left, NodePtr _right)
         : Operator(_left, _right)
     {}
     
@@ -242,7 +242,25 @@ public:
 
     virtual void code_gen(std::ostream &dst, Context &context) const override
     {
-        throw std::runtime_error("AndOperator::code_gen is not implemented.");
+        left->code_gen(dst,context);
+        std::string break1 = make_name("AND");
+        dst<<"\tbeq\t$s"<<context.get_current_register()<<",$0,"<<break1<<std::endl;
+        context.reset_registers(); //so that the next && can use the same register
+        dst<<"\tnop"<<std::endl<<std::endl;
+        
+        right->code_gen(dst,context);
+        dst<<"\tbeq\t$s"<<context.get_current_register()<<",$0,"<<break1<<std::endl;
+        dst<<"\tnop"<<std::endl<<std::endl;
+
+        std::string break2 = make_name("ANDSKIP");
+        dst<<"\tli\t$s"<<context.get_current_register()<<",1"<<std::endl;
+        dst<<"\tb\t"<<break2<<std::endl;
+        dst<<"\tnop"<<std::endl<<std::endl;
+
+
+        dst<<break1<<":"<<std::endl;
+        dst<<"\tmove\t$s"<<context.get_current_register()<<",$0"<<std::endl;
+        dst<<break2<<":"<<std::endl;
     }
 };
 

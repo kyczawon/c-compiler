@@ -25,14 +25,14 @@
 %token T_INT T_IF T_ELSE T_WHILE
 %token T_RETURN
 %token T_NUMBER T_STRING
-%token T_EQUALS_EQUALS T_NOT_EQUALS T_GREATER T_SMALLER T_AND T_OR
+%token T_EQUALS_EQUALS T_NOT_EQUALS T_GREATER T_LESS T_AND T_OR
 
 %type <expr> EXPR TERM FACTOR STATEMENT DECLARATION FUNCTION_DECLARATION COMPOUND_STATEMENT SEQUENCE SEQUENCE_PROG
 %type <expr> CONDITIONAL_STATEMENT PARAMETER_LIST PARAMETER EXPR_LIST GLOBAL_DECLARATION GLOBAL_VARIABLE_DECLARATION IF_STATEMENT ELSE_STATEMENT
 %type <expr> EMPTY
 %type <number> T_NUMBER
 %type <string> T_STRING T_INT TYPE T_IF T_ELSE T_WHILE T_COMMA
-%type <string> T_EQUALS_EQUALS T_NOT_EQUALS T_GREATER T_SMALLER T_AND T_OR
+%type <string> T_EQUALS_EQUALS T_NOT_EQUALS T_GREATER T_LESS T_AND T_OR
 
 %start PROGRAM
 
@@ -71,7 +71,7 @@ EMPTY
         : %empty {$$ = nullptr;}
 
 STATEMENT
-        : EXPR T_SEMI { $$ = $1;}
+        : EXPR T_SEMI { $$ = new Statement($1);}
         | CONDITIONAL_STATEMENT { $$ = $1; }
         | T_RETURN EXPR T_SEMI { $$ = new ReturnStatement($2);}
         | DECLARATION { $$ = $1; }
@@ -101,7 +101,7 @@ EXPR
         | EXPR T_EQUALS_EQUALS TERM { $$ = new EqualsOperator($1, $3); }
         | EXPR T_NOT_EQUALS TERM { $$ = new NotEqualsOperator($1, $3); }
         | EXPR T_GREATER TERM { $$ = new GreaterOperator($1, $3); }
-        | EXPR T_SMALLER TERM { $$ = new SmallerOperator($1, $3); }
+        | EXPR T_LESS TERM { $$ = new LessOperator($1, $3); }
         | EXPR T_AND TERM { $$ = new AndOperator($1, $3); }
         | EXPR T_OR TERM { $$ = new OrOperator($1, $3); }
 
@@ -120,11 +120,11 @@ FACTOR
 
 GLOBAL_VARIABLE_DECLARATION
         : TYPE T_STRING T_SEMI { $$ = new GlobalVariableDeclaration(*$1, *$2 );}
-        | TYPE T_STRING T_EQUAL EXPR T_SEMI { $$ = new InitialisedGlobalVariableDeclaration(*$1, *$2, $4 );}
+        | TYPE T_STRING T_EQUALS EXPR T_SEMI { $$ = new InitialisedGlobalVariableDeclaration(*$1, *$2, $4 );}
 
 DECLARATION
         : TYPE T_STRING T_SEMI    { $$ = new VariableDeclaration(*$1, *$2 );}
-        | TYPE T_STRING T_EQUAL EXPR T_SEMI { $$ = new InitialisedVariableDeclaration(*$1, *$2, $4 );}
+        | TYPE T_STRING T_EQUALS EXPR T_SEMI { $$ = new InitialisedVariableDeclaration(*$1, *$2, $4 );}
 
 
 TYPE
