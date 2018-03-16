@@ -23,7 +23,7 @@ public:
     virtual void code_gen(std::ostream &dst, Context &context) const override
     {
         expr->code_gen(dst,context);
-        dst<<"\taddi\t$v0,$s"<<context.get_currnet_register()<<","<<std::hex<<0<<std::endl;
+        dst<<"\taddi\t$v0,$s"<<context.get_current_register()<<","<<std::hex<<0<<std::endl;
         dst<<"\tj\t$31"<<std::endl;
         context.reset_registers();	
     }
@@ -81,8 +81,26 @@ public:
     }
 };
 
-class ifStatement
-    : public Node
+class Statement : public Node
+{
+protected:
+    NodePtr expr;
+public:
+    Statement(NodePtr _expr)
+            : expr(_expr)
+        {}
+    virtual void translate(int level, std::ostream &dst) const override
+    {
+        expr->translate(level,dst);
+    }
+    virtual void code_gen(std::ostream &dst, Context &context) const override
+    {
+        expr->code_gen(dst,context);
+        context.reset_registers();
+    }
+};
+
+class ifStatement : public Node
 {
 protected:
     NodePtr condition, sequence;
@@ -104,8 +122,7 @@ public:
     }
 };
 
-class whileStatement
-    : public Node
+class whileStatement : public Node
 {
 protected:
     NodePtr condition, sequence;
@@ -128,8 +145,7 @@ public:
     }
 };
 
-class elseStatement
-    : public Node
+class elseStatement : public Node
 {
 protected:
     NodePtr sequence;

@@ -20,6 +20,9 @@ protected:
     {}
 public:
     virtual const char *getOpcode() const =0;
+    virtual const char *getOp() const {
+        throw std::runtime_error("getOp() not implemented");
+    };
 
     NodePtr getLeft() const
     { return left; }
@@ -34,6 +37,13 @@ public:
         dst<<getOpcode();
         dst<<" ";
         right->translate(0, dst);
+    }
+
+    virtual void code_gen(std::ostream &dst, Context &context) const
+    {
+        left->code_gen(dst,context);
+        right->code_gen(dst,context);
+        dst<<"\t"<<getOp()<<"\t$s"<<context.next_register()<<",$s"<<context.get_current_register()-1<<",$s"<<context.get_current_register()<<std::endl;
     }
 };
 
@@ -59,7 +69,7 @@ public:
         right->translate(0, dst);
     }
 
-    virtual void code_gen(std::ostream &dst, Context &context) const
+    virtual void code_gen(std::ostream &dst, Context &context) const override
     {
         throw std::runtime_error("AssignmentOperator::code_gen is not implemented.");
     }
@@ -71,15 +81,12 @@ class AddOperator
 protected:
     virtual const char *getOpcode() const override
     { return "+"; }
+    virtual const char *getOp() const override
+    { return "addu"; }
 public:
     AddOperator(NodePtr _left, NodePtr _right)
         : Operator(_left, _right)
     {}
-
-    virtual void code_gen(std::ostream &dst, Context &context) const
-    {
-        throw std::runtime_error("AddOperator::code_gen is not implemented.");
-    }
 };
 
 class SubOperator
@@ -88,15 +95,12 @@ class SubOperator
 protected:
     virtual const char *getOpcode() const override
     { return "-"; }
+    virtual const char *getOp() const override
+    { return "sub"; }
 public:
     SubOperator(NodePtr _left, NodePtr _right)
         : Operator(_left, _right)
     {}
-
-    virtual void code_gen(std::ostream &dst, Context &context) const
-    {
-        throw std::runtime_error("SubOperator:code_gen is not implemented.");
-    }
 };
 
 
@@ -106,15 +110,12 @@ class MulOperator
 protected:
     virtual const char *getOpcode() const override
     { return "*"; }
+    virtual const char *getOp() const override
+    { return "mul"; }
 public:
     MulOperator(NodePtr _left, NodePtr _right)
         : Operator(_left, _right)
     {}
-
-    virtual void code_gen(std::ostream &dst, Context &context) const
-    {
-        throw std::runtime_error("MulOperator::code_gen is not implemented.");
-    }
 };
 
 class DivOperator
@@ -123,14 +124,22 @@ class DivOperator
 protected:
     virtual const char *getOpcode() const override
     { return "/"; }
+    virtual const char *getOp() const override
+    { return "div"; }
 public:
     DivOperator(NodePtr _left, NodePtr _right)
         : Operator(_left, _right)
     {}
 
-    virtual void code_gen(std::ostream &dst, Context &context) const
+    virtual void code_gen(std::ostream &dst, Context &context) const override
     {
-        throw std::runtime_error("DivOperator::code_gen is not implemented.");
+        left->code_gen(dst,context);
+        right->code_gen(dst,context);
+        int denominator = context.get_current_register();
+        dst<<"\t"<<getOp()<<"\t$0,$s"<<context.get_current_register()-1<<",$s"<<denominator<<std::endl;
+        dst<<"\tteq\t$s"<<denominator<<",$0,7"<<std::endl; //trap with code 7 if denominator is eqaul to zero
+        dst<<"\tmfhi\t$s"<<denominator<<std::endl;
+        dst<<"\tmflo\t$s"<<denominator<<std::endl;
     }
 };
 
@@ -145,9 +154,14 @@ public:
         : Operator(_left, _right)
     {}
 
-    virtual void code_gen(std::ostream &dst, Context &context) const
+    virtual void code_gen(std::ostream &dst, Context &context) const override
     {
-        throw std::runtime_error("EqualsOperator::code_gen is not implemented.");
+        left->code_gen(dst,context);
+        right->code_gen(dst,context);
+        int second = context.get_current_register();
+        dst<<"\txor\t$s"<<second<<",$s"<<context.get_current_register()-1<<",$s"<<second<<std::endl;
+        dst<<"\tsltu\t$s"<<second<<",$s"<<second<<",1"<<std::endl;
+        dst<<"\tandi\t$s"<<second<<",$s"<<second<<",0x00ff"<<std::endl;
     }
 };
 
@@ -162,9 +176,14 @@ public:
         : Operator(_left, _right)
     {}
 
-    virtual void code_gen(std::ostream &dst, Context &context) const
+    virtual void code_gen(std::ostream &dst, Context &context) const override
     {
-        throw std::runtime_error("NotEqualsOperator::code_gen is not implemented.");
+        left->code_gen(dst,context);
+        right->code_gen(dst,context);
+        int second = context.get_current_register();
+        dst<<"\txor\t$s"<<second<<",$s"<<context.get_current_register()-1<<",$s"<<second<<std::endl;
+        dst<<"\tsltu\t$s"<<second<<",$0"<<",$s"<<second<<std::endl;
+        dst<<"\tandi\t$s"<<second<<",$s"<<second<<",0x00ff"<<std::endl;
     }
 };
 
@@ -179,9 +198,13 @@ public:
         : Operator(_left, _right)
     {}
 
-    virtual void code_gen(std::ostream &dst, Context &context) const
+    virtual void code_gen(std::ostream &dst, Context &context) const override
     {
-        throw std::runtime_error("GreaterOperator::code_gen is not implemented.");
+        left->code_gen(dst,context);
+        int first = context.get_current_register();
+        right->code_gen(dst,context);
+        dst<<"\tsltu\t$s"<<first<<",$s"<<first<<",$s"<<context.get_current_register()<<std::endl;
+        dst<<"\tandi\t$s"<<first<<",$s"<<first<<",0x00ff"<<std::endl;
     }
 };
 
@@ -195,10 +218,14 @@ public:
     SmallerOperator(NodePtr _left, NodePtr _right)
         : Operator(_left, _right)
     {}
-
-    virtual void code_gen(std::ostream &dst, Context &context) const
+    
+    virtual void code_gen(std::ostream &dst, Context &context) const override
     {
-        throw std::runtime_error("SmallerOperator::code_gen is not implemented.");
+        left->code_gen(dst,context);
+        right->code_gen(dst,context);
+        int second = context.get_current_register();
+        dst<<"\tsltu\t$s"<<second<<",$s"<<context.get_current_register()-1<<",$s"<<second<<std::endl;
+        dst<<"\tandi\t$s"<<second<<",$s"<<second<<",0x00ff"<<std::endl;
     }
 };
 
@@ -213,7 +240,7 @@ public:
         : Operator(_left, _right)
     {}
 
-    virtual void code_gen(std::ostream &dst, Context &context) const
+    virtual void code_gen(std::ostream &dst, Context &context) const override
     {
         throw std::runtime_error("AndOperator::code_gen is not implemented.");
     }
@@ -230,7 +257,7 @@ public:
         : Operator(_left, _right)
     {}
 
-    virtual void code_gen(std::ostream &dst, Context &context) const
+    virtual void code_gen(std::ostream &dst, Context &context) const override
     {
         throw std::runtime_error("OrOperator::code_gen is not implemented.");
     }
