@@ -73,7 +73,7 @@ void print_python(FILE* is, std::ostream &os) {
         const Node *ast=parseAST();
         ast->translate(0, os);
 
-        os << std::endl << "# Boilerplat" << std::endl
+        os << std::endl << "# Boilerplate" << std::endl
         << "if __name__ == \"__main__\":" << std::endl
         << "\t" << "import sys" << std::endl
         << "\t" << "ret=main()" << std::endl
