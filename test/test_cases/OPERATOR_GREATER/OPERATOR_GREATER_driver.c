@@ -1,0 +1,16 @@
+#include <stdio.h>
+int f(int x, int y);
+
+int main(){
+    int x = f(8,5);
+    if (x) {
+        printf("8>5 passed got %d\n",x);
+        int y = f(1,4);
+        if (!y) {
+            printf("1>4 passed got %d\n",y);
+            return 0;
+        }
+        else printf("1>4 failed, got %d\n",y);
+    } else printf("8>5 failed, got %d\n",x);
+    return 1;
+}
