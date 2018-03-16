@@ -25,3 +25,4 @@ tmp/formative/f6-got.py
 test/*.c
 test/*.s
 test/tmp
+dt10/*

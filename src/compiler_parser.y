@@ -28,7 +28,7 @@
 %token T_EQUALS_EQUALS T_NOT_EQUALS T_GREATER T_SMALLER T_AND T_OR
 
 %type <expr> EXPR TERM FACTOR STATEMENT DECLARATION FUNCTION_DECLARATION COMPOUND_STATEMENT SEQUENCE SEQUENCE_PROG
-%type <expr> CONDITIONAL_STATEMENT PARAMETER_LIST PARAMETER EXPR_LIST GLOBAL_DECLARATION GLOBAL_VARIABLE_DECLARATION
+%type <expr> CONDITIONAL_STATEMENT PARAMETER_LIST PARAMETER EXPR_LIST GLOBAL_DECLARATION GLOBAL_VARIABLE_DECLARATION IF_STATEMENT ELSE_STATEMENT
 %type <expr> EMPTY
 %type <number> T_NUMBER
 %type <string> T_STRING T_INT TYPE T_IF T_ELSE T_WHILE T_COMMA
@@ -77,8 +77,16 @@ STATEMENT
         | DECLARATION { $$ = $1; }
 
 CONDITIONAL_STATEMENT
-        : T_IF T_LBRACKET EXPR T_RBRACKET COMPOUND_STATEMENT { $$ = new ifStatement( $3, $5 ); }
+        : IF_STATEMENT
+        | IF_STATEMENT ELSE_STATEMENT
         | T_WHILE T_LBRACKET EXPR T_RBRACKET COMPOUND_STATEMENT { $$ = new whileStatement( $3, $5 ); }
+
+IF_STATEMENT
+        : T_IF T_LBRACKET EXPR T_RBRACKET COMPOUND_STATEMENT { $$ = new ifStatement( $3, $5 ); }
+        | T_IF T_LBRACKET EXPR T_RBRACKET STATEMENT { $$ = new ifStatement( $3, new CompoundStatement( new Sequence( nullptr, $5 )) ); }
+
+ELSE_STATEMENT
+        : T_ELSE STATEMENT { $$ = new elseStatement( $2 );  }
         | T_ELSE COMPOUND_STATEMENT { $$ = new elseStatement( $2 );  }
 
 EXPR_LIST
@@ -112,9 +120,11 @@ FACTOR
 
 GLOBAL_VARIABLE_DECLARATION
         : TYPE T_STRING T_SEMI { $$ = new GlobalVariableDeclaration(*$1, *$2 );}
+        | TYPE T_STRING T_EQUAL EXPR T_SEMI { $$ = new InitialisedGlobalVariableDeclaration(*$1, *$2, $4 );}
 
 DECLARATION
         : TYPE T_STRING T_SEMI    { $$ = new VariableDeclaration(*$1, *$2 );}
+        | TYPE T_STRING T_EQUAL EXPR T_SEMI { $$ = new InitialisedVariableDeclaration(*$1, *$2, $4 );}
 
 
 TYPE

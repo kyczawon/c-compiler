@@ -6,48 +6,95 @@ else
     compiler="bin/c_compiler"
 fi
 
-have_compiler=0
-if [[ ! -f bin/c_compiler ]] ; then
-    >&2 echo "Warning : cannot find compiler at path ${compiler}. Only checking C reference against python reference."
-    have_compiler=1
+if [[ "$2" != "" ]] ; then
+    working_dir="$2"
+else
+    working_dir="dt10/soft/outputs"
 fi
 
-input_dir="c_translator/formative"
+if [[ "$3" != "" ]] ; then
+    input_dir="$3"
+else
+    input_dir="dt10/soft/inputs"
+fi
 
-working="tmp/formative"
-mkdir -p ${working}
+if [[ ! -f bin/c_compiler ]] ; then
+    >&2 echo "Error : cannot find compiler at path ${compiler}."
+    exit 1
+fi
+
+mkdir -p ${working_dir}
+
+function run_log {
+    >&2 echo " Cmd: $1"
+    >&2 echo " Log files: ${working_dir}/$1.*.txt"
+    ( $1 ) > ${working_dir}/$2.stdout.txt  2> ${working_dir}/$2.stderr.txt
+    ret=$?
+    return $ret
+}
+
+make -B all
 
 for i in ${input_dir}/*.c ; do
     base=$(echo $i | sed -E -e "s|${input_dir}/([^.]+)[.]c|\1|g");
     
-    # Compile the reference C version
-    gcc $i -o $working/$base
-    
-    # Run the reference C version
-    $working/$base
-    REF_C_OUT=$?
-    
-    # Run the reference python version
-    python3 ${input_dir}/$base.py
-    REF_P_OUT=$?
-    
-    if [[ ${have_compiler} -eq 0 ]] ; then
+    {
+        echo "Compile the reference C version"
+        run_log "gcc $i -o ${working_dir}/$base" $base-reference-compile
         
-        # Create the DUT python version by invoking the compiler with translation flags
-        $compiler --translate $i -o ${working}/$base-got.py
+        echo "Run the reference C version"
+        run_log "${working_dir}/$base"  $base-reference-execute
+        REF_C_OUT=$?
+        echo "REF_C_OUT=${REF_C_OUT}"
         
-        # Run the DUT python version
-        python3 ${working}/$base-got.py
+        echo "Create the DUT python version by invoking the compiler with translation flags"
+        run_log "$compiler --translate $i -o ${working_dir}/$base.py" $base-dut-translate
+        
+        echo "Run the DUT python version"
+        run_log "python3 ${working_dir}/$base.py" $base-dut-python
         GOT_P_OUT=$?
-    fi
+        echo "GOT_P_OUT=${GOT_P_OUT}"
+        
+        echo "Compile the code to MIPS assembly."
+        run_log "$compiler -S $i -o ${working_dir}/$base.s" $base-dut-compile
+        
+        compiler_ok=1
+        compiler_reason=""
+        if [[ -f ${working_dir}/$base.s ]] ; then
+            echo "Linking (and assembling) the code to MIPS executable."
+            run_log "mips-linux-gnu-gcc -W -Wall -static ${working_dir}/$base.s -o ${working_dir}/$base.mips.elf" $base-dut-link
+            
+            if [[ -f ${working_dir}/$base.mips.elf ]] ; then
+                echo "Executing the MIPS executable."
+                run_log "qemu-mips ${working_dir}/$base.mips.elf" $base-dut-qemu
+                GOT_C_OUT=$?
+                echo "GOT_C_OUT=${GOT_C_OUT}"
+                
+                if [[ ${GOT_C_OUT} -eq ${REF_C_OUT} ]] ; then
+                    compiler_ok=0
+                else
+                    compiler_reason="Expected ${REF_C_OUT}, got ${GOT_C_OUT}"
+                fi
+            else
+                compiler_reason="couldn't link"
+            fi
+        else
+            compiler_reason="no assembly produced"
+        fi
+        
+        
+    } &> ${working_dir}/$base-translate.log
     
-    if [[ $REF_C_OUT -ne $REF_P_OUT ]] ; then
-        echo "$base, REF_FAIL, Expected ${REF_C_OUT}, got ${REF_P_OUT}"
-    elif [[ ${have_compiler} -ne 0 ]] ; then
-        echo "$base, Fail, No C compiler/translator"
-    elif [[ $REF_C_OUT -ne $GOT_P_OUT ]] ; then
-        echo "$base, Fail, Expected ${REF_C_OUT}, got ${GOT_P_OUT}"
+    if [[ $REF_C_OUT -ne $GOT_P_OUT ]] ; then
+        echo "$base, translate, FAIL,   Expected ${REF_C_OUT}, got ${GOT_P_OUT}"
     else
-        echo "$base, Pass"
-    fi
+        echo "$base, translate, Pass"  
+    fi | tee ${working_dir}/$base-translate.csv
+    
+    if [[ ${compiler_ok} -ne 0 ]] ; then
+        echo "$base, compile,   FAIL,   ${compiler_reason}"
+    else
+        echo "$base, compile,   Pass"  
+    fi | tee ${working_dir}/$base-compile.csv
 done
+

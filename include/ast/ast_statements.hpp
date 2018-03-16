@@ -95,7 +95,7 @@ public:
     {
         dst<<"if (";
         condition->translate(0,dst);
-        dst<< "):";
+        dst<< "):"; //<<std::endl<< std::string(level+1,'\t');
         sequence->translate(level, dst);
     }
     virtual void code_gen(std::ostream &dst, Context &context) const override

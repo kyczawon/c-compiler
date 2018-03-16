@@ -77,6 +77,35 @@ public:
     }
 };
 
+class InitialisedVariableDeclaration
+    : public Node
+{
+private:
+    std::string type, id;
+    NodePtr value;
+public:
+    InitialisedVariableDeclaration(const std::string &_type, const std::string &_id, const NodePtr _value)
+        : type(_type),
+        id(_id),
+        value(_value)
+    {}
+
+    const std::string getId() const
+    { return id; }
+
+    virtual void translate(int level, std::ostream &dst) const override
+    {
+        dst<<id<<"=";
+        value->translate(0, dst);
+        dst<<std::endl;
+    }
+
+    virtual void code_gen(std::ostream &dst, Context &context) const override
+    {
+        context.add_binding(id,4);
+    }
+};
+
 class GlobalVariableDeclaration
     : public Node
 {
@@ -96,6 +125,37 @@ public:
     virtual void translate(int level, std::ostream &dst) const override
     {
         dst<<id<<"=0"<<std::endl;
+    }
+
+    virtual void code_gen(std::ostream &dst, Context &context) const override
+    {
+        context.add_binding(id, 4);
+    }
+};
+
+class InitialisedGlobalVariableDeclaration
+    : public Node
+{
+private:
+    std::string type, id;
+    NodePtr value;
+public:
+    InitialisedGlobalVariableDeclaration(const std::string &_type, const std::string &_id, const NodePtr _value)
+        : type(_type),
+        id(_id),
+        value(_value)
+    {
+        getGlobals()[id] = (NodePtr) this;
+    }
+
+    const std::string getId() const
+    { return id; }
+
+    virtual void translate(int level, std::ostream &dst) const override
+    {
+        dst<<id<<"=";
+        value->translate(0, dst);
+        dst<<std::endl;
     }
 
     virtual void code_gen(std::ostream &dst, Context &context) const override
