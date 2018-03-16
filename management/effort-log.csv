@@ -9,3 +9,7 @@ Date,Effort,Developers,Milestones
 7.03,6,lkn16,ImplementStackForScopes
 14.03,8,ms6616,WriteTests
 14.03,8,lkn16,"ImplementContext, CreateCodeGenStructure"
+15.03,2.5,ms6616,FinishTranslate
+15.03,3.5,lkn16,"CompileSimpleProgram, O"
+16.03,4,lkn16,compileOperators
+16.03,5.5,ms6616,FinishTranslate
