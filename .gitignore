@@ -23,5 +23,8 @@ tmp/formative/f5-got.py
 tmp/formative/f6-got.py
 
 test/*.c
+test/*.cpp
 test/*.s
 test/tmp
+
+dt10/soft/outputs
