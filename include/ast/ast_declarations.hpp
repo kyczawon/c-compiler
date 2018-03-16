@@ -6,7 +6,7 @@
 #include <cmath>
 #include <sstream>
 
-class Parameter;
+//class Parameter;
 
 class Function
     : public Node
@@ -76,7 +76,7 @@ public:
 
     virtual void translate(int level, std::ostream &dst) const override
     {
-        dst<<id<<"=0"<<std::endl;
+        dst<<id<<"=0";
     }
 
     virtual void code_gen(std::ostream &dst, Context &context) const override
@@ -105,7 +105,6 @@ public:
     {
         dst<<id<<"=";
         value->translate(0, dst);
-        dst<<std::endl;
     }
 
     virtual void code_gen(std::ostream &dst, Context &context) const override
@@ -136,7 +135,6 @@ public:
     {
         dst<<id<<"=";
         value->translate(0, dst);
-        dst<<std::endl;
     }
 
     virtual void code_gen(std::ostream &dst, Context &context) const override
@@ -163,7 +161,7 @@ public:
 
     virtual void translate(int level, std::ostream &dst) const override
     {
-        dst<<id<<"=0"<<std::endl;
+        dst<<id<<"=0";
     }
 
     virtual void code_gen(std::ostream &dst, Context &context) const override
@@ -173,7 +171,7 @@ public:
 };
 
 
-
+/*
 class ParameterList
     : public Node
 {
@@ -191,6 +189,7 @@ public:
         paramter->translate(0,dst);
     }
 };
+*/
 
 class Parameter
     : public Node
