@@ -13,3 +13,4 @@ Date,Effort,Developers,Milestones
 15.03,3.5,lkn16,"CompileSimpleProgram, O"
 16.03,4,lkn16,compileOperators
 16.03,5.5,ms6616,FinishTranslate
+16.03,3,lkn16,OperatorsCompileTests
