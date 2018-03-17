@@ -7,8 +7,7 @@
 #include <cmath>
 #include <iostream>
 
-class Operator
-    : public Node
+class Operator : public Node
 {
 protected:
     NodePtr left;
@@ -47,18 +46,18 @@ public:
     }
 };
 
-class AssignmentOperator
-    : public Node
+class AssignmentOperator : public Node
 {
 protected:
-    std::string value;
+    std::string value, assign_operator;
     NodePtr right;
 
-    virtual const char *getOpcode() const
-    { return "="; }
+    virtual const std::string getOpcode() const
+    { return assign_operator; }
 public:
-    AssignmentOperator(std::string &_left, NodePtr _right)
+    AssignmentOperator(std::string &_left, std::string &_assign_operator, NodePtr _right)
         : value(_left),
+        assign_operator(_assign_operator),
         right(_right)
     {}
     
@@ -75,8 +74,7 @@ public:
     }
 };
 
-class AddOperator
-    : public Operator
+class AddOperator : public Operator
 {
 protected:
     virtual const char *getOpcode() const override
@@ -89,8 +87,7 @@ public:
     {}
 };
 
-class SubOperator
-    : public Operator
+class SubOperator : public Operator
 {
 protected:
     virtual const char *getOpcode() const override
@@ -104,8 +101,7 @@ public:
 };
 
 
-class MulOperator
-    : public Operator
+class MulOperator : public Operator
 {
 protected:
     virtual const char *getOpcode() const override
@@ -118,8 +114,7 @@ public:
     {}
 };
 
-class DivOperator
-    : public Operator
+class DivOperator : public Operator
 {
 protected:
     virtual const char *getOpcode() const override
@@ -143,8 +138,7 @@ public:
     }
 };
 
-class EqualsOperator
-    : public Operator
+class EqualsOperator : public Operator
 {
 protected:
     virtual const char *getOpcode() const override
@@ -165,8 +159,7 @@ public:
     }
 };
 
-class NotEqualsOperator
-    : public Operator
+class NotEqualsOperator : public Operator
 {
 protected:
     virtual const char *getOpcode() const override
@@ -187,8 +180,7 @@ public:
     }
 };
 
-class GreaterOperator
-    : public Operator
+class GreaterOperator : public Operator
 {
 protected:
     virtual const char *getOpcode() const override
@@ -208,8 +200,23 @@ public:
     }
 };
 
-class LessOperator
-    : public Operator
+class GreaterEqualOperator : public Operator
+{
+protected:
+    virtual const char *getOpcode() const override
+    { return "<"; }
+public:
+    GreaterEqualOperator(NodePtr _left, NodePtr _right)
+        : Operator(_left, _right)
+    {}
+    
+    virtual void code_gen(std::ostream &dst, Context &context) const override
+    {
+        throw std::runtime_error("LessEqualOperator::code_gen not implemented.");
+    }
+};
+
+class LessOperator : public Operator
 {
 protected:
     virtual const char *getOpcode() const override
@@ -229,8 +236,23 @@ public:
     }
 };
 
-class AndOperator
-    : public Operator
+class LessEqualOperator : public Operator
+{
+protected:
+    virtual const char *getOpcode() const override
+    { return "<"; }
+public:
+    LessEqualOperator(NodePtr _left, NodePtr _right)
+        : Operator(_left, _right)
+    {}
+    
+    virtual void code_gen(std::ostream &dst, Context &context) const override
+    {
+        throw std::runtime_error("LessEqualOperator::code_gen not implemented.");
+    }
+};
+
+class AndOperator : public Operator
 {
 protected:
     virtual const char *getOpcode() const override
@@ -263,8 +285,7 @@ public:
     }
 };
 
-class OrOperator
-    : public Operator
+class OrOperator : public Operator
 {
 protected:
     virtual const char *getOpcode() const override
