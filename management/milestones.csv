@@ -17,5 +17,6 @@ SetUpTestsuite,,3,ms6616,b3eebfc6b953dfaf7ff42782b9d79a6810b26cd2,Write an autom
 WriteTests,,5,ms6616,dfcf9b6aeb050ed67c3c8701f4e34407fa12673e,Write the tests required for the testsuite
 CompileSimpleProgram,,2,lkn16,f84742c9d79b319927800070486739e4247572b5,Implement code_gen to compile a funciotn with a return statement
 FinishTranslate,,6,ms6616,,Make sure we are meeting the spec for translation and passing all test from formative feedback
-CompileOperators,,5,lkn16,,Implement code_gen for all operators
-OperatorsCompileTests,,5,lkn16,,Create tests for all operators
+CompileBasicOperators,,5,lkn16,,Implement code_gen for all operators
+OperatorsCompileTests,,5,lkn16,this,Create tests for all operators
+CompileAllOperators,,6,lkn16,,

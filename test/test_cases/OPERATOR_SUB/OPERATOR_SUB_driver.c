@@ -6,7 +6,7 @@ int main(){
     if (x==4) {
         printf("8-4 passed, got %d\n",x);
         int y = f(10,-4);
-        if (y==15) {
+        if (y==14) {
             printf("10-(-4) passed, got %d\n",y);
             return 0;
         }
