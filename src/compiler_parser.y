@@ -28,7 +28,7 @@
 %token T_EQUALS_EQUALS T_NOT_EQUALS T_GREATER T_LESS T_AND T_OR
 
 %type <expr> EXPR TERM FACTOR STATEMENT DECLARATION FUNCTION_DECLARATION COMPOUND_STATEMENT SEQUENCE SEQUENCE_PROG
-%type <expr> CONDITIONAL_STATEMENT PARAMETER_LIST PARAMETER EXPR_LIST GLOBAL_DECLARATION GLOBAL_VARIABLE_DECLARATION IF_STATEMENT ELSE_STATEMENT
+%type <expr> CONDITIONAL_STATEMENT PARAMETER_LIST PARAMETER EXPR_LIST GLOBAL_DECLARATION GLOBAL_VARIABLE_DECLARATION IF_STATEMENT 
 %type <expr> EMPTY
 %type <number> T_NUMBER
 %type <string> T_STRING T_INT TYPE T_IF T_ELSE T_WHILE T_COMMA
@@ -54,7 +54,7 @@ FUNCTION_DECLARATION
 PARAMETER_LIST
         : PARAMETER { $$ = $1;}
         | PARAMETER_LIST T_COMMA PARAMETER { $$ = new ParameterList($1,$3);}
-        | EMPTY {$$ = $1;}
+        | EMPTY { $$ = $1; }
 
 PARAMETER
         : TYPE T_STRING { $$ = new Parameter(*$1, *$2);}
@@ -77,17 +77,16 @@ STATEMENT
         | DECLARATION { $$ = $1; }
 
 CONDITIONAL_STATEMENT
-        : IF_STATEMENT
-        | IF_STATEMENT ELSE_STATEMENT
-        | T_WHILE T_LBRACKET EXPR T_RBRACKET COMPOUND_STATEMENT { $$ = new whileStatement( $3, $5 ); }
+        : T_WHILE T_LBRACKET EXPR T_RBRACKET COMPOUND_STATEMENT { $$ = new whileStatement( $3, $5 ); }
+        | IF_STATEMENT
 
 IF_STATEMENT
         : T_IF T_LBRACKET EXPR T_RBRACKET COMPOUND_STATEMENT { $$ = new ifStatement( $3, $5 ); }
         | T_IF T_LBRACKET EXPR T_RBRACKET STATEMENT { $$ = new ifStatement( $3, new CompoundStatement( new Sequence( nullptr, $5 )) ); }
-
-ELSE_STATEMENT
-        : T_ELSE STATEMENT { $$ = new elseStatement( $2 );  }
-        | T_ELSE COMPOUND_STATEMENT { $$ = new elseStatement( $2 );  }
+        | T_IF T_LBRACKET EXPR T_RBRACKET COMPOUND_STATEMENT T_ELSE STATEMENT { $$ = new ifElseStatement( $3, $5, new CompoundStatement( new Sequence( nullptr, $7 )) ); }
+        | T_IF T_LBRACKET EXPR T_RBRACKET STATEMENT T_ELSE STATEMENT { $$ = new ifElseStatement( $3, new CompoundStatement( new Sequence( nullptr, $5 )), new CompoundStatement( new Sequence( nullptr, $7 )) ); }
+        | T_IF T_LBRACKET EXPR T_RBRACKET COMPOUND_STATEMENT T_ELSE COMPOUND_STATEMENT { $$ = new ifElseStatement( $3, $5, new CompoundStatement( new Sequence( nullptr, $7 )) ); }
+        | T_IF T_LBRACKET EXPR T_RBRACKET STATEMENT T_ELSE COMPOUND_STATEMENT { $$ = new ifElseStatement( $3, new CompoundStatement( new Sequence( nullptr, $5 )), $7 ); }
 
 EXPR_LIST
         : EXPR { $$ = $1;}

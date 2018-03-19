@@ -7,6 +7,10 @@ void print_python(FILE* is, std::ostream &os);
 void check_files_opened(FILE *source_file, std::ofstream &out_file, char *argv[]);
 void print_code_gen(FILE* is, std::ostream &os);
 
+int ifElseStatement::ifElseCounter = 0;
+int ifStatement::ifCounter = 0;
+int whileStatement::whileCounter = 0;
+
 int main(int argc, char *argv[])
 {
     //check for correct number of arguments

@@ -1,6 +1,0 @@
-Traceback (most recent call last):
-  File "dt10/soft/outputs/f10.py", line 10, in <module>
-    ret=main()
-  File "dt10/soft/outputs/f10.py", line 6, in main
-    return factorial(4) - factorial(2) - factorial(1) - factorial(0)
-TypeError: unsupported operand type(s) for -: 'NoneType' and 'NoneType'
