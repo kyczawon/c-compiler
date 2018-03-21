@@ -1,2 +1,0 @@
-dt10/soft/outputs/f13.s: Assembler messages:
-dt10/soft/outputs/f13.s: Warning: missing .end at end of assembly

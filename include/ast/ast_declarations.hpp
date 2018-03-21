@@ -47,12 +47,14 @@ public:
         dst<<"\t.set\tnomacro"<<std::endl;
         std::stringstream inner_compiled; 
         Context inner_context = new Context(context);
+        if(parameter_list != NULL){
         parameter_list->code_gen(inner_compiled,inner_context);
         inner_context.reset_registers(); //after the parameter list
+        }
         compound->code_gen(inner_compiled, inner_context);
         dst << "\taddiu	$sp,$sp,-" << inner_context.size()<<std::endl;
         dst<<inner_compiled.str();
-        dst << "\taddiu	$sp,$sp," << inner_context.size()<<std::endl;
+        // dst << "\taddiu	$sp,$sp," << inner_context.size()<<std::endl;
 
         dst<<"\t.set\tmacro"<<std::endl;
         dst<<"\t.set\treorder"<<std::endl;
@@ -110,6 +112,9 @@ public:
     virtual void code_gen(std::ostream &dst, Context &context) const override
     {
         context.add_binding(id,4);
+        value->code_gen(dst, context);
+        dst << "\tsw\t$s"<<context.get_current_register()<<","<<context.get_binding(id)<<"($fp)"<<std::endl;
+
     }
 };
 

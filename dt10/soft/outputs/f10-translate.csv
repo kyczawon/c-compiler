@@ -1,1 +1,1 @@
-f10, translate, Pass
+f10, translate, FAIL,   Expected 1, got 0

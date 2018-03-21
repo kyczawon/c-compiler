@@ -1,2 +1,0 @@
-dt10/soft/outputs/f06.s: Assembler messages:
-dt10/soft/outputs/f06.s: Warning: missing .end at end of assembly

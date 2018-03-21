@@ -5,6 +5,7 @@
 extern "C" int fileno(FILE *stream);
 
 #include <stdio.h>
+#include <vector>
 #include "compiler_parser.tab.hpp"
 
 void comment();
@@ -23,6 +24,7 @@ return 			{ return T_RETURN; }
 if              { return T_IF; }
 else            { return T_ELSE; }
 while           { return T_WHILE; }
+for 			{return T_FOR; }
 
 %{
 //comments
@@ -68,17 +70,17 @@ while           { return T_WHILE; }
 %{
 //Assignment operators
 %}
-"="            	{ return T_EQUALS; }
-"+="			{ return T_ADD_EQUALS; }
-"-="			{ return T_SUB_EQUALS; }
-"*="			{ return T_TIMES_EQUALS; }
-"/="			{ return T_DIV_EQUALS; }
-"%="			{ return T_MOD_EQUALS; }
-"&="			{ return T_AND_EQUALS; }
-"^="			{ return T_XOR_EQUALS; }
-"|="			{ return T_OR_EQUALS; }
-"<<="			{ return T_SHIFT_LEFT_EQUALS; }
-">>="			{ return T_SHIFT_RIGHT_EQUALS; }
+"="            	{ yylval.string=new std::string(yytext); return T_EQUALS; }
+"+="			{ yylval.string=new std::string(yytext); return T_ADD_EQUALS; }
+"-="			{ yylval.string=new std::string(yytext); return T_SUB_EQUALS; }
+"*="			{ yylval.string=new std::string(yytext); return T_TIMES_EQUALS; }
+"/="			{ yylval.string=new std::string(yytext); return T_DIV_EQUALS; }
+"%="			{ yylval.string=new std::string(yytext); return T_MOD_EQUALS; }
+"&="			{ yylval.string=new std::string(yytext); return T_AND_EQUALS; }
+"^="			{ yylval.string=new std::string(yytext); return T_XOR_EQUALS; }
+"|="			{ yylval.string=new std::string(yytext); return T_OR_EQUALS; }
+"<<="			{ yylval.string=new std::string(yytext); return T_SHIFT_LEFT_EQUALS; }
+">>="			{ yylval.string=new std::string(yytext); return T_SHIFT_RIGHT_EQUALS; }
 
 %{
 //Conditional operator

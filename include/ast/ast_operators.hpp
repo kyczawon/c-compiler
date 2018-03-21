@@ -48,29 +48,46 @@ public:
 
 class AssignmentOperator : public Node
 {
+private:
+    enum string_code {
+        not_hit,
+        equals
+    };
+    string_code hashit (std::string const& inString) const {
+        if (inString == "=") return equals;
+        else return not_hit;
+    }
 protected:
-    std::string value, assign_operator;
+    std::string id, assign_operator;
     NodePtr right;
 
     virtual const std::string getOpcode() const
     { return assign_operator; }
 public:
-    AssignmentOperator(std::string &_left, std::string &_assign_operator, NodePtr _right)
-        : value(_left),
+    AssignmentOperator(std::string &_id, std::string &_assign_operator, NodePtr _right)
+        : id(_id),
         assign_operator(_assign_operator),
         right(_right)
     {}
     
     virtual void translate(int level, std::ostream &dst) const override
     {
-        dst<<value;
+        dst<<id;
         dst<<getOpcode();
         right->translate(0, dst);
     }
 
     virtual void code_gen(std::ostream &dst, Context &context) const override
     {
-        throw std::runtime_error("AssignmentOperator::code_gen is not implemented.");
+        switch(hashit(assign_operator))
+        {
+            case equals:
+                right->code_gen(dst, context);
+                dst << "\tsw\t$s"<<context.get_current_register()<<","<<context.get_binding(id)<<"($fp)"<<std::endl;
+                break;
+            default:
+                throw std::runtime_error("AssignmentOperator::code_gen is not implemented.");
+        }
     }
 };
 

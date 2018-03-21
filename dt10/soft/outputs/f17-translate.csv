@@ -1,1 +1,1 @@
-f17, translate, Pass
+f17, translate, FAIL,   Expected 255, got 0
