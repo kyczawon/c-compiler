@@ -14,7 +14,6 @@ f:
 	li	$s0,10
 	addi	$v0,$s0,0
 	j	$31
-	nop
 	addiu	$sp,$sp,4
 	.set	macro
 	.set	reorder

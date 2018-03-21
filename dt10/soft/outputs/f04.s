@@ -27,7 +27,6 @@ main:
 	addu	$s14,$s12,$s13
 	addi	$v0,$s14,0
 	j	$31
-	nop
 	addiu	$sp,$sp,0
 	.set	macro
 	.set	reorder

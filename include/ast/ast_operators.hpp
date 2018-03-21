@@ -51,27 +51,29 @@ class AssignmentOperator
     : public Node
 {
 protected:
-    std::string value;
+    std::string id;
     NodePtr right;
 
     virtual const char *getOpcode() const
     { return "="; }
 public:
-    AssignmentOperator(std::string &_left, NodePtr _right)
-        : value(_left),
+    AssignmentOperator(std::string &_id, NodePtr _right)
+        : id(_id),
         right(_right)
     {}
     
     virtual void translate(int level, std::ostream &dst) const override
     {
-        dst<<value;
+        dst<<id;
         dst<<getOpcode();
         right->translate(0, dst);
     }
 
     virtual void code_gen(std::ostream &dst, Context &context) const override
     {
-        throw std::runtime_error("AssignmentOperator::code_gen is not implemented.");
+        right->code_gen(dst, context);
+        dst << "\tsw\t$s"<<context.get_current_register()<<","<<context.get_binding(id)<<"($fp)"<<std::endl;
+        //throw std::runtime_error("AssignmentOperator::code_gen is not implemented.");
     }
 };
 

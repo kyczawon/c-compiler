@@ -16,6 +16,9 @@ echo "    -----   Force Builidng Compiler    -----    "
 make -B all
 echo " "
 
+ COUNT=0
+ PASSED=0
+
 for testfile in ${cases}/* ; do 
 
     testname=${testfile:18}
@@ -32,16 +35,22 @@ for testfile in ${cases}/* ; do
 
     GOT=$?
 
+   
+
     if [[ $GOT -eq 0 ]] ; then 
         echo "$testname, Pass"
+        ((COUNT++))
+        ((PASSED++))
     else 
         echo "$testname, Fail, Expected 0, got $GOT"
+        ((COUNT++))
     fi 
 
     echo " "
     
 done
 
+echo "Passed $PASSED out of $COUNT tests"
     
 
         

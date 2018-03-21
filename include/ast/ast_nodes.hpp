@@ -76,7 +76,7 @@ public:
         std::unordered_map<std::string,int>::iterator it = bindings.find(key);
         
         if (it == bindings.end())
-            parent->get_binding(key);
+            return parent->get_binding(key);
         else
             return it->second;
     }

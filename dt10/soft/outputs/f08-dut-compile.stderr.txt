@@ -1,2 +1,2 @@
 terminate called after throwing an instance of 'std::runtime_error'
-  what():  AssignmentOperator::code_gen is not implemented.
+  what():  UnaryFunctionInvocation::code_gen is not implemented.

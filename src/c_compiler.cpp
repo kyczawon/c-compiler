@@ -10,6 +10,7 @@ void print_code_gen(FILE* is, std::ostream &os);
 int ifElseStatement::ifElseCounter = 0;
 int ifStatement::ifCounter = 0;
 int whileStatement::whileCounter = 0;
+int forLoop::forCounter = 0;
 
 int main(int argc, char *argv[])
 {

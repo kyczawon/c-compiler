@@ -5,6 +5,7 @@
 extern "C" int fileno(FILE *stream);
 
 #include <stdio.h>
+#include <vector>
 #include "compiler_parser.tab.hpp"
 
 void comment();
@@ -21,7 +22,7 @@ int { yylval.string=new std::string(yytext); return T_INT;}
 %}
 return { return T_RETURN; }
 
-"/"[/]+.*    {;}
+"/"[/]+.*       {;}
 "/*"			{ comment(); }
 
 [;]             { return T_SEMI; }
@@ -38,8 +39,8 @@ return { return T_RETURN; }
 
 "=="            { return T_EQUALS_EQUALS; }
 "!="            { return T_NOT_EQUALS; }
-">"            { return T_GREATER; }
-"<"            { return T_LESS; }
+">"             { return T_GREATER; }
+"<"             { return T_LESS; }
 
 [(]             { return T_LBRACKET;}
 [)]             { return T_RBRACKET;}
@@ -49,6 +50,7 @@ return { return T_RETURN; }
 if              {return T_IF;    }
 else            {return T_ELSE;  }
 while           {return T_WHILE; }
+for 			{return T_FOR; 	  }
 
 [0-9]+([.][0-9]*)? { yylval.number=strtod(yytext, 0); return T_NUMBER; }
 [a-z]+          { yylval.string=new std::string(yytext); return T_STRING; }

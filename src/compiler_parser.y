@@ -1,6 +1,6 @@
 %code requires{
   #include "ast.hpp"
-
+  #include <vector>
   #include <cassert>
 
   extern const Node *g_root; // A way of getting the AST out
@@ -23,13 +23,13 @@
 %token T_TIMES T_DIVIDE T_PLUS T_MINUS T_COMMA
 %token T_LBRACKET T_RBRACKET T_LCURLY T_RCURLY T_SEMI T_EQUALS
 %token T_INT T_IF T_ELSE T_WHILE
-%token T_RETURN
+%token T_RETURN T_FOR
 %token T_NUMBER T_STRING
 %token T_EQUALS_EQUALS T_NOT_EQUALS T_GREATER T_LESS T_AND T_OR
 
-%type <expr> EXPR TERM FACTOR STATEMENT DECLARATION FUNCTION_DECLARATION COMPOUND_STATEMENT SEQUENCE SEQUENCE_PROG
-%type <expr> CONDITIONAL_STATEMENT PARAMETER_LIST PARAMETER EXPR_LIST GLOBAL_DECLARATION GLOBAL_VARIABLE_DECLARATION IF_STATEMENT 
-%type <expr> EMPTY
+%type <expr> EXPR TERM FACTOR STATEMENT DECLARATION FUNCTION_DECLARATION COMPOUND_STATEMENT SEQUENCE SEQUENCE_PROG 
+%type <expr> CONDITIONAL_STATEMENT PARAMETER_LIST PARAMETER EXPR_LIST GLOBAL_DECLARATION GLOBAL_VARIABLE_DECLARATION 
+%type <expr> EMPTY IF_STATEMENT EXPRESSION_STATEMENT
 %type <number> T_NUMBER
 %type <string> T_STRING T_INT TYPE T_IF T_ELSE T_WHILE T_COMMA
 %type <string> T_EQUALS_EQUALS T_NOT_EQUALS T_GREATER T_LESS T_AND T_OR
@@ -71,14 +71,18 @@ EMPTY
         : %empty {$$ = nullptr;}
 
 STATEMENT
-        : EXPR T_SEMI { $$ = new Statement($1);}
+        : EXPRESSION_STATEMENT { $$ = $1; }
         | CONDITIONAL_STATEMENT { $$ = $1; }
         | T_RETURN EXPR T_SEMI { $$ = new ReturnStatement($2);}
         | DECLARATION { $$ = $1; }
 
+EXPRESSION_STATEMENT
+        : EXPR T_SEMI { $$ = new Statement($1);}
+
 CONDITIONAL_STATEMENT
         : T_WHILE T_LBRACKET EXPR T_RBRACKET COMPOUND_STATEMENT { $$ = new whileStatement( $3, $5 ); }
         | IF_STATEMENT
+        | T_FOR T_LBRACKET EXPR T_SEMI EXPR T_SEMI EXPR T_RBRACKET COMPOUND_STATEMENT { $$ = new forLoop( $3, $5, $7, $9 ); }
 
 IF_STATEMENT
         : T_IF T_LBRACKET EXPR T_RBRACKET COMPOUND_STATEMENT { $$ = new ifStatement( $3, $5 ); }
@@ -94,7 +98,7 @@ EXPR_LIST
 
 EXPR
         : TERM             { $$ = $1; }
-        | T_STRING T_EQUALS TERM { $$ = new AssignmentOperator(*$1,$3);}
+        | T_STRING T_EQUALS EXPR { $$ = new AssignmentOperator(*$1,$3);}
         | EXPR T_PLUS TERM { $$ = new AddOperator($1, $3); }
         | EXPR T_MINUS TERM { $$ = new SubOperator($1, $3); }
         | EXPR T_EQUALS_EQUALS TERM { $$ = new EqualsOperator($1, $3); }
@@ -103,6 +107,8 @@ EXPR
         | EXPR T_LESS TERM { $$ = new LessOperator($1, $3); }
         | EXPR T_AND TERM { $$ = new AndOperator($1, $3); }
         | EXPR T_OR TERM { $$ = new OrOperator($1, $3); }
+        | EXPR T_PLUS T_PLUS { $$ = new AddOperator($1, new Number(1));}
+        | EXPR T_MINUS T_MINUS { $$ = new SubOperator($1, new Number(1));}
 
 TERM
         : FACTOR              { $$ = $1; }
@@ -110,6 +116,7 @@ TERM
         | T_STRING T_LBRACKET EXPR_LIST T_RBRACKET { $$ = new FunctionInvocation(*$1, $3);}
         | TERM T_TIMES FACTOR { $$ = new MulOperator($1, $3); }
         | TERM T_DIVIDE FACTOR { $$ = new DivOperator($1, $3); }
+
 
 FACTOR
         : T_MINUS T_NUMBER   {$$ = new NegativeNumber($2);}
