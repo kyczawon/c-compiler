@@ -14,3 +14,6 @@ Date,Effort,Developers,Milestones
 16.03,4,lkn16,compileBasicOperators
 16.03,5.5,ms6616,FinishTranslate
 16.03,3,lkn16,OperatorsCompileTests
+17.03,8,lkn16,ParseAllOperators
+18.03,5,ms6616,IfElseStatements
+20.03,4,ms6616,ForWhileStatements
