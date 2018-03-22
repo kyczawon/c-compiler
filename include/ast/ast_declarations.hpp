@@ -33,7 +33,6 @@ public:
     virtual void code_gen(std::ostream &dst, Context &context) const override
     {
        
-
         dst<<"\t.align\t2"<<std::endl;
         dst<<"\t.global\t"<<identifier<<std::endl;
         dst<<"\t.set\tnomips16"<<std::endl;
@@ -48,8 +47,8 @@ public:
         std::stringstream inner_compiled; 
         Context inner_context = new Context(context);
         if(parameter_list != NULL){
-        parameter_list->code_gen(inner_compiled,inner_context);
-        inner_context.reset_registers(); //after the parameter list
+            parameter_list->code_gen(inner_compiled,inner_context);
+            inner_context.reset_registers(); //after the parameter list
         }
         compound->code_gen(inner_compiled, inner_context);
         dst << "\taddiu	$sp,$sp,-" << inner_context.size()<<std::endl;
@@ -83,7 +82,7 @@ public:
 
     virtual void code_gen(std::ostream &dst, Context &context) const override
     {
-        context.add_binding(id,4);
+        context.add_binding(type, id);
     }
 };
 
@@ -111,7 +110,7 @@ public:
 
     virtual void code_gen(std::ostream &dst, Context &context) const override
     {
-        context.add_binding(id,4);
+        context.add_binding(type, id);
         value->code_gen(dst, context);
         dst << "\tsw\t$s"<<context.get_current_register()<<","<<context.get_binding(id)<<"($fp)"<<std::endl;
 
@@ -144,7 +143,7 @@ public:
 
     virtual void code_gen(std::ostream &dst, Context &context) const override
     {
-        context.add_binding(id, 4);
+        context.add_binding(type, id);
     }
 };
 
@@ -171,7 +170,7 @@ public:
 
     virtual void code_gen(std::ostream &dst, Context &context) const override
     {
-        context.add_binding(id, 4);
+        context.add_binding(type, id);
     }
 };
 
@@ -196,7 +195,7 @@ public:
 
     virtual void code_gen(std::ostream &dst, Context &context) const override
     {
-        context.add_binding(id,4);
+        context.add_binding(type,id);
         dst << "\tsw\t$a"<<context.next_register()<<","<<context.get_binding(id)<<"($fp)"<<std::endl;
     }
 };

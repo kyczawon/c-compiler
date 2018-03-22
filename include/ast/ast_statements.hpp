@@ -12,7 +12,7 @@ static std::vector<std::string> condTracker;
 static std::vector<std::string> endTracker;
 static std::vector<NodePtr> switchTracker;
 
-class ReturnStatement : public Statement2
+class ReturnStatement : public Node
 {
 protected:
     NodePtr expr;

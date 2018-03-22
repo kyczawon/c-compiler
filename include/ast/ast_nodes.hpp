@@ -39,15 +39,6 @@ public:
     { throw std::runtime_error("Not implemented."); }
 };
 
-class Statement2 : public Node
-{
-public:
-
-    //! Generate the mips code to the given stream
-    virtual void code_gen(std::ostream &dst, Context &context) const override
-    { throw std::runtime_error("Statement Not implemented."); }
-};
-
 class Expression : public Node
 {
 public:
@@ -62,6 +53,7 @@ private:
     int _size = 0;
     int current_register = -1;
     std::unordered_map<std::string,int> bindings;
+    std::unordered_map<std::string,std::string> types;
     Context* parent;
 public:
     Context(Context* _parent)
@@ -77,12 +69,33 @@ public:
             return it->second;
     }
 
-    void add_binding(std::string key, int bytes) {
+    std::string get_type(std::string key) {
+        std::unordered_map<std::string,std::string>::iterator it = types.find(key);
+        
+        if (it == types.end())
+            return parent->get_type(key);
+        else
+            return it->second;
+    }
+
+    int get_size (std::string const& inString) const {
+        if (inString == "int") return 4;
+        else return 0;
+    }
+
+    void add_binding(std::string type, std::string key) {
+
+        int bytes = get_size(type);
+
+        if (bytes == 0) throw std::runtime_error("type: " + type + "not implemented");
+
         std::unordered_map<std::string,int>::iterator it = bindings.find(key);
             
         if (it == bindings.end()) {
             bindings[key] = _size;
             _size += bytes;
+
+            types[key] = type;
         }
         else
             std::cout<<"redefinition of '"<<key<<"'";
