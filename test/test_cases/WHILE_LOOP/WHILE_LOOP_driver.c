@@ -1,7 +1,11 @@
 int f(int x);
 
 int main(){
-    if (f(5)==0) return 0;
-    else return 1;
-
+    if (f(5)==0) {
+        if(f(0)==0){
+            return 0;
+        }
+        return 1;
+    }
+    return 2;
 }

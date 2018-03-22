@@ -8,6 +8,10 @@
 #include <iostream>
 #include <vector>
 
+static std::vector<std::string> condTracker;
+static std::vector<std::string> endTracker;
+static std::vector<NodePtr> switchTracker;
+
 class ReturnStatement : public Statement2
 {
 protected:
@@ -27,7 +31,6 @@ public:
         dst<<"\taddi\t$v0,$s"<<context.get_current_register()<<","<<std::hex<<0<<std::endl;
         dst<<"\tj\t$31"<<std::endl;
         dst <<"\taddiu\t$sp,$sp," << std::hex << std::to_string(context.size()) << std::endl;
-        // dst<<"\tnop"<<std::endl;
         context.reset_registers();	
     }
 };
@@ -103,47 +106,6 @@ public:
     }
 };
 
-class whileStatement : public Node
-{
-protected:
-    NodePtr condition, sequence;
-    std::string seqLabel, condLabel;
-public:
-    static int whileCounter;
-    std::string makeWhileLabel()
-    {
-        return "$WL"+std::to_string(whileCounter++);
-    }
-    whileStatement(NodePtr _condition, NodePtr _sequence)
-            : condition(_condition),
-            sequence(_sequence)
-        {
-            condLabel = makeWhileLabel();
-            seqLabel = makeWhileLabel();   
-        }
-    virtual void translate(int level, std::ostream &dst) const override
-    {
-        dst<<"while (";
-        condition->translate(0,dst);
-        dst<< "):";
-        sequence->translate(level, dst);
-        dst<<std::endl;
-    }
-    virtual void code_gen(std::ostream &dst, Context &context) const override
-    {
-        Context inner_context = new Context(context);
-        dst<<"\tb\t"<<condLabel<<std::endl;
-        dst<<"\tnop\n";
-        dst<<seqLabel<<":"<<std::endl;
-        sequence->code_gen(dst,inner_context);
-        dst<<condLabel<<":"<<std::endl;
-        condition->code_gen(dst,context);
-        dst<<"\tbne\t$s"<<context.get_current_register()<<",$0,"<<seqLabel;  
-        dst<<std::endl<<"\tnop"<<std::endl;      
-        //throw std::runtime_error("whileStatement::code_gen is not implemented.");
-    }
-};
-
 class ifStatement : public Node
 {
 protected:
@@ -176,15 +138,6 @@ public:
         Context inner_context = new Context(context);
         sequence->code_gen(dst,inner_context);
         dst<<endLabel<<":"<<std::endl;
-    }
-    NodePtr get_sequence() const {
-        return sequence;
-    }
-    NodePtr get_condition() const {
-        return condition;
-    }
-    std::string get_endLabel() const {
-        return endLabel;
     }
 };
 
@@ -235,11 +188,101 @@ public:
     
 };
 
+class whileStatement : public Node
+{
+protected:
+    NodePtr condition, sequence;
+    std::string seqLabel, condLabel, endLabel;
+public:
+    static int whileCounter;
+    std::string makeWhileLabel()
+    {
+        return "$WL"+std::to_string(whileCounter++);
+    }
+    whileStatement(NodePtr _condition, NodePtr _sequence)
+            : condition(_condition),
+            sequence(_sequence)
+        {
+            seqLabel = makeWhileLabel();
+            condLabel = makeWhileLabel();
+            endLabel = makeWhileLabel();
+            condTracker.push_back(condLabel);
+            endTracker.push_back(endLabel);
+        }
+    virtual void translate(int level, std::ostream &dst) const override
+    {
+        dst<<"while (";
+        condition->translate(0,dst);
+        dst<< "):";
+        sequence->translate(level, dst);
+        dst<<std::endl;
+    }
+    virtual void code_gen(std::ostream &dst, Context &context) const override
+    {
+        Context inner_context = new Context(context);
+        dst<<"\tb\t"<<condLabel<<std::endl;
+        dst<<"\tnop\n";
+        dst<<seqLabel<<":"<<std::endl;
+        sequence->code_gen(dst,inner_context);
+        dst<<condLabel<<":"<<std::endl;
+        condition->code_gen(dst,context);
+        dst<<"\tbne\t$s"<<context.get_current_register()<<",$0,"<<seqLabel;  
+        dst<<std::endl<<"\tnop"<<std::endl;  
+        dst<<endLabel<<":"<<std::endl;
+        condTracker.erase(condTracker.begin());
+        endTracker.erase(endTracker.begin());
+    }
+};
+
+class doWhileStatement : public Node
+{
+protected:
+    NodePtr condition, sequence;
+    std::string seqLabel, condLabel, endLabel;
+public:
+    static int doWhileCounter;
+    std::string makeDoWhileLabel()
+    {
+        return "$DWL"+std::to_string(doWhileCounter++);
+    }
+    doWhileStatement(NodePtr _sequence, NodePtr _condition)
+            : sequence(_sequence),
+            condition(_condition)
+        {
+            seqLabel = makeDoWhileLabel();
+            condLabel = makeDoWhileLabel();
+            endLabel = makeDoWhileLabel();   
+            condTracker.push_back(condLabel);
+            endTracker.push_back(endLabel);
+        }
+    virtual void translate(int level, std::ostream &dst) const override
+    {
+        dst<<"while (";
+        condition->translate(0,dst);
+        dst<< "):";
+        sequence->translate(level, dst);
+        dst<<std::endl;
+    }
+    virtual void code_gen(std::ostream &dst, Context &context) const override
+    {
+        Context inner_context = new Context(context);
+        dst<<seqLabel<<":"<<std::endl;
+        sequence->code_gen(dst,inner_context);
+        dst<<condLabel<<":"<<std::endl;
+        condition->code_gen(dst,context);
+        dst<<"\tbne\t$s"<<context.get_current_register()<<",$0,"<<seqLabel;  
+        dst<<std::endl<<"\tnop"<<std::endl; 
+        dst<<endLabel<<":"<<std::endl;
+        condTracker.erase(condTracker.begin());
+        endTracker.erase(endTracker.begin());
+    }
+};
+
 class forLoop : public Node
 {
 protected:
     NodePtr initializer, condition, increment, sequence;
-    std::string seqLabel, condLabel;
+    std::string seqLabel, incLabel, condLabel, endLabel;
 public:
     static int forCounter;
     forLoop(NodePtr _initializer, NodePtr _condition, NodePtr _increment, NodePtr _sequence)
@@ -249,7 +292,11 @@ public:
             sequence(_sequence)
         {
             seqLabel = makeForLabel();
+            incLabel = makeForLabel();
             condLabel = makeForLabel();
+            endLabel = makeForLabel();
+            condTracker.push_back(incLabel);
+            endTracker.push_back(endLabel);
         }
     virtual void translate(int level, std::ostream &dst) const override
     {
@@ -263,22 +310,134 @@ public:
         dst<<"\tb\t"<<condLabel<<"\n\tnop\n";
         dst<<seqLabel<<":\n";
         sequence->code_gen(dst, inner_context);
+        dst<<incLabel<<":\n";
         increment->code_gen(dst, cond_context);
         dst<<condLabel<<":"<<std::endl;
         condition->code_gen(dst, cond_context);
         dst<<"\tbne\t$s"<<cond_context.get_current_register()<<",$0,"<<seqLabel<<std::endl;
-
+        dst<<endLabel<<":"<<std::endl;
+        condTracker.erase(condTracker.begin());
+        endTracker.erase(endTracker.begin());
     }
     std::string makeForLabel()
     {
         return "$FL"+std::to_string(forCounter++);
     }
 
-    
 };
    
+class continueStatement : public Node 
+{
+public:
+    continueStatement()
+    {
+    }
+    virtual void translate(int level, std::ostream &dst) const override
+    {
+       throw std::runtime_error("continueStatement::translate is not implemented.");
+    }
+    virtual void code_gen(std::ostream &dst, Context &context) const override
+    {
+        std::string label = condTracker[0];
+        dst<<"\tb\t"<<label;
+        dst<<"\n\tnop\n";
+    }
+
+};
+
+class breakStatement : public Node 
+{
+public:
+    breakStatement(){
+        
+    }
+    virtual void translate(int level, std::ostream &dst) const override
+    {
+       throw std::runtime_error("breakStatement::translate is not implemented.");
+    }
+    virtual void code_gen(std::ostream &dst, Context &context) const override
+    {
+        std::string label = endTracker[0];
+        dst<<"\tb\t"<<label;
+        dst<<"\n\tnop\n";
+    }
 
 
+};
+
+class caseStatement : public Node
+{
+protected:
+    NodePtr condition, sequence;
+    std::string endLabel;
+public:
+    static int caseCounter;
+    caseStatement(NodePtr _condition, NodePtr _sequence)
+        : condition(_condition),
+        sequence(_sequence)
+    {
+        endLabel = makeCaseLabel();
+    }
+    virtual void translate(int level, std::ostream &dst) const override
+    {
+        throw std::runtime_error("caseStatement::translate is not implemented.");
+    }
+    std::string makeCaseLabel()
+    {
+        return "$CL"+std::to_string(caseCounter++);
+    }
+    virtual void code_gen(std::ostream &dst, Context &context) const override
+    {
+        if(condition!=NULL){
+        Context cond_context = new Context(context);
+        switchTracker[0]->code_gen(dst, cond_context);
+        int switch_reg = cond_context.get_current_register();
+        condition->code_gen(dst,cond_context);
+        dst<<"\tbne\t$s"<<cond_context.get_current_register()<<",$s"<< switch_reg <<","<<endLabel;
+        dst<<std::endl<<"\tnop"<<std::endl;
+        }
+        Context inner_context = new Context(context);
+        sequence->code_gen(dst,inner_context);
+        std::string label = endTracker[0];
+        dst<<"\tb\t"<<label;
+        dst<<"\n\tnop\n";
+        dst<<endLabel<<":"<<std::endl;
+        
+    }
+};
+
+class switchStatement : public Node
+{
+protected:
+    NodePtr condition, sequence;
+    std::string endLabel;
+public:
+    static int switchCounter;
+    switchStatement(NodePtr _condition, NodePtr _sequence)
+        : condition(_condition),
+        sequence(_sequence)
+    {
+        endLabel = makeSwitchLabel();
+        switchTracker.push_back(condition);
+        endTracker.push_back(endLabel);
+    }
+    virtual void translate(int level, std::ostream &dst) const override
+    {
+        throw std::runtime_error("switchStatement::translate is not implemented.");
+    }
+    std::string makeSwitchLabel()
+    {
+        return "$SL"+std::to_string(switchCounter++);
+    }
+    virtual void code_gen(std::ostream &dst, Context &context) const override
+    {
+        Context inner_context = new Context(context);
+        sequence->code_gen(dst,inner_context);
+        dst<<endLabel<<":"<<std::endl;
+        switchTracker.erase(switchTracker.begin());
+        endTracker.erase(endTracker.begin());        
+    }
+};
 
 
 

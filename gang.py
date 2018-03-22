@@ -1,7 +1,7 @@
 def main():
-	z=0
-	z=7
-	return z
+	while (1):
+	return 1
+
 
 # Boilerplat
 if __name__ == "__main__":

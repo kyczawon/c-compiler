@@ -15,20 +15,21 @@ geo:
 	sw	$s0,4($fp)
 	lw	$s1,0($fp)
 	sw	$s1,8($fp)
-	b	$WL0
+	b	$WL1
 	nop
-$WL1:
+$WL0:
 	lw	$s0,4($fp)
 	lw	$s1,8($fp)
 	addu	$s2,$s0,$s1
 	sw	$s2,4($fp)
-$WL0:
+$WL1:
 	lw	$s2,8($fp)
 	lw	$s3,0($fp)
 	sltu	$s3,$s2,$s3
 	andi	$s3,$s3,0x00ff
-	bne	$s3,$0,$WL1
+	bne	$s3,$0,$WL0
 	nop
+$WL2:
 	lw	$s4,4($fp)
 	addi	$v0,$s4,0
 	j	$31

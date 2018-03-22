@@ -71,7 +71,7 @@ public:
     Context(Context* _parent)
         : parent(_parent)
     {}
-    
+
     int get_binding(std::string key) {
         std::unordered_map<std::string,int>::iterator it = bindings.find(key);
         

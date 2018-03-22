@@ -22,14 +22,14 @@
 
 %token T_TIMES T_DIVIDE T_PLUS T_MINUS T_COMMA
 %token T_LBRACKET T_RBRACKET T_LCURLY T_RCURLY T_SEMI T_EQUALS
-%token T_INT T_IF T_ELSE T_WHILE
-%token T_RETURN T_FOR
-%token T_NUMBER T_STRING
+%token T_INT T_IF T_ELSE T_WHILE T_CASE T_COLON
+%token T_RETURN T_FOR T_DO T_DEFAULT T_SWITCH 
+%token T_NUMBER T_STRING T_CONTINUE T_BREAK
 %token T_EQUALS_EQUALS T_NOT_EQUALS T_GREATER T_LESS T_AND T_OR
 
 %type <expr> EXPR TERM FACTOR STATEMENT DECLARATION FUNCTION_DECLARATION COMPOUND_STATEMENT SEQUENCE SEQUENCE_PROG 
 %type <expr> CONDITIONAL_STATEMENT PARAMETER_LIST PARAMETER EXPR_LIST GLOBAL_DECLARATION GLOBAL_VARIABLE_DECLARATION 
-%type <expr> EMPTY IF_STATEMENT EXPRESSION_STATEMENT
+%type <expr> EMPTY IF_STATEMENT EXPRESSION_STATEMENT CASE_COMPOUND CASE_STATEMENT
 %type <number> T_NUMBER
 %type <string> T_STRING T_INT TYPE T_IF T_ELSE T_WHILE T_COMMA
 %type <string> T_EQUALS_EQUALS T_NOT_EQUALS T_GREATER T_LESS T_AND T_OR
@@ -73,8 +73,11 @@ EMPTY
 STATEMENT
         : EXPRESSION_STATEMENT { $$ = $1; }
         | CONDITIONAL_STATEMENT { $$ = $1; }
+        | COMPOUND_STATEMENT
         | T_RETURN EXPR T_SEMI { $$ = new ReturnStatement($2);}
         | DECLARATION { $$ = $1; }
+        | T_BREAK T_SEMI { $$ = new breakStatement(); }
+        | T_CONTINUE T_SEMI { $$ = new continueStatement(); }
 
 EXPRESSION_STATEMENT
         : EXPR T_SEMI { $$ = new Statement($1);}
@@ -83,14 +86,24 @@ CONDITIONAL_STATEMENT
         : T_WHILE T_LBRACKET EXPR T_RBRACKET COMPOUND_STATEMENT { $$ = new whileStatement( $3, $5 ); }
         | IF_STATEMENT
         | T_FOR T_LBRACKET EXPR T_SEMI EXPR T_SEMI EXPR T_RBRACKET COMPOUND_STATEMENT { $$ = new forLoop( $3, $5, $7, $9 ); }
+        | T_DO COMPOUND_STATEMENT T_WHILE T_LBRACKET EXPR_LIST T_RBRACKET T_SEMI { $$ = new doWhileStatement( $2, $5 ); }
+        | T_SWITCH T_LBRACKET EXPR T_RBRACKET T_LCURLY CASE_COMPOUND T_RCURLY { $$ = new switchStatement( $3, $6 ); }
+
+CASE_COMPOUND
+        : CASE_STATEMENT
+        | CASE_COMPOUND CASE_STATEMENT { $$ = new Sequence($1, $2); }
+
+CASE_STATEMENT
+        : T_CASE EXPR T_COLON SEQUENCE { $$ = new caseStatement( $2, $4 ); }
+        | T_DEFAULT T_COLON SEQUENCE { $$ = new caseStatement( nullptr, $3 ); }
 
 IF_STATEMENT
-        : T_IF T_LBRACKET EXPR T_RBRACKET COMPOUND_STATEMENT { $$ = new ifStatement( $3, $5 ); }
-        | T_IF T_LBRACKET EXPR T_RBRACKET STATEMENT { $$ = new ifStatement( $3, new CompoundStatement( new Sequence( nullptr, $5 )) ); }
-        | T_IF T_LBRACKET EXPR T_RBRACKET COMPOUND_STATEMENT T_ELSE STATEMENT { $$ = new ifElseStatement( $3, $5, new CompoundStatement( new Sequence( nullptr, $7 )) ); }
-        | T_IF T_LBRACKET EXPR T_RBRACKET STATEMENT T_ELSE STATEMENT { $$ = new ifElseStatement( $3, new CompoundStatement( new Sequence( nullptr, $5 )), new CompoundStatement( new Sequence( nullptr, $7 )) ); }
-        | T_IF T_LBRACKET EXPR T_RBRACKET COMPOUND_STATEMENT T_ELSE COMPOUND_STATEMENT { $$ = new ifElseStatement( $3, $5, new CompoundStatement( new Sequence( nullptr, $7 )) ); }
-        | T_IF T_LBRACKET EXPR T_RBRACKET STATEMENT T_ELSE COMPOUND_STATEMENT { $$ = new ifElseStatement( $3, new CompoundStatement( new Sequence( nullptr, $5 )), $7 ); }
+        //  T_IF T_LBRACKET EXPR T_RBRACKET COMPOUND_STATEMENT { $$ = new ifStatement( $3, $5 ); }
+        : T_IF T_LBRACKET EXPR T_RBRACKET STATEMENT { $$ = new ifStatement( $3, new CompoundStatement( new Sequence( nullptr, $5 )) ); }
+        // | T_IF T_LBRACKET EXPR T_RBRACKET COMPOUND_STATEMENT T_ELSE STATEMENT { $$ = new ifElseStatement( $3, $5, new CompoundStatement( new Sequence( nullptr, $7 )) ); }
+        | T_IF T_LBRACKET EXPR T_RBRACKET STATEMENT T_ELSE STATEMENT { $$ = new ifElseStatement( $3, $5, $7 ); }
+        // | T_IF T_LBRACKET EXPR T_RBRACKET COMPOUND_STATEMENT T_ELSE COMPOUND_STATEMENT { $$ = new ifElseStatement( $3, $5, $7 ); }
+        // | T_IF T_LBRACKET EXPR T_RBRACKET STATEMENT T_ELSE COMPOUND_STATEMENT { $$ = new ifElseStatement( $3, new CompoundStatement( new Sequence( nullptr, $5 )), $7 ); }
 
 EXPR_LIST
         : EXPR { $$ = $1;}

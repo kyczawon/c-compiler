@@ -11,6 +11,9 @@ int ifElseStatement::ifElseCounter = 0;
 int ifStatement::ifCounter = 0;
 int whileStatement::whileCounter = 0;
 int forLoop::forCounter = 0;
+int doWhileStatement::doWhileCounter = 0;
+int caseStatement::caseCounter = 0;
+int switchStatement::switchCounter = 0;
 
 int main(int argc, char *argv[])
 {

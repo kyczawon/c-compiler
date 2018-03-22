@@ -26,6 +26,7 @@ return { return T_RETURN; }
 "/*"			{ comment(); }
 
 [;]             { return T_SEMI; }
+[:]				{return T_COLON; }
 [,]             { return T_COMMA; }
 [=]             { return T_EQUALS; }
 
@@ -50,7 +51,13 @@ return { return T_RETURN; }
 if              {return T_IF;    }
 else            {return T_ELSE;  }
 while           {return T_WHILE; }
-for 			{return T_FOR; 	  }
+for 			{return T_FOR; 	 }
+do 				{return T_DO; 	 }
+break 			{return T_BREAK; }
+continue		{return T_CONTINUE; }
+switch 			{return T_SWITCH;}
+case 			{return T_CASE;  }
+default			{return T_DEFAULT;}
 
 [0-9]+([.][0-9]*)? { yylval.number=strtod(yytext, 0); return T_NUMBER; }
 [a-z]+          { yylval.string=new std::string(yytext); return T_STRING; }
