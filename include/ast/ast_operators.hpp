@@ -46,57 +46,6 @@ public:
     }
 };
 
-class AssignmentOperator : public Node
-{
-private:
-    int hashit (std::string const& inString) const {
-        if (inString == "=") return 1;
-        if (inString == "+=") return 2;
-        if (inString == "-=") return 3;
-        if (inString == "*=") return 4;
-        if (inString == "/=") return 5;
-        if (inString == "%=") return 6;
-        if (inString == "&=") return 7;
-        if (inString == "^=") return 8;
-        if (inString == "|=") return 9;
-        if (inString == "<<=") return 10;
-        if (inString == ">>=") return 11;
-        else return 0;
-    }
-protected:
-    std::string id, assign_operator;
-    NodePtr right;
-
-    virtual const std::string getOpcode() const
-    { return assign_operator; }
-public:
-    AssignmentOperator(std::string &_id, std::string &_assign_operator, NodePtr _right)
-        : id(_id),
-        assign_operator(_assign_operator),
-        right(_right)
-    {}
-    
-    virtual void translate(int level, std::ostream &dst) const override
-    {
-        dst<<id;
-        dst<<getOpcode();
-        right->translate(0, dst);
-    }
-
-    virtual void code_gen(std::ostream &dst, Context &context) const override
-    {
-        switch(hashit(assign_operator))
-        {
-            case 1: //equals
-                right->code_gen(dst, context);
-                dst << "\tsw\t$s"<<context.get_current_register()<<","<<context.get_binding(id)<<"($fp)"<<std::endl;
-                break;
-            default:
-                throw std::runtime_error("AssignmentOperator::code_gen is not implemented.");
-        }
-    }
-};
-
 class AddOperator : public Operator
 {
 protected:
@@ -729,6 +678,119 @@ public:
     virtual void code_gen(std::ostream &dst, Context &context) const override
     {
         throw std::runtime_error("CastOperator::code_gen not implemented.");
+    }
+};
+
+class AssignmentOperator : public Node
+{
+private:
+    int hashit (std::string const& inString) const {
+        if (inString == "=") return 1;
+        if (inString == "+=") return 2;
+        if (inString == "-=") return 3;
+        if (inString == "*=") return 4;
+        if (inString == "/=") return 5;
+        if (inString == "%=") return 6;
+        if (inString == "&=") return 7;
+        if (inString == "^=") return 8;
+        if (inString == "|=") return 9;
+        if (inString == "<<=") return 10;
+        if (inString == ">>=") return 11;
+        else return 0;
+    }
+protected:
+    std::string id, assign_operator;
+    NodePtr right;
+
+    virtual const std::string getOpcode() const
+    { return assign_operator; }
+public:
+    AssignmentOperator(std::string &_id, std::string &_assign_operator, NodePtr _right)
+        : id(_id),
+        assign_operator(_assign_operator),
+        right(_right)
+    {}
+    
+    virtual void translate(int level, std::ostream &dst) const override
+    {
+        dst<<id;
+        dst<<getOpcode();
+        right->translate(0, dst);
+    }
+
+    virtual void code_gen(std::ostream &dst, Context &context) const override
+    {
+        switch(hashit(assign_operator))
+        {
+            case 1: //equals
+                {
+                right->code_gen(dst, context);
+                break;
+                }
+            case 2: //plus equals
+                {
+                AddOperator *addition = new AddOperator( new Variable(id), right);
+                addition->code_gen(dst, context);
+                break;
+                }
+            case 3: //minus equals
+                {
+                SubOperator *substraction = new SubOperator( new Variable(id), right);
+                substraction->code_gen(dst, context);
+                break;
+                }
+            case 4: //times equals
+                {
+                MulOperator *mult = new MulOperator( new Variable(id), right);
+                mult->code_gen(dst, context);
+                break;
+                }
+            case 5: //divide equals
+                {
+                DivOperator *division = new DivOperator( new Variable(id), right);
+                division->code_gen(dst, context);
+                break;
+                }
+            case 6: //mod equals
+                {
+                ModOperator *division = new ModOperator( new Variable(id), right);
+                division->code_gen(dst, context);
+                break;
+                }
+            case 7: //and equals
+                {
+                BitwiseAndOperator *division = new BitwiseAndOperator( new Variable(id), right);
+                division->code_gen(dst, context);
+                break;
+                }
+            case 8: //xor equals
+                {
+                BitwiseXorOperator *division = new BitwiseXorOperator( new Variable(id), right);
+                division->code_gen(dst, context);
+                break;
+                }
+            case 9: //or equals
+                {
+                BitwiseOrOperator *division = new BitwiseOrOperator( new Variable(id), right);
+                division->code_gen(dst, context);
+                break;
+                }
+            case 10: //leftshift equals
+                {
+                LeftShiftOperator *division = new LeftShiftOperator( new Variable(id), right);
+                division->code_gen(dst, context);
+                break;
+                }
+            case 11: //rightshift equals
+                {
+                RightShiftOperator *division = new RightShiftOperator( new Variable(id), right);
+                division->code_gen(dst, context);
+                break;
+                }
+            default:
+                throw std::runtime_error("AssignmentOperator::code_gen is not implemented.");
+        }
+        dst << "\tsw\t$s"<<context.get_current_register()<<","<<context.get_binding(id)<<"($fp)"<<std::endl;
     }
 };
 
