@@ -46,7 +46,16 @@ for 			{return T_FOR; }
 %}
 "&&"            { return T_AND; }
 "||"            { return T_OR; }
+
+%{
+//Unary operators (except *, -, +,&)
+%}
 "!"            	{ return T_NOT; }
+"++"            { return T_INC; }
+"--"            { return T_DEC; }
+"~"				{ return T_NEGATION; }
+"sizeof"		{ return T_SIZE_OF; }
+"->"			{ return T_PTR; }
 
 %{
 //Relational operators
@@ -87,11 +96,6 @@ for 			{return T_FOR; }
 %}
 "?"            	{ return T_QUESTION; }
 ":"            	{ return T_COLON; }
-%{
-//increment and decrement operators
-%}
-"++"            	{ return T_INC; }
-"--"            	{ return T_DEC; }
 
 %{
 //Symbols
@@ -100,8 +104,11 @@ for 			{return T_FOR; }
 [)]             { return T_RBRACKET; }
 [{]             { return T_LCURLY; }
 [}]             { return T_RCURLY; }
+[[]             { return T_LSQUARE; }
+[]]             { return T_RSQUARE; }
 [;]             { return T_SEMI; }
 [,]             { return T_COMMA; }
+[.]				{ return T_PERIOD; }
 
 [0-9]+([.][0-9]*)? { yylval.number=strtod(yytext, 0); return T_NUMBER; }
 [a-z]+          { yylval.string=new std::string(yytext); return T_STRING; }

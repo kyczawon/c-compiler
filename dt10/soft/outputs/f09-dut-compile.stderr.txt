@@ -1,1 +1,2 @@
-Parse error : syntax error
+terminate called after throwing an instance of 'std::runtime_error'
+  what():  FunctionInvocation::code_gen is not implemented.
