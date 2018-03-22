@@ -694,6 +694,10 @@ class SizeOfType : public Node
 {
 private:
     std::string type;
+    int get_size (std::string const& inString) const {
+        if (inString == "int") return 4;
+        else return 0;
+    }
 public:
     SizeOfType(std::string _type)
         : type(_type)
@@ -706,7 +710,12 @@ public:
     
     virtual void code_gen(std::ostream &dst, Context &context) const override
     {
-        throw std::runtime_error("SizeOfType::code_gen not implemented.");
+        int size = get_size(type);
+        if (size != 0) {
+            dst<<"\tli\t$s"<<context.next_register()<<","<<size<<std::endl;
+        } else {
+            throw std::runtime_error("SizeOfType::translate not implemented.");
+        }
     }
 };
 
