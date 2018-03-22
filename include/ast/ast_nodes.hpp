@@ -42,8 +42,6 @@ public:
 class Statement2 : public Node
 {
 public:
-    //! Tell node to translate itself to the given stream
-    virtual void translate(int level, std::ostream &dst) const =0;
 
     //! Generate the mips code to the given stream
     virtual void code_gen(std::ostream &dst, Context &context) const override
@@ -53,8 +51,6 @@ public:
 class Expression : public Node
 {
 public:
-    //! Tell node to translate itself to the given stream
-    virtual void translate(int level, std::ostream &dst) const =0;
 
     //! Generate the mips code to the given stream
     virtual void code_gen(std::ostream &dst, Context &context) const override

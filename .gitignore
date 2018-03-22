@@ -28,3 +28,4 @@ test/*.s
 test/tmp
 
 dt10/soft/outputs
+dt10/*

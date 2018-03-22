@@ -7,8 +7,7 @@
 #include <cmath>
 #include <iostream>
 
-class Operator
-    : public Node
+class Operator : public Node
 {
 protected:
     NodePtr left;
@@ -39,7 +38,7 @@ public:
         right->translate(0, dst);
     }
 
-    virtual void code_gen(std::ostream &dst, Context &context) const
+    virtual void code_gen(std::ostream &dst, Context &context) const override
     {
         left->code_gen(dst,context);
         right->code_gen(dst,context);
@@ -47,18 +46,33 @@ public:
     }
 };
 
-class AssignmentOperator
-    : public Node
+class AssignmentOperator : public Node
 {
+private:
+    int hashit (std::string const& inString) const {
+        if (inString == "=") return 1;
+        if (inString == "+=") return 2;
+        if (inString == "-=") return 3;
+        if (inString == "*=") return 4;
+        if (inString == "/=") return 5;
+        if (inString == "%%=") return 6;
+        if (inString == "&=") return 7;
+        if (inString == "^=") return 8;
+        if (inString == "|=") return 9;
+        if (inString == "<<=") return 10;
+        if (inString == ">>=") return 11;
+        else return 0;
+    }
 protected:
-    std::string id;
+    std::string id, assign_operator;
     NodePtr right;
 
-    virtual const char *getOpcode() const
-    { return "="; }
+    virtual const std::string getOpcode() const
+    { return assign_operator; }
 public:
-    AssignmentOperator(std::string &_id, NodePtr _right)
+    AssignmentOperator(std::string &_id, std::string &_assign_operator, NodePtr _right)
         : id(_id),
+        assign_operator(_assign_operator),
         right(_right)
     {}
     
@@ -71,14 +85,19 @@ public:
 
     virtual void code_gen(std::ostream &dst, Context &context) const override
     {
-        right->code_gen(dst, context);
-        dst << "\tsw\t$s"<<context.get_current_register()<<","<<context.get_binding(id)<<"($fp)"<<std::endl;
-        //throw std::runtime_error("AssignmentOperator::code_gen is not implemented.");
+        switch(hashit(assign_operator))
+        {
+            case 1: //equals
+                right->code_gen(dst, context);
+                dst << "\tsw\t$s"<<context.get_current_register()<<","<<context.get_binding(id)<<"($fp)"<<std::endl;
+                break;
+            default:
+                throw std::runtime_error("AssignmentOperator::code_gen is not implemented.");
+        }
     }
 };
 
-class AddOperator
-    : public Operator
+class AddOperator : public Operator
 {
 protected:
     virtual const char *getOpcode() const override
@@ -91,8 +110,7 @@ public:
     {}
 };
 
-class SubOperator
-    : public Operator
+class SubOperator : public Operator
 {
 protected:
     virtual const char *getOpcode() const override
@@ -106,8 +124,7 @@ public:
 };
 
 
-class MulOperator
-    : public Operator
+class MulOperator : public Operator
 {
 protected:
     virtual const char *getOpcode() const override
@@ -120,8 +137,7 @@ public:
     {}
 };
 
-class DivOperator
-    : public Operator
+class DivOperator : public Operator
 {
 protected:
     virtual const char *getOpcode() const override
@@ -145,8 +161,7 @@ public:
     }
 };
 
-class EqualsOperator
-    : public Operator
+class EqualsOperator : public Operator
 {
 protected:
     virtual const char *getOpcode() const override
@@ -167,8 +182,7 @@ public:
     }
 };
 
-class NotEqualsOperator
-    : public Operator
+class NotEqualsOperator : public Operator
 {
 protected:
     virtual const char *getOpcode() const override
@@ -189,8 +203,7 @@ public:
     }
 };
 
-class GreaterOperator
-    : public Operator
+class GreaterOperator : public Operator
 {
 protected:
     virtual const char *getOpcode() const override
@@ -210,8 +223,23 @@ public:
     }
 };
 
-class LessOperator
-    : public Operator
+class GreaterEqualOperator : public Operator
+{
+protected:
+    virtual const char *getOpcode() const override
+    { return ">="; }
+public:
+    GreaterEqualOperator(NodePtr _left, NodePtr _right)
+        : Operator(_left, _right)
+    {}
+    
+    virtual void code_gen(std::ostream &dst, Context &context) const override
+    {
+        throw std::runtime_error("LessEqualOperator::code_gen not implemented.");
+    }
+};
+
+class LessOperator : public Operator
 {
 protected:
     virtual const char *getOpcode() const override
@@ -231,8 +259,23 @@ public:
     }
 };
 
-class AndOperator
-    : public Operator
+class LessEqualOperator : public Operator
+{
+protected:
+    virtual const char *getOpcode() const override
+    { return "<="; }
+public:
+    LessEqualOperator(NodePtr _left, NodePtr _right)
+        : Operator(_left, _right)
+    {}
+    
+    virtual void code_gen(std::ostream &dst, Context &context) const override
+    {
+        throw std::runtime_error("LessEqualOperator::code_gen not implemented.");
+    }
+};
+
+class AndOperator : public Operator
 {
 protected:
     virtual const char *getOpcode() const override
@@ -265,8 +308,7 @@ public:
     }
 };
 
-class OrOperator
-    : public Operator
+class OrOperator : public Operator
 {
 protected:
     virtual const char *getOpcode() const override
@@ -298,6 +340,379 @@ public:
         dst<<break2<<":"<<std::endl;
         dst<<"\tmove\t$s"<<context.get_current_register()<<",$0"<<std::endl;
         dst<<break3<<":"<<std::endl;
+    }
+};
+
+class ConditionalOperator : public Node
+{
+private:
+    NodePtr cond, if_exp, else_exp;
+public:
+    ConditionalOperator(NodePtr _cond, NodePtr _if_exp, NodePtr _else_exp)
+        : cond(_cond),
+        if_exp(_if_exp),
+        else_exp(_else_exp)
+    {}
+
+    virtual void translate(int level, std::ostream &dst) const override
+    {
+        throw std::runtime_error("ConditionalOperator::translate not implemented.");
+    }
+    
+    virtual void code_gen(std::ostream &dst, Context &context) const override
+    {
+        throw std::runtime_error("ConditionalOperator::code_gen not implemented.");
+    }
+};
+
+class BitwiseOrOperator : public Operator
+{
+protected:
+    virtual const char *getOpcode() const override
+    { return "|"; }
+public:
+    BitwiseOrOperator(NodePtr _left, NodePtr _right)
+        : Operator(_left, _right)
+    {}
+
+    virtual void translate(int level, std::ostream &dst) const override
+    {
+        throw std::runtime_error("BitwiseOrOperator::translate not implemented.");
+    }
+    
+    virtual void code_gen(std::ostream &dst, Context &context) const override
+    {
+        throw std::runtime_error("BitwiseOrOperator::code_gen not implemented.");
+    }
+};
+
+class BitwiseAndOperator : public Operator
+{
+protected:
+    virtual const char *getOpcode() const override
+    { return "&"; }
+public:
+    BitwiseAndOperator(NodePtr _left, NodePtr _right)
+        : Operator(_left, _right)
+    {}
+
+    virtual void translate(int level, std::ostream &dst) const override
+    {
+        throw std::runtime_error("BitwiseAndOperator::translate not implemented.");
+    }
+    
+    virtual void code_gen(std::ostream &dst, Context &context) const override
+    {
+        throw std::runtime_error("BitwiseAndOperator::code_gen not implemented.");
+    }
+};
+
+class BitwiseXorOperator : public Operator
+{
+protected:
+    virtual const char *getOpcode() const override
+    { return "^"; }
+public:
+    BitwiseXorOperator(NodePtr _left, NodePtr _right)
+        : Operator(_left, _right)
+    {}
+
+    virtual void translate(int level, std::ostream &dst) const override
+    {
+        throw std::runtime_error("BitwiseXorOperator::translate not implemented.");
+    }
+    
+    virtual void code_gen(std::ostream &dst, Context &context) const override
+    {
+        throw std::runtime_error("BitwiseXorOperator::code_gen not implemented.");
+    }
+};
+
+class LeftShiftOperator : public Operator
+{
+protected:
+    virtual const char *getOpcode() const override
+    { return "<<"; }
+public:
+    LeftShiftOperator(NodePtr _left, NodePtr _right)
+        : Operator(_left, _right)
+    {}
+
+    virtual void translate(int level, std::ostream &dst) const override
+    {
+        throw std::runtime_error("LeftShiftOperator::translate not implemented.");
+    }
+    
+    virtual void code_gen(std::ostream &dst, Context &context) const override
+    {
+        throw std::runtime_error("LeftShiftOperator::code_gen not implemented.");
+    }
+};
+
+class RightShiftOperator : public Operator
+{
+protected:
+    virtual const char *getOpcode() const override
+    { return ">>"; }
+public:
+    RightShiftOperator(NodePtr _left, NodePtr _right)
+        : Operator(_left, _right)
+    {}
+
+    virtual void translate(int level, std::ostream &dst) const override
+    {
+        throw std::runtime_error("RightShiftOperator::translate not implemented.");
+    }
+    
+    virtual void code_gen(std::ostream &dst, Context &context) const override
+    {
+        throw std::runtime_error("RightShiftOperator::code_gen not implemented.");
+    }
+};
+
+class Member : public Node
+{
+private:
+    std::string id, member;
+public:
+    Member(std::string _id, std::string _member)
+        : id(_id),
+        member(_member)
+    {}
+
+    virtual void translate(int level, std::ostream &dst) const override
+    {
+        throw std::runtime_error("Member::translate not implemented.");
+    }
+    
+    virtual void code_gen(std::ostream &dst, Context &context) const override
+    {
+        throw std::runtime_error("Member::code_gen not implemented.");
+    }
+};
+
+class MemberPtr : public Node
+{
+private:
+    std::string id, member;
+public:
+    MemberPtr(std::string _id, std::string _member)
+        : id(_id),
+        member(_member)
+    {}
+
+    virtual void translate(int level, std::ostream &dst) const override
+    {
+        throw std::runtime_error("MemberPtr::translate not implemented.");
+    }
+    
+    virtual void code_gen(std::ostream &dst, Context &context) const override
+    {
+        throw std::runtime_error("MemberPtr::code_gen not implemented.");
+    }
+};
+
+
+class Array : public Node
+{
+private:
+    std::string id;
+    NodePtr expr_list;
+public:
+    Array(std::string _id, NodePtr _expr_list)
+        : id(_id),
+        expr_list(_expr_list)
+    {}
+
+    virtual void translate(int level, std::ostream &dst) const override
+    {
+        throw std::runtime_error("Array::translate not implemented.");
+    }
+    
+    virtual void code_gen(std::ostream &dst, Context &context) const override
+    {
+        throw std::runtime_error("Array::code_gen not implemented.");
+    }
+};
+
+class PostIncrement : public Node
+{
+private:
+    std::string id;
+public:
+    PostIncrement(std::string _id)
+        : id(_id)
+    {}
+
+    virtual void translate(int level, std::ostream &dst) const override
+    {
+        throw std::runtime_error("PostIncrement::translate not implemented.");
+    }
+    
+    virtual void code_gen(std::ostream &dst, Context &context) const override
+    {
+        throw std::runtime_error("PostIncrement::code_gen not implemented.");
+    }
+};
+
+class PreIncrement : public Node
+{
+private:
+    std::string id;
+public:
+    PreIncrement(std::string _id)
+        : id(_id)
+    {}
+
+    virtual void translate(int level, std::ostream &dst) const override
+    {
+        throw std::runtime_error("PreIncrement::translate not implemented.");
+    }
+    
+    virtual void code_gen(std::ostream &dst, Context &context) const override
+    {
+        throw std::runtime_error("PreIncrement::code_gen not implemented.");
+    }
+};
+
+class PostDecrement : public Node
+{
+private:
+    std::string id;
+public:
+    PostDecrement(std::string _id)
+        : id(_id)
+    {}
+
+    virtual void translate(int level, std::ostream &dst) const override
+    {
+        throw std::runtime_error("PostDecrement::translate not implemented.");
+    }
+    
+    virtual void code_gen(std::ostream &dst, Context &context) const override
+    {
+        throw std::runtime_error("PostDecrement::code_gen not implemented.");
+    }
+};
+
+class PreDecrement : public Node
+{
+private:
+    std::string id;
+public:
+    PreDecrement(std::string _id)
+        : id(_id)
+    {}
+
+    virtual void translate(int level, std::ostream &dst) const override
+    {
+        throw std::runtime_error("PreDecrement::translate not implemented.");
+    }
+    
+    virtual void code_gen(std::ostream &dst, Context &context) const override
+    {
+        throw std::runtime_error("PreDecrement::code_gen not implemented.");
+    }
+};
+
+class UnaryOperator : public Node
+{
+private:
+    int hashit (std::string const& inString) const {
+        if (inString == "*") return 1;
+        if (inString == "&") return 2;
+        if (inString == "!") return 3;
+        if (inString == "~") return 4;
+        if (inString == "+") return 5;
+        if (inString == "-") return 6;
+        else return 0;
+    }
+protected:
+    std::string unary_operator;
+    NodePtr right;
+
+    virtual const std::string getOpcode() const
+    { return unary_operator; }
+public:
+    UnaryOperator(std::string &_unary_operator, NodePtr _right)
+        : unary_operator(_unary_operator),
+        right(_right)
+    {}
+    
+    virtual void translate(int level, std::ostream &dst) const override
+    {
+        throw std::runtime_error("UnaryOperator::translate is not implemented.");
+    }
+
+    virtual void code_gen(std::ostream &dst, Context &context) const override
+    {
+        switch(hashit(unary_operator))
+        {
+            default:
+                throw std::runtime_error("UnaryOperator::code_gen is not implemented.");
+        }
+    }
+};
+
+class SizeOf : public Node
+{
+private:
+    std::string id;
+public:
+    SizeOf(std::string _id)
+        : id(_id)
+    {}
+
+    virtual void translate(int level, std::ostream &dst) const override
+    {
+        throw std::runtime_error("SizeOf::translate not implemented.");
+    }
+    
+    virtual void code_gen(std::ostream &dst, Context &context) const override
+    {
+        throw std::runtime_error("SizeOf::code_gen not implemented.");
+    }
+};
+
+class SizeOfType : public Node
+{
+private:
+    std::string type;
+public:
+    SizeOfType(std::string _type)
+        : type(_type)
+    {}
+
+    virtual void translate(int level, std::ostream &dst) const override
+    {
+        throw std::runtime_error("SizeOfType::translate not implemented.");
+    }
+    
+    virtual void code_gen(std::ostream &dst, Context &context) const override
+    {
+        throw std::runtime_error("SizeOfType::code_gen not implemented.");
+    }
+};
+
+class CastOperator : public Node
+{
+private:
+    std::string type;
+    NodePtr cast_expr;
+public:
+    CastOperator(std::string _type, NodePtr _cast_expr)
+        : type(_type),
+        cast_expr(_cast_expr)
+    {}
+
+    virtual void translate(int level, std::ostream &dst) const override
+    {
+        throw std::runtime_error("CastOperator::translate not implemented.");
+    }
+    
+    virtual void code_gen(std::ostream &dst, Context &context) const override
+    {
+        throw std::runtime_error("CastOperator::code_gen not implemented.");
     }
 };
 
