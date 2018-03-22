@@ -190,6 +190,7 @@ MULTIPLICATIVE_EXPR
         : CAST_EXPR
         | MULTIPLICATIVE_EXPR T_TIMES CAST_EXPR { $$ = new MulOperator($1, $3); }
         | MULTIPLICATIVE_EXPR T_DIVIDE CAST_EXPR { $$ = new DivOperator($1, $3); }
+        | MULTIPLICATIVE_EXPR T_MOD CAST_EXPR { $$ = new ModOperator($1, $3); }
 
 CAST_EXPR
 	: UNARY_EXPR

@@ -55,7 +55,7 @@ private:
         if (inString == "-=") return 3;
         if (inString == "*=") return 4;
         if (inString == "/=") return 5;
-        if (inString == "%%=") return 6;
+        if (inString == "%=") return 6;
         if (inString == "&=") return 7;
         if (inString == "^=") return 8;
         if (inString == "|=") return 9;
@@ -158,6 +158,22 @@ public:
         dst<<"\tteq\t$s"<<denominator<<",$0,7"<<std::endl; //trap with code 7 if denominator is eqaul to zero
         dst<<"\tmfhi\t$s"<<denominator<<std::endl;
         dst<<"\tmflo\t$s"<<denominator<<std::endl;
+    }
+};
+
+class ModOperator : public Operator
+{
+protected:
+    virtual const char *getOpcode() const override
+    { return "%"; }
+public:
+    ModOperator(NodePtr _left, NodePtr _right)
+        : Operator(_left, _right)
+    {}
+
+    virtual void code_gen(std::ostream &dst, Context &context) const override
+    {
+        throw std::runtime_error("ModOperator::code_gen not implemented.");
     }
 };
 
