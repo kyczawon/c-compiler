@@ -43,8 +43,8 @@ default			{return T_DEFAULT;}
 %}
 [*]             { return T_TIMES; }
 [/]             { return T_DIVIDE; }
-[+]             { return T_PLUS; }
-[-]             { return T_MINUS; }
+[+]             { yylval.string=new std::string(yytext); return T_PLUS; }
+[-]             { yylval.string=new std::string(yytext); return T_MINUS; }
 [%]             { return T_MOD; }
 
 %{
@@ -56,10 +56,10 @@ default			{return T_DEFAULT;}
 %{
 //Unary operators (except *, -, +,&)
 %}
-"!"            	{ return T_NOT; }
+"!"            	{ yylval.string=new std::string(yytext); return T_NOT; }
 "++"            { return T_INC; }
 "--"            { return T_DEC; }
-"~"				{ return T_NEGATION; }
+"~"				{ yylval.string=new std::string(yytext); return T_NEGATION; }
 "sizeof"		{ return T_SIZE_OF; }
 "->"			{ return T_PTR; }
 
@@ -76,7 +76,7 @@ default			{return T_DEFAULT;}
 %{
 //Bitwise operators
 %}
-"&"            	{ return T_BIT_AND; }
+"&"            	{ yylval.string=new std::string(yytext); return T_BIT_AND; }
 "|"            	{ return T_BIT_OR; }
 "^"            	{ return T_BIT_XOR; }
 "<<"            { return T_SHIFT_LEFT; }
