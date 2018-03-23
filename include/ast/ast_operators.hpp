@@ -105,7 +105,6 @@ public:
         int denominator = context.get_current_register();
         dst<<"\t"<<getOp()<<"\t$0,$s"<<context.get_current_register()-1<<",$s"<<denominator<<std::endl;
         dst<<"\tteq\t$s"<<denominator<<",$0,7"<<std::endl; //trap with code 7 if denominator is eqaul to zero
-        dst<<"\tmfhi\t$s"<<denominator<<std::endl;
         dst<<"\tmflo\t$s"<<denominator<<std::endl;
     }
 };
@@ -119,10 +118,17 @@ public:
     ModOperator(NodePtr _left, NodePtr _right)
         : Operator(_left, _right)
     {}
+    virtual const char *getOp() const override
+    { return "div"; }
 
     virtual void code_gen(std::ostream &dst, Context &context) const override
     {
-        throw std::runtime_error("ModOperator::code_gen not implemented.");
+        left->code_gen(dst,context);
+        right->code_gen(dst,context);
+        int denominator = context.get_current_register();
+        dst<<"\t"<<getOp()<<"\t$0,$s"<<context.get_current_register()-1<<",$s"<<denominator<<std::endl;
+        dst<<"\tteq\t$s"<<denominator<<",$0,7"<<std::endl; //trap with code 7 if denominator is eqaul to zero
+        dst<<"\tmfhi\t$s"<<denominator<<std::endl;
     }
 };
 
@@ -200,7 +206,12 @@ public:
     
     virtual void code_gen(std::ostream &dst, Context &context) const override
     {
-        throw std::runtime_error("LessEqualOperator::code_gen not implemented.");
+        left->code_gen(dst,context);
+        right->code_gen(dst,context);
+        int second = context.get_current_register();
+        dst<<"\tslt\t$s"<<second<<",$s"<<context.get_current_register()-1<<",$s"<<second<<std::endl;
+        dst<<"\txori\t$s"<<second<<",$s"<<second<<","<<std::hex<<1;
+        dst<<"\n\tandi\t$s"<<second<<",$s"<<second<<",0x00ff"<<std::endl;
     }
 };
 
@@ -236,7 +247,12 @@ public:
     
     virtual void code_gen(std::ostream &dst, Context &context) const override
     {
-        throw std::runtime_error("LessEqualOperator::code_gen not implemented.");
+        left->code_gen(dst,context);
+        right->code_gen(dst,context);
+        int second = context.get_current_register();
+        dst<<"\tsltu\t$s"<<second<<",$s"<<second<<",$s"<<context.get_current_register()-1<<std::endl;
+        dst<<"\txori\t$s"<<second<<",$s"<<second<<","<<std::hex<<1;
+        dst<<"\n\tandi\t$s"<<second<<",$s"<<second<<",0x00ff"<<std::endl;
     }
 };
 
@@ -326,7 +342,9 @@ public:
     
     virtual void code_gen(std::ostream &dst, Context &context) const override
     {
-        throw std::runtime_error("ConditionalOperator::code_gen not implemented.");
+        ifElseStatement *ifElse = new ifElseStatement(cond,if_exp,else_exp);
+        ifElse->code_gen(dst,context);
+        context.reset_last_register();
     }
 };
 
@@ -347,7 +365,11 @@ public:
     
     virtual void code_gen(std::ostream &dst, Context &context) const override
     {
-        throw std::runtime_error("BitwiseOrOperator::code_gen not implemented.");
+        left->code_gen(dst, context);
+        int lReg = context.get_current_register();
+        right->code_gen(dst, context);
+        int rReg = context.get_current_register();
+        dst<<"\tor\t$s"<<rReg<<",$s"<<lReg<<",$s"<<rReg<<"\n";
     }
 };
 
@@ -368,7 +390,11 @@ public:
     
     virtual void code_gen(std::ostream &dst, Context &context) const override
     {
-        throw std::runtime_error("BitwiseAndOperator::code_gen not implemented.");
+        left->code_gen(dst, context);
+        int lReg = context.get_current_register();
+        right->code_gen(dst, context);
+        int rReg = context.get_current_register();
+        dst<<"\tand\t$s"<<rReg<<",$s"<<lReg<<",$s"<<rReg<<"\n";
     }
 };
 
@@ -389,7 +415,11 @@ public:
     
     virtual void code_gen(std::ostream &dst, Context &context) const override
     {
-        throw std::runtime_error("BitwiseXorOperator::code_gen not implemented.");
+        left->code_gen(dst, context);
+        int lReg = context.get_current_register();
+        right->code_gen(dst, context);
+        int rReg = context.get_current_register();
+        dst<<"\txor\t$s"<<rReg<<",$s"<<lReg<<",$s"<<rReg<<"\n";
     }
 };
 
@@ -410,7 +440,11 @@ public:
     
     virtual void code_gen(std::ostream &dst, Context &context) const override
     {
-        throw std::runtime_error("LeftShiftOperator::code_gen not implemented.");
+        left->code_gen(dst, context);
+        int lReg = context.get_current_register();
+        right->code_gen(dst, context);
+        int rReg = context.get_current_register();
+        dst<<"\tsllv\t$s"<<rReg<<",$s"<<lReg<<",$s"<<rReg<<"\n";
     }
 };
 
@@ -431,7 +465,12 @@ public:
     
     virtual void code_gen(std::ostream &dst, Context &context) const override
     {
-        throw std::runtime_error("RightShiftOperator::code_gen not implemented.");
+        left->code_gen(dst, context);
+        int lReg = context.get_current_register();
+        right->code_gen(dst, context);
+        int rReg = context.get_current_register();
+        dst<<"\tsra\t$s"<<rReg<<",$s"<<lReg<<",$s"<<rReg<<"\n";
+        // Need to implement arithmetic shift
     }
 };
 

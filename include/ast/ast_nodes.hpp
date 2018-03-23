@@ -101,6 +101,11 @@ public:
         return current_register;
     }
 
+    int reset_last_register(){
+        current_register--;
+        return current_register;
+    }
+
     void reset_registers() {
         current_register = -1;
     }
