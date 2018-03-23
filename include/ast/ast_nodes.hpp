@@ -39,15 +39,6 @@ public:
     { throw std::runtime_error("Not implemented."); }
 };
 
-class Statement2 : public Node
-{
-public:
-
-    //! Generate the mips code to the given stream
-    virtual void code_gen(std::ostream &dst, Context &context) const override
-    { throw std::runtime_error("Statement Not implemented."); }
-};
-
 class Expression : public Node
 {
 public:
@@ -62,6 +53,7 @@ private:
     int _size = 0;
     int current_register = -1;
     std::unordered_map<std::string,int> bindings;
+    std::unordered_map<std::string,std::string> types;
     Context* parent;
 public:
     Context(Context* _parent)
@@ -71,18 +63,40 @@ public:
     int get_binding(std::string key) {
         std::unordered_map<std::string,int>::iterator it = bindings.find(key);
         
-        if (it == bindings.end())
-            return parent->get_binding(key);
+        if (it == bindings.end()) {
+            if (parent != nullptr) return parent->get_binding(key);
+            else throw std::runtime_error("error: '" + key + "' undeclared");
+        }
         else
             return it->second;
     }
 
-    void add_binding(std::string key, int bytes) {
+    std::string get_type(std::string key) {
+        std::unordered_map<std::string,std::string>::iterator it = types.find(key);
+        
+        if (it == types.end())
+            if (parent != nullptr) return parent->get_type(key);
+            else throw std::runtime_error("error: '" + key + "' undeclared");
+        else
+            return it->second;
+    }
+
+    int get_size (std::string const& type) const {
+        if (type == "int") return 4;
+        else throw std::runtime_error("type: " + type + "not implemented");
+    }
+
+    void add_binding(std::string type, std::string key) {
+
+        int bytes = get_size(type);
+
         std::unordered_map<std::string,int>::iterator it = bindings.find(key);
             
         if (it == bindings.end()) {
             bindings[key] = _size;
             _size += bytes;
+
+            types[key] = type;
         }
         else
             std::cout<<"redefinition of '"<<key<<"'";
