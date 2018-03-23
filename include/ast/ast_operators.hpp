@@ -474,6 +474,7 @@ public:
     }
 };
 
+//needs  implementing
 class Member : public Node
 {
 private:
@@ -495,6 +496,7 @@ public:
     }
 };
 
+//needs  implementing
 class MemberPtr : public Node
 {
 private:
@@ -516,7 +518,7 @@ public:
     }
 };
 
-
+//needs  implementing
 class Array : public Node
 {
 private:
@@ -631,6 +633,7 @@ public:
     }
 };
 
+//needs  implementing
 class UnaryOperator : public Node
 {
 private:
@@ -724,6 +727,7 @@ public:
     }
 };
 
+//needs  implementing
 class CastOperator : public Node
 {
 private:

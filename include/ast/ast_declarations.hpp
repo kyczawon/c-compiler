@@ -6,10 +6,161 @@
 #include <cmath>
 #include <sstream>
 
-//class Parameter;
+class InitialisedVariableDeclaration : public Node
+{
+private:
+    std::string type, id;
+    NodePtr value;
+public:
+    InitialisedVariableDeclaration(const std::string &_type, const std::string &_id, const NodePtr _value)
+        : type(_type),
+        id(_id),
+        value(_value)
+    {}
 
-class Function
-    : public Node
+    const std::string getId() const
+    { return id; }
+
+    virtual void translate(int level, std::ostream &dst) const override
+    {
+        dst<<id<<"=";
+        value->translate(0, dst);
+    }
+
+    virtual void code_gen(std::ostream &dst, Context &context) const override
+    {
+        context.add_binding(type, id);
+        value->code_gen(dst, context);
+        dst << "\tsw\t$s"<<context.get_current_register()<<","<<context.get_binding(id)<<"($fp)"<<std::endl;
+
+    }
+};
+
+class InitialisedGlobalVariableDeclaration : public Node
+{
+private:
+    std::string type, id;
+    NodePtr value;
+public:
+    InitialisedGlobalVariableDeclaration(const std::string &_type, const std::string &_id, const NodePtr _value)
+        : type(_type),
+        id(_id),
+        value(_value)
+    {
+        getGlobals()[id] = (NodePtr) this;
+    }
+
+    const std::string getId() const
+    { return id; }
+
+    virtual void translate(int level, std::ostream &dst) const override
+    {
+        dst<<id<<"=";
+        value->translate(0, dst);
+    }
+
+    virtual void code_gen(std::ostream &dst, Context &context) const override
+    {
+        context.add_binding(type, id);
+    }
+};
+
+class GlobalVariableDeclaration : public Node
+{
+private:
+    std::string type, id;
+public:
+    GlobalVariableDeclaration(const std::string &_type, const std::string &_id)
+        : type(_type),
+        id(_id)
+    {
+        getGlobals()[id] = (NodePtr) this;
+    }
+
+    const std::string getId() const
+    { return id; }
+
+    virtual void translate(int level, std::ostream &dst) const override
+    {
+        dst<<id<<"=0";
+    }
+
+    virtual void code_gen(std::ostream &dst, Context &context) const override
+    {
+        context.add_binding(type, id);
+    }
+};
+
+class Parameter : public Node
+{
+private:
+    std::string type, id;
+public:
+    Parameter(const std::string &_type, const std::string &_id)
+        : type(_type),
+        id(_id)
+    {}
+
+    const std::string getId() const
+    { return id; }
+
+    virtual void translate(int level, std::ostream &dst) const override
+    {
+        dst<<id;
+    }
+
+    virtual void code_gen(std::ostream &dst, Context &context) const override
+    {
+        context.add_binding(type,id);
+        dst << "\tsw\t$a"<<context.next_register()<<","<<context.get_binding(id)<<"($fp)"<<std::endl;
+    }
+};
+
+class ParameterList : public Node
+{
+protected:
+    NodePtr list, parameter;
+public:
+    ParameterList (NodePtr _list, NodePtr _parameter)
+            : list(_list),
+            parameter(_parameter)
+        {}
+    virtual void translate(int level, std::ostream &dst) const override
+    {
+        //parameter list could contain one parameter
+       if (list != nullptr) {
+            list->translate(0,dst);
+        }
+        dst << ", ";
+        parameter->translate(0,dst);
+    }
+
+    unsigned int get_num() const
+    {
+        const ParameterList* params = dynamic_cast<const ParameterList *>(list);
+        unsigned int num = 1;
+        if (list != nullptr) {
+            num += params->get_num();
+        }
+        return num;
+    }
+
+    virtual void code_gen(std::ostream &dst, Context &context) const override
+    {
+        const Parameter* param = dynamic_cast<const Parameter *>(parameter);
+        // parameter list could contain one parameter
+        if (list != nullptr) {
+            list->code_gen(dst, context);
+        }
+        parameter->code_gen(dst, context);
+        // paremter list cannot containg more than 4 parameters (assuming 4 bytes parameters)
+        if (context.get_binding(param->Parameter::getId()) > 12) {
+            throw std::runtime_error("More than 4 parameters not supported");
+        }
+    }
+};
+
+class Function : public Node
 {
 protected:
     NodePtr compound, parameter_list;
@@ -32,12 +183,17 @@ public:
 
     virtual void code_gen(std::ostream &dst, Context &context) const override
     {
-       
+        if (parameter_list != nullptr) {
+            const ParameterList* params = dynamic_cast<const ParameterList *>(parameter_list);
+            context.add_function(identifier, params->get_num());
+        } else {
+            context.add_function(identifier, 0);
+        }
+
         dst<<"\t.align\t2"<<std::endl;
         dst<<"\t.global\t"<<identifier<<std::endl;
         dst<<"\t.set\tnomips16"<<std::endl;
         dst<<"\t.set\tnomicromips"<<std::endl;
-        dst<<"\t.type\t"<<identifier<<", @function"<<std::endl;
         dst<<"\t.ent\t"<<identifier<<std::endl;
         dst<<"\t.type\t"<<identifier<<", @function"<<std::endl;
         
@@ -83,154 +239,6 @@ public:
     virtual void code_gen(std::ostream &dst, Context &context) const override
     {
         context.add_binding(type, id);
-    }
-};
-
-class InitialisedVariableDeclaration
-    : public Node
-{
-private:
-    std::string type, id;
-    NodePtr value;
-public:
-    InitialisedVariableDeclaration(const std::string &_type, const std::string &_id, const NodePtr _value)
-        : type(_type),
-        id(_id),
-        value(_value)
-    {}
-
-    const std::string getId() const
-    { return id; }
-
-    virtual void translate(int level, std::ostream &dst) const override
-    {
-        dst<<id<<"=";
-        value->translate(0, dst);
-    }
-
-    virtual void code_gen(std::ostream &dst, Context &context) const override
-    {
-        context.add_binding(type, id);
-        value->code_gen(dst, context);
-        dst << "\tsw\t$s"<<context.get_current_register()<<","<<context.get_binding(id)<<"($fp)"<<std::endl;
-
-    }
-};
-
-class InitialisedGlobalVariableDeclaration
-    : public Node
-{
-private:
-    std::string type, id;
-    NodePtr value;
-public:
-    InitialisedGlobalVariableDeclaration(const std::string &_type, const std::string &_id, const NodePtr _value)
-        : type(_type),
-        id(_id),
-        value(_value)
-    {
-        getGlobals()[id] = (NodePtr) this;
-    }
-
-    const std::string getId() const
-    { return id; }
-
-    virtual void translate(int level, std::ostream &dst) const override
-    {
-        dst<<id<<"=";
-        value->translate(0, dst);
-    }
-
-    virtual void code_gen(std::ostream &dst, Context &context) const override
-    {
-        context.add_binding(type, id);
-    }
-};
-
-class GlobalVariableDeclaration
-    : public Node
-{
-private:
-    std::string type, id;
-public:
-    GlobalVariableDeclaration(const std::string &_type, const std::string &_id)
-        : type(_type),
-        id(_id)
-    {
-        getGlobals()[id] = (NodePtr) this;
-    }
-
-    const std::string getId() const
-    { return id; }
-
-    virtual void translate(int level, std::ostream &dst) const override
-    {
-        dst<<id<<"=0";
-    }
-
-    virtual void code_gen(std::ostream &dst, Context &context) const override
-    {
-        context.add_binding(type, id);
-    }
-};
-
-class Parameter
-    : public Node
-{
-private:
-    std::string type, id;
-public:
-    Parameter(const std::string &_type, const std::string &_id)
-        : type(_type),
-        id(_id)
-    {}
-
-    const std::string getId() const
-    { return id; }
-
-    virtual void translate(int level, std::ostream &dst) const override
-    {
-        dst<<id;
-    }
-
-    virtual void code_gen(std::ostream &dst, Context &context) const override
-    {
-        context.add_binding(type,id);
-        dst << "\tsw\t$a"<<context.next_register()<<","<<context.get_binding(id)<<"($fp)"<<std::endl;
-    }
-};
-
-class ParameterList
-    : public Node
-{
-protected:
-    NodePtr list, parameter;
-public:
-    ParameterList (NodePtr _list, NodePtr _parameter)
-            : list(_list),
-            parameter(_parameter)
-        {}
-    virtual void translate(int level, std::ostream &dst) const override
-    {
-        //parameter list could contain one parameter
-       if (list != nullptr) {
-            list->translate(0,dst);
-        }
-        dst << ", ";
-        parameter->translate(0,dst);
-    }
-    virtual void code_gen(std::ostream &dst, Context &context) const override
-    {
-        const Parameter* param = dynamic_cast<const Parameter *>(parameter);
-        // parameter list could contain one parameter
-        if (list != nullptr) {
-            list->code_gen(dst, context);
-        }
-        parameter->code_gen(dst, context);
-        // paremter list cannot containg more than 4 parameters (assuming 4 bytes parameters)
-        if (context.get_binding(param->Parameter::getId()) > 12) {
-            throw std::runtime_error("More than 4 parameters not supported");
-        }
     }
 };
 

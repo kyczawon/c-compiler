@@ -50,59 +50,74 @@ public:
 
 class Context {
 private:
-    int _size = 0;
+    unsigned int _size = 0;
     int current_register = -1;
-    std::unordered_map<std::string,int> bindings;
+    std::unordered_map<std::string,unsigned int> bindings;
     std::unordered_map<std::string,std::string> types;
+    std::unordered_map<std::string,unsigned int> functions;
     Context* parent;
 public:
     Context(Context* _parent)
         : parent(_parent)
     {}
 
-    int get_binding(std::string key) {
-        std::unordered_map<std::string,int>::iterator it = bindings.find(key);
+    unsigned int get_binding(std::string key) {
+        std::unordered_map<std::string,unsigned int>::iterator it = bindings.find(key);
         
         if (it == bindings.end()) {
             if (parent != nullptr) return parent->get_binding(key);
             else throw std::runtime_error("error: '" + key + "' undeclared");
-        }
-        else
-            return it->second;
+        } else return it->second;
     }
 
     std::string get_type(std::string key) {
         std::unordered_map<std::string,std::string>::iterator it = types.find(key);
         
-        if (it == types.end())
+        if (it == types.end()) {
             if (parent != nullptr) return parent->get_type(key);
             else throw std::runtime_error("error: '" + key + "' undeclared");
-        else
-            return it->second;
+        } else return it->second;
     }
 
-    int get_size (std::string const& type) const {
+    unsigned int get_size (std::string const& type) const {
         if (type == "int") return 4;
         else throw std::runtime_error("type: " + type + "not implemented");
     }
 
+    unsigned int get_function(std::string key) {
+        if (parent != nullptr) parent->get_function(key);
+        else {
+            std::unordered_map<std::string,unsigned int>::iterator it = functions.find(key);
+            if (it == functions.end()) throw std::runtime_error("error: '" + key + "' undeclared");
+            else return it->second;
+        }
+    }
+
+    //add variable bindings
     void add_binding(std::string type, std::string key) {
 
-        int bytes = get_size(type);
+        unsigned int bytes = get_size(type);
 
-        std::unordered_map<std::string,int>::iterator it = bindings.find(key);
+        std::unordered_map<std::string,unsigned int>::iterator it = bindings.find(key);
             
         if (it == bindings.end()) {
             bindings[key] = _size;
             _size += bytes;
 
             types[key] = type;
-        }
-        else
-            std::cout<<"redefinition of '"<<key<<"'";
+        } else throw std::runtime_error("redefinition of '"+key+"'");
     }
 
-    int size() {
+    void add_function(std::string key, unsigned int param_num) {
+
+        std::unordered_map<std::string,unsigned int>::iterator it = functions.find(key);
+            
+        if (it == functions.end()) {
+            functions[key] = param_num;
+        } else throw std::runtime_error("conflicting types for ‘"+key+"’");
+    }
+
+    unsigned int size() {
         return _size;
     }
 

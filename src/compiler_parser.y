@@ -73,7 +73,7 @@ FUNCTION_DECLARATION
         : TYPE T_STRING T_LBRACKET PARAMETER_LIST T_RBRACKET COMPOUND_STATEMENT { $$ = new Function(*$1, *$2, $4, $6);}
 
 PARAMETER_LIST
-        : PARAMETER
+        : EMPTY PARAMETER { $$ = new ParameterList($1,$2);}
         | PARAMETER_LIST T_COMMA PARAMETER { $$ = new ParameterList($1,$3);}
         | EMPTY
 
