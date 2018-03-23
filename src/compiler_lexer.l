@@ -31,6 +31,7 @@ continue		{return T_CONTINUE; }
 switch 			{return T_SWITCH;}
 case 			{return T_CASE;  }
 default			{return T_DEFAULT;}
+goto			{return T_GOTO; }
 
 %{
 //comments
@@ -117,7 +118,7 @@ default			{return T_DEFAULT;}
 [.]				{ return T_PERIOD; }
 
 [0-9]+([.][0-9]*)? { yylval.number=strtod(yytext, 0); return T_NUMBER; }
-[a-z]+          { yylval.string=new std::string(yytext); return T_STRING; }
+[a-zA-Z]+          { yylval.string=new std::string(yytext); return T_STRING; }
 
 [ \t\r\n]+		{;}
 
