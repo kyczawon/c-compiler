@@ -516,7 +516,10 @@ public:
     
     virtual void code_gen(std::ostream &dst, Context &context) const override
     {
-        throw std::runtime_error("PostIncrement::code_gen not implemented.");
+        int reg = context.next_register();
+        dst << "\tlw\t$s"<<reg<<","<<context.get_binding(id)<<"($fp)"<<std::endl;
+        dst<<"\taddiu\t$s"<<reg+1<<",$s"<<reg<<",1"<<std::endl;
+        dst << "\tsw\t$s"<<reg+1<<","<<context.get_binding(id)<<"($fp)"<<std::endl;
     }
 };
 
@@ -536,7 +539,10 @@ public:
     
     virtual void code_gen(std::ostream &dst, Context &context) const override
     {
-        throw std::runtime_error("PreIncrement::code_gen not implemented.");
+        int reg = context.next_register();
+        dst << "\tlw\t$s"<<reg<<","<<context.get_binding(id)<<"($fp)"<<std::endl;
+        dst<<"\taddiu\t$s"<<reg<<",$s"<<reg<<",1"<<std::endl;
+        dst << "\tsw\t$s"<<reg<<","<<context.get_binding(id)<<"($fp)"<<std::endl;
     }
 };
 
@@ -556,7 +562,10 @@ public:
     
     virtual void code_gen(std::ostream &dst, Context &context) const override
     {
-        throw std::runtime_error("PostDecrement::code_gen not implemented.");
+        int reg = context.next_register();
+        dst << "\tlw\t$s"<<reg<<","<<context.get_binding(id)<<"($fp)"<<std::endl;
+        dst<<"\taddiu\t$s"<<reg+1<<",$s"<<reg<<",-1"<<std::endl;
+        dst << "\tsw\t$s"<<reg+1<<","<<context.get_binding(id)<<"($fp)"<<std::endl;
     }
 };
 
@@ -576,7 +585,10 @@ public:
     
     virtual void code_gen(std::ostream &dst, Context &context) const override
     {
-        throw std::runtime_error("PreDecrement::code_gen not implemented.");
+        int reg = context.next_register();
+        dst << "\tlw\t$s"<<reg<<","<<context.get_binding(id)<<"($fp)"<<std::endl;
+        dst<<"\taddiu\t$s"<<reg<<",$s"<<reg<<",-1"<<std::endl;
+        dst << "\tsw\t$s"<<reg<<","<<context.get_binding(id)<<"($fp)"<<std::endl;
     }
 };
 
@@ -611,10 +623,18 @@ public:
 
     virtual void code_gen(std::ostream &dst, Context &context) const override
     {
+        std::cout<<unary_operator<<std::endl;
         switch(hashit(unary_operator))
         {
+            case 3: //not
+                {
+                    int reg = context.next_register();
+                    dst<<"\tsltu\t$s"<<reg<<",$s"<<reg<<",1"<<std::endl;
+                    dst<<"\tandi\t$s"<<reg<<",$s"<<reg<<",0x00ff"<<std::endl;
+                    break;
+                }
             default:
-                throw std::runtime_error("UnaryOperator::code_gen is not implemented.");
+                throw std::runtime_error("UnaryOperator::code_gen the operator '" + unary_operator + "' is not implemented.");
         }
     }
 };
@@ -635,7 +655,8 @@ public:
     
     virtual void code_gen(std::ostream &dst, Context &context) const override
     {
-        throw std::runtime_error("SizeOf::code_gen not implemented.");
+        int size = context.get_size(context.get_type(id));
+        dst<<"\tli\t$s"<<context.next_register()<<","<<size<<std::endl;
     }
 };
 

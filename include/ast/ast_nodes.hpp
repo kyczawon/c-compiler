@@ -63,8 +63,10 @@ public:
     int get_binding(std::string key) {
         std::unordered_map<std::string,int>::iterator it = bindings.find(key);
         
-        if (it == bindings.end())
-            return parent->get_binding(key);
+        if (it == bindings.end()) {
+            if (parent != nullptr) return parent->get_binding(key);
+            else throw std::runtime_error("error: '" + key + "' undeclared");
+        }
         else
             return it->second;
     }
@@ -73,21 +75,20 @@ public:
         std::unordered_map<std::string,std::string>::iterator it = types.find(key);
         
         if (it == types.end())
-            return parent->get_type(key);
+            if (parent != nullptr) return parent->get_type(key);
+            else throw std::runtime_error("error: '" + key + "' undeclared");
         else
             return it->second;
     }
 
-    int get_size (std::string const& inString) const {
-        if (inString == "int") return 4;
-        else return 0;
+    int get_size (std::string const& type) const {
+        if (type == "int") return 4;
+        else throw std::runtime_error("type: " + type + "not implemented");
     }
 
     void add_binding(std::string type, std::string key) {
 
         int bytes = get_size(type);
-
-        if (bytes == 0) throw std::runtime_error("type: " + type + "not implemented");
 
         std::unordered_map<std::string,int>::iterator it = bindings.find(key);
             

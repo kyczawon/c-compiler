@@ -203,6 +203,7 @@ UNARY_EXPR
 	| T_DEC T_STRING { $$ = new PreDecrement(*$2); }
         | T_SIZE_OF T_STRING { $$ = new SizeOf(*$2); }
 	| T_SIZE_OF T_LBRACKET TYPE T_RBRACKET { $$ = new SizeOfType(*$3); }
+        | T_SIZE_OF T_LBRACKET T_STRING T_RBRACKET { $$ = new SizeOf(*$3); }
 
 UNARY_OPERATOR
 	: T_TIMES
