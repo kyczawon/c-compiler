@@ -439,6 +439,42 @@ public:
     }
 };
 
+class gotoStatement : public Node
+{
+protected:
+    std::string label;
+public:
+    gotoStatement(std::string _label)
+            : label(_label)
+        {}
+    virtual void translate(int level, std::ostream &dst) const override
+    {
+        throw std::runtime_error("gotoStatement::translate is not implemented.");
+    }
+    virtual void code_gen(std::ostream &dst, Context &context) const override
+    {
+        dst<<"\tb\t"<<label<<"\n\tnop\n";
+    }
+};
+
+class Label : public Node
+{
+protected:
+    std::string label;
+public:
+    Label(std::string _label)
+            : label(_label)
+        {}
+    virtual void translate(int level, std::ostream &dst) const override
+    {
+        throw std::runtime_error("gotoStatement::translate is not implemented.");
+    }
+    virtual void code_gen(std::ostream &dst, Context &context) const override
+    {
+        dst<<label<<":\n";
+    }
+};
+
 
 
 #endif

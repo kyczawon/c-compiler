@@ -8,7 +8,11 @@ int main(){
         int y = f(1,4);
         if (y) {
             printf("1<4 passed got %d\n",y);
-            return 0;
+            int z = f(1,1);
+            if(!z) {
+                printf("1<1 passed got %d\n",z);
+                return 0;
+            }
         }
         else printf("1<4 failed, got %d\n",y);
     } else printf("8<4 failed, got %d\n",x);
