@@ -1,4 +1,0 @@
-  File "dt10/soft/outputs/f09.py", line 2
-    def function(, a, b):
-                 ^
-SyntaxError: invalid syntax

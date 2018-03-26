@@ -236,7 +236,7 @@ FACTOR
 
 GLOBAL_VARIABLE_DECLARATION
         : TYPE T_STRING T_SEMI { $$ = new GlobalVariableDeclaration(*$1, *$2 );}
-        | TYPE T_STRING T_EQUALS EXPR_LIST T_SEMI { $$ = new InitialisedGlobalVariableDeclaration(*$1, *$2, $4 );}
+        | TYPE T_STRING T_EQUALS T_NUMBER T_SEMI { $$ = new InitialisedGlobalVariableDeclaration(*$1, *$2, $4 );}
 
 DECLARATION
         : TYPE T_STRING T_SEMI    { $$ = new VariableDeclaration(*$1, *$2 );}

@@ -5,6 +5,7 @@
 #include <iostream>
 #include <map>
 #include <unordered_map>
+#include <vector>
 
 #include <memory>
 #include <regex>
@@ -25,9 +26,8 @@ static std::string make_name(std::string base)
 
 class Node
 {
-protected:
-    static std::unordered_map<std::string,NodePtr>& getGlobals()  { static std::unordered_map<std::string,NodePtr> globals; return globals; }
 public:
+    static std::vector<std::string>& getGlobals()  { static std::vector<std::string> globals; return globals; }
     virtual ~Node()
     {}
 
@@ -58,15 +58,39 @@ private:
     std::unordered_map<std::string,unsigned int> functions;
     Context* parent;
 public:
+    bool is_first_global = true;
+    bool is_first_text = true;
+    
     Context(Context* _parent)
         : parent(_parent)
     {}
 
-    unsigned int get_binding(std::string key) {
+    unsigned int set_binding(std::string key, std::string reg, std::ostream &dst) {
+        int address = get_binding(key);
+        if (address < 0) { //global
+            dst<<"\tla\t$t0,"<<key<<std::endl;
+            dst<<"\tsw\t$"<<reg<<",($t0)"<<std::endl;
+        } else {
+            dst<<"\tsw\t$"<<reg<<","<<get_binding(key)<<"($fp)"<<std::endl;
+        }
+    }
+
+    unsigned int load_binding(std::string key, std::string reg, std::ostream &dst) {
+        int address = get_binding(key);
+        if (address < 0) { //global
+            dst<<"\tla\t$t0,"<<key<<std::endl;
+            dst<<"\tlw\t$"<<reg<<",($t0)"<<std::endl;
+        } else {
+            dst<<"\tlw\t$"<<reg<<","<<get_binding(key)<<"($fp)"<<std::endl;
+        }
+    }
+
+    int get_binding(std::string key) {
         std::unordered_map<std::string,unsigned int>::iterator it = bindings.find(key);
         
         if (it == bindings.end()) {
             if (parent != nullptr) return parent->get_binding(key);
+            else if (std::find(Node::getGlobals().begin(), Node::getGlobals().end(),key) != Node::getGlobals().end()) return -1;
             else throw std::runtime_error("error: '" + key + "' undeclared");
         } else return it->second;
     }

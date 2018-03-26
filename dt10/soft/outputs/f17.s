@@ -1,4 +1,4 @@
-	.text
+	.text	
 	.align	2
 	.global	main
 	.set	nomips16
@@ -6,6 +6,7 @@
 	.ent	main
 	.type	main, @function
 main:
+	.frame	$fp,96,$31
 	.set	noreorder
 	.set	nomacro
 	addiu	$sp,$sp,-96
@@ -48,8 +49,8 @@ $WL0:
 	sw	$s0,52($fp)
 	lw	$s0,56($fp)
 	sw	$s0,56($fp)
-	lw	$s0,52($fp)
-	lw	$s1,56($fp)
+	lw	$s1,52($fp)
+	lw	$s0,56($fp)
 	addu	$s2,$s1,$s0
 	sw	$s2,60($fp)
 	lw	$s0,60($fp)
@@ -58,8 +59,8 @@ $WL0:
 	sw	$s0,52($fp)
 	li	$s0,1
 	sw	$s0,56($fp)
-	lw	$s0,52($fp)
-	lw	$s1,56($fp)
+	lw	$s1,52($fp)
+	lw	$s0,56($fp)
 	addu	$s2,$s1,$s0
 	sw	$s2,60($fp)
 	lw	$s0,60($fp)
@@ -69,8 +70,8 @@ $WL1:
 	sw	$s0,52($fp)
 	lw	$s0,52($fp)
 	sw	$s0,56($fp)
-	lw	$s0,52($fp)
-	lw	$s1,56($fp)
+	lw	$s1,52($fp)
+	lw	$s0,56($fp)
 	xor	$s0,$s1,$s0
 	sltu	$s0,$0,$s0
 	andi	$s0,$s0,0x00ff
@@ -83,8 +84,8 @@ $WL2:
 	sw	$s0,64($fp)
 	li	$s0,2
 	sw	$s0,68($fp)
-	lw	$s0,64($fp)
-	lw	$s1,68($fp)
+	lw	$s1,64($fp)
+	lw	$s0,68($fp)
 	addu	$s2,$s1,$s0
 	sw	$s2,72($fp)
 	lw	$s0,72($fp)
@@ -94,8 +95,8 @@ $WL4:
 	sw	$s0,64($fp)
 	li	$s0,6
 	sw	$s0,68($fp)
-	lw	$s0,64($fp)
-	lw	$s1,68($fp)
+	lw	$s1,64($fp)
+	lw	$s0,68($fp)
 	sltu	$s0,$s1,$s0
 	andi	$s0,$s0,0x00ff
 	sw	$s0,72($fp)
@@ -107,14 +108,14 @@ $WL5:
 	sw	$s0,76($fp)
 	lw	$s0,52($fp)
 	sw	$s0,80($fp)
-	lw	$s0,76($fp)
-	lw	$s1,80($fp)
+	lw	$s1,76($fp)
+	lw	$s0,80($fp)
 	sub	$s2,$s1,$s0
 	sw	$s2,84($fp)
 	lw	$s0,56($fp)
 	sw	$s0,88($fp)
-	lw	$s0,84($fp)
-	lw	$s1,88($fp)
+	lw	$s1,84($fp)
+	lw	$s0,88($fp)
 	sub	$s2,$s1,$s0
 	sw	$s2,92($fp)
 	lw	$v0,92($fp)
@@ -136,3 +137,4 @@ $WL5:
 	.set	macro
 	.set	reorder
 	.end	main
+

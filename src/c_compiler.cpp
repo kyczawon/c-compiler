@@ -72,7 +72,6 @@ void print_code_gen(FILE* is, std::ostream &os) {
         yyin = is;
         const Node *ast=parseAST();
         Context context = new Context(nullptr);
-        os<<"\t.text"<<std::endl;
         ast->code_gen(os, context);
 }
 

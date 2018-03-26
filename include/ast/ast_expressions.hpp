@@ -25,18 +25,22 @@ public:
 
     virtual void code_gen(std::ostream &dst, Context &context) const override
     {
-        throw std::runtime_error("FunctionInvocation::code_gen is not implemented.");
+        input_params->code_gen(dst,context);
+        context.reset_registers();//reset the registers used by input parameters
+        dst<<"\tjal\t"<<identifier<<std::endl;
+        dst<<"\tnop"<<std::endl;
+        dst<<"\tsw\t$v0,"<<context.next_mem()<<"($fp)"<<std::endl;
     }
 };
 
 class InputParams : public Node
 {
 protected:
-    NodePtr list, parameter;
+    NodePtr list, expr;
 public:
-    InputParams(NodePtr _list, NodePtr _parameter)
+    InputParams(NodePtr _list, NodePtr _expr)
             : list(_list),
-            parameter(_parameter)
+            expr(_expr)
         {}
     virtual void translate(int level, std::ostream &dst) const override
     {
@@ -45,7 +49,7 @@ public:
             list->translate(0,dst);
             dst << ", ";
         }
-        parameter->translate(0,dst);
+        expr->translate(0,dst);
     }
 
     unsigned int get_num() const
@@ -63,7 +67,8 @@ public:
         if (list != nullptr) {
             list->code_gen(dst, context);
         }
-        parameter->code_gen(dst, context);
+        expr->code_gen(dst, context);
+        dst<<"\tlw\t$a"<<context.next_register()<<","<<context.get_current_mem()<<"($fp)"<<std::endl;
     }
 };
 

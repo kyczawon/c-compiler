@@ -57,9 +57,9 @@ public:
         {}
     virtual void translate(int level, std::ostream &dst) const override
     {
-        for (std::pair<std::string, NodePtr> element : getGlobals())
+        for (std::string element : getGlobals())
         {
-            dst<<std::endl<<std::string(level+1,'\t')<<"global "<<element.first;
+            dst<<std::endl<<std::string(level+1,'\t')<<"global "<<element;
         }
         if (seq != nullptr) { //compound statement could be empty
             seq->translate(level+1,dst);

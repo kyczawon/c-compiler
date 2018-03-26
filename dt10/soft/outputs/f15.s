@@ -1,4 +1,4 @@
-	.text
+	.text	
 	.align	2
 	.global	main
 	.set	nomips16
@@ -6,6 +6,7 @@
 	.ent	main
 	.type	main, @function
 main:
+	.frame	$fp,60,$31
 	.set	noreorder
 	.set	nomacro
 	addiu	$sp,$sp,-60
@@ -67,3 +68,4 @@ $IL0:
 	.set	macro
 	.set	reorder
 	.end	main
+

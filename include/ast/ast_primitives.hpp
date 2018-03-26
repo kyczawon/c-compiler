@@ -26,7 +26,7 @@ public:
 
     virtual void code_gen(std::ostream &dst, Context &context) const override
     {
-        dst << "\tlw\t$s0,"<<context.get_binding(id)<<"($fp)"<<std::endl;
+        context.load_binding(id,"s0",dst);
         dst << "\tsw\t$s0,"<<context.next_mem()<<"($fp)"<<std::endl;
     }
 };
