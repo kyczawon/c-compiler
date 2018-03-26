@@ -2,9 +2,9 @@ Date,Effort,Developers,Milestones
 21.02,2,lkn16;ms6616,DefineInitialMilestones
 21.02,10,lkn16;ms6616,LexAssignOperator;ParseAssignOperator;TranslateAssignOperator
 23.02,8,lkn16;ms6616,ParseStatements;ParseExpressions;TranslateStatements;TranslateExpressions
-26.02,4,lkn16;ms6617,AddStack;SupportConditionals
+26.02,4,lkn16;ms6616,AddStack;SupportConditionals
 27.02,4,lkn16,SupportFunctions;SupportOperators;SupportGlobalVariables;SupportFunctionCalls
-6.03,6,lkn16;ms6617,CreateCodeGenStructure;SetUpTestsuite
+6.03,6,lkn16;ms6616,CreateCodeGenStructure;SetUpTestsuite
 7.03,5,ms6616,SetUpTestsuite
 7.03,6,lkn16,ImplementStackForScopes
 14.03,8,ms6616,WriteTests
@@ -22,3 +22,5 @@ Date,Effort,Developers,Milestones
 22.03,9,lkn16,ParseAllOperators;CompileAllMajorOperators
 22.03,9,ms6616,SwitchStatement;CompileAllMajorOperators
 23.03,4,lkn16,FunctionBindings
+25.05,6,lkn16;ms6616,SaveToMem
+26.06,6,lkn16,SaveToMem;SupportGlobals;FunctionCalls

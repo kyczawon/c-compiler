@@ -26,3 +26,6 @@ ContinueBreakStatements,,5,ms6616,,Compile and test continue and break statement
 SwitchStatement,,4,ms6616,,Compile and test switch statement
 CompileAllMajorOperators,,8,lkn16,,Compile all non unary and non postfix operators
 FunctionBindings,,3,lkn16,this,Add bindings to functions to allow function calls
+SaveToMem,,8,lkn16,,"Instead of using consecutive registers for a statement, each expression needs to save into memory allowing expressions to be binded together"
+SupportGlobals,,4,lkn16,,Compile globals - create a data section and create a way of distinguishing between globals and scopes
+FunctionCalls,,2,lkn16,,compile function calls - both nullary and with many parameters. Get rid of nullaryfunctionInvocation and parse both as one
