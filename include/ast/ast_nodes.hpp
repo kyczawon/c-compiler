@@ -63,7 +63,9 @@ public:
     
     Context(Context* _parent)
         : parent(_parent)
-    {}
+    {
+        if(_parent != NULL) current_mem = (*_parent).mem_init();
+    }
 
     unsigned int set_binding(std::string key, std::string reg, std::ostream &dst) {
         int address = get_binding(key);
@@ -173,13 +175,17 @@ public:
         return _size+current_mem;
     }
 
+    int mem_init() {
+        return current_mem;
+    }
+
     int reset_last_mem(){
         current_mem = current_mem - 4;
         return _size+current_mem;
     }
 
     void reset_mem() {
-        current_mem = -4;
+        current_mem = 0;
     }
 };
 

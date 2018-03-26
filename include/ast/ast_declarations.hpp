@@ -31,7 +31,7 @@ public:
     {
         context.add_binding(type, id);
         value->code_gen(dst, context);
-        dst<<"\tlw\t$s0,"<<context.get_current_mem()<<"($fp)"<<std::endl;
+        // dst<<"\tlw\t$s0,"<<context.get_current_mem()<<"($fp)"<<std::endl;
         context.set_binding(id,"s0",dst);
     }
 };
