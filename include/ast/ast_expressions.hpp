@@ -43,8 +43,8 @@ public:
         //parameter list could contain one parameter
        if (list != nullptr) {
             list->translate(0,dst);
+            dst << ", ";
         }
-        dst << ", ";
         parameter->translate(0,dst);
     }
 
