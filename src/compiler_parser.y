@@ -43,7 +43,7 @@
 
 %type <expr> FACTOR STATEMENT DECLARATION FUNCTION_DECLARATION COMPOUND_STATEMENT SEQUENCE SEQUENCE_PROG
 %type <expr> CONDITIONAL_STATEMENT PARAMETER_LIST PARAMETER EXPR_LIST GLOBAL_DECLARATION GLOBAL_VARIABLE_DECLARATION IF_STATEMENT
-%type <expr> EMPTY CASE_COMPOUND CASE_STATEMENT 
+%type <expr> EMPTY CASE_COMPOUND CASE_STATEMENT INPUT_PARAMS
 %type <expr> ASSIGN_EXPR COND_EXPR LOGICAL_OR_EXPR LOGICAL_AND_EXPR BIT_OR_EXPR BIT_XOR_EXPR BIT_AND_EXPR EQUALITY_EXPR RELATIONAL_EXPR
 %type <expr> ADDITIVE_EXPR MULTIPLICATIVE_EXPR SHIFT_EXPR CAST_EXPR UNARY_EXPR POSTFIX_EXPR 
 %type <number> T_NUMBER
@@ -123,7 +123,7 @@ IF_STATEMENT
 
 EXPR_LIST
         : ASSIGN_EXPR
-        | EXPR_LIST T_COMMA ASSIGN_EXPR { $$ = new NodeList($1,$3);}
+        | EXPR_LIST T_COMMA ASSIGN_EXPR { $$ = new ExprList($1,$3);}
 
 ASSIGN_EXPR
         : COND_EXPR
@@ -217,14 +217,17 @@ UNARY_OPERATOR
 
 POSTFIX_EXPR
         : FACTOR
-        | T_STRING T_LBRACKET T_RBRACKET { $$ = new UnaryFunctionInvocation(*$1);}
-        | T_STRING T_LBRACKET EXPR_LIST T_RBRACKET { $$ = new FunctionInvocation(*$1, $3);}
+        | T_STRING T_LBRACKET INPUT_PARAMS T_RBRACKET { $$ = new FunctionInvocation(*$1, $3);}
         | T_STRING T_INC { $$ = new PostIncrement(*$1); }
 	| T_STRING T_DEC { $$ = new PostDecrement(*$1); }
         | T_STRING T_LSQUARE EXPR_LIST T_RSQUARE { $$ = new Array(*$1, $3); }
 	| T_STRING T_PERIOD T_STRING  { $$ = new Member(*$1, *$3); }
 	| T_STRING T_PTR T_STRING { $$ = new MemberPtr(*$1, *$3); }
 
+INPUT_PARAMS
+        : EMPTY ASSIGN_EXPR { $$ = new InputParams($1,$2);}
+        | INPUT_PARAMS T_COMMA ASSIGN_EXPR { $$ = new InputParams($1,$3);}
+        | EMPTY
 FACTOR
         : T_MINUS T_NUMBER   {$$ = new NegativeNumber($2);}
         | T_NUMBER          {$$ = new Number( $1 );}

@@ -1,5 +1,5 @@
 
-def geo(n):
+def geo(, n):
 	acc=0
 	t=n
 	while (t < n):
@@ -7,7 +7,7 @@ def geo(n):
 
 	return acc
 def main():
-	return geo(4) + geo(3) + geo(2)
+	return geo(, 4) + geo(, 3) + geo(, 2)
 # Boilerplate
 if __name__ == "__main__":
 	import sys

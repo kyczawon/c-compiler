@@ -31,7 +31,8 @@ public:
     {
         context.add_binding(type, id);
         value->code_gen(dst, context);
-        dst << "\tsw\t$s"<<context.get_current_register()<<","<<context.get_binding(id)<<"($fp)"<<std::endl;
+        dst<<"\tlw\t$s0,"<<context.get_current_mem()<<"($fp)"<<std::endl;
+        dst<<"\tsw\t$s0,"<<context.get_binding(id)<<"($fp)"<<std::endl;
 
     }
 };
@@ -112,7 +113,7 @@ public:
     virtual void code_gen(std::ostream &dst, Context &context) const override
     {
         context.add_binding(type,id);
-        dst << "\tsw\t$a"<<context.next_register()<<","<<context.get_binding(id)<<"($fp)"<<std::endl;
+        dst<<"\tsw\t$a"<<context.next_register()<<","<<context.get_binding(id)<<"($fp)"<<std::endl;
     }
 };
 
@@ -154,9 +155,9 @@ public:
         }
         parameter->code_gen(dst, context);
         // paremter list cannot containg more than 4 parameters (assuming 4 bytes parameters)
-        if (context.get_binding(param->Parameter::getId()) > 12) {
-            throw std::runtime_error("More than 4 parameters not supported");
-        }
+        // if (context.get_binding(param->Parameter::getId()) > 12) {
+        //     throw std::runtime_error("More than 4 parameters not supported");
+        // }
     }
 };
 
@@ -208,9 +209,21 @@ public:
         }
         compound->code_gen(inner_compiled, inner_context);
         dst << "\taddiu	$sp,$sp,-" << inner_context.size()<<std::endl;
+        dst<<"\tsw\t$31, 4($sp)\n";
+        dst<<"\tsw\t$30, 8($sp)\n";
+        dst<<"\tsw\t$29, 12($sp)\n";
+        dst<<"\tsw\t$28, 16($sp)\n";
+        dst<<"\tsw\t$s7, 20($sp)\n";
+        dst<<"\tsw\t$s6, 24($sp)\n";
+        dst<<"\tsw\t$s5, 28($sp)\n";
+        dst<<"\tsw\t$s4, 32($sp)\n";
+        dst<<"\tsw\t$s3, 36($sp)\n";
+        dst<<"\tsw\t$s2, 40($sp)\n";
+        dst<<"\tsw\t$s1, 44($sp)\n";
+        dst<<"\tsw\t$s0, 48($sp)\n";
+        dst<<"\tmove\t$fp,$sp"<<std::endl;
         dst<<inner_compiled.str();
         // dst << "\taddiu	$sp,$sp," << inner_context.size()<<std::endl;
-
         dst<<"\t.set\tmacro"<<std::endl;
         dst<<"\t.set\treorder"<<std::endl;
         dst<<"\t.end\t"<<identifier<<std::endl;

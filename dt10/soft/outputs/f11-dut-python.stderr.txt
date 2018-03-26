@@ -1,0 +1,4 @@
+  File "dt10/soft/outputs/f11.py", line 2
+    def geo(, n):
+            ^
+SyntaxError: invalid syntax

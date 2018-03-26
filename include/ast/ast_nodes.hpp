@@ -50,7 +50,8 @@ public:
 
 class Context {
 private:
-    unsigned int _size = 0;
+    unsigned int _size = 52;
+    int current_mem = -4;
     int current_register = -1;
     std::unordered_map<std::string,unsigned int> bindings;
     std::unordered_map<std::string,std::string> types;
@@ -118,7 +119,7 @@ public:
     }
 
     unsigned int size() {
-        return _size;
+        return _size+current_mem+4;
     }
 
     int next_register() {
@@ -137,6 +138,24 @@ public:
 
     void reset_registers() {
         current_register = -1;
+    }
+
+    int next_mem() {
+        current_mem = current_mem + 4;
+        return _size+current_mem;
+    }
+
+    int get_current_mem() {
+        return _size+current_mem;
+    }
+
+    int reset_last_mem(){
+        current_mem = current_mem - 4;
+        return _size+current_mem;
+    }
+
+    void reset_mem() {
+        current_mem = -4;
     }
 };
 

@@ -1,1 +1,1 @@
-f03, translate, Pass
+f03, translate, FAIL,   Expected 17, got 1

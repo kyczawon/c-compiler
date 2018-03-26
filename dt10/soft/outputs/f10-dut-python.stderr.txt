@@ -1,0 +1,4 @@
+  File "dt10/soft/outputs/f10.py", line 2
+    def factorial(, n):
+                  ^
+SyntaxError: invalid syntax

@@ -26,7 +26,8 @@ public:
 
     virtual void code_gen(std::ostream &dst, Context &context) const override
     {
-        dst << "\tlw\t$s"<<context.next_register()<<","<<context.get_binding(id)<<"($fp)"<<std::endl;
+        dst << "\tlw\t$s0,"<<context.get_binding(id)<<"($fp)"<<std::endl;
+        dst << "\tsw\t$s0,"<<context.next_mem()<<"($fp)"<<std::endl;
     }
 };
 
@@ -50,7 +51,8 @@ public:
 
     virtual void code_gen(std::ostream &dst, Context &context) const override
     {
-        dst << "\tli\t$s"<<context.next_register()<<","<<value<<std::endl;
+        dst<<"\tli\t$s0,"<<value<<std::endl;
+        dst<<"\tsw\t$s0,"<<context.next_mem()<<"($fp)"<<std::endl;
     }
 };
 
@@ -74,7 +76,8 @@ public:
 
     virtual void code_gen(std::ostream &dst, Context &context) const override
     {
-        throw std::runtime_error("NegativeNumber::code_gen is not implemented.");
+        dst << "\tli\t$s0,"<<value<<std::endl;
+        dst << "\tsw\t$s0,"<<context.next_mem()<<"($fp)"<<std::endl;
     }
 };
 

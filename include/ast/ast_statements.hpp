@@ -28,10 +28,22 @@ public:
     virtual void code_gen(std::ostream &dst, Context &context) const override
     {
         expr->code_gen(dst,context);
-        dst<<"\taddi\t$v0,$s"<<context.get_current_register()<<","<<std::hex<<0<<std::endl;
+        dst<<"\tlw\t$v0,"<<context.get_current_mem()<<"($fp)"<<std::endl;
+        dst<<"\tmove\t$sp,$fp"<<std::endl;
+		dst<<"\tlw\t$31, 4($sp)\n";
+        dst<<"\tlw\t$30, 8($sp)\n";
+        dst<<"\tlw\t$29, 12($sp)\n";
+        dst<<"\tlw\t$28, 16($sp)\n";
+        dst<<"\tlw\t$s7, 20($sp)\n";
+        dst<<"\tlw\t$s6, 24($sp)\n";
+        dst<<"\tlw\t$s5, 28($sp)\n";
+        dst<<"\tlw\t$s4, 32($sp)\n";
+        dst<<"\tlw\t$s3, 36($sp)\n";
+        dst<<"\tlw\t$s2, 40($sp)\n";
+        dst<<"\tlw\t$s1, 44($sp)\n";
+        dst<<"\tlw\t$s0, 48($sp)\n";
         dst<<"\tj\t$31"<<std::endl;
-        dst <<"\taddiu\t$sp,$sp," << std::hex << std::to_string(context.size()) << std::endl;
-        context.reset_registers();	
+        dst <<"\taddiu\t$sp,$sp,"<<context.size()<<std::endl;
     }
 };
 
@@ -102,7 +114,7 @@ public:
     virtual void code_gen(std::ostream &dst, Context &context) const override
     {
         expr->code_gen(dst,context);
-        context.reset_registers();
+        context.reset_mem();
     }
 };
 
@@ -133,7 +145,8 @@ public:
     virtual void code_gen(std::ostream &dst, Context &context) const override
     {
         condition->code_gen(dst,context);
-        dst<<"\tbeq\t$s"<<context.get_current_register()<<",$0,"<<endLabel;
+        dst<<"\tlw\t$s0,"<<context.get_current_mem()<<"($fp)"<<std::endl;
+        dst<<"\tbeq\t$s0,$0,"<<endLabel;
         dst<<std::endl<<"\tnop"<<std::endl;
         Context inner_context = new Context(context);
         sequence->code_gen(dst,inner_context);
@@ -174,7 +187,8 @@ public:
     virtual void code_gen(std::ostream &dst, Context &context) const override
     {
         condition->code_gen(dst,context);
-        dst<<"\tbeq\t$s"<<context.get_current_register()<<",$0,"<<elseLabel;
+        dst<<"\tlw\t$s0,"<<context.get_current_mem()<<"($fp)"<<std::endl;
+        dst<<"\tbeq\t$s0,$0,"<<elseLabel;
         dst<<std::endl<<"\tnop"<<std::endl;
         Context if_context = new Context(context);
         ifSequence->code_gen(dst,if_context);
@@ -226,7 +240,8 @@ public:
         sequence->code_gen(dst,inner_context);
         dst<<condLabel<<":"<<std::endl;
         condition->code_gen(dst,context);
-        dst<<"\tbne\t$s"<<context.get_current_register()<<",$0,"<<seqLabel;  
+        dst<<"\tlw\t$s0,"<<context.get_current_mem()<<"($fp)"<<std::endl;
+        dst<<"\tbne\t$s0,$0,"<<seqLabel;  
         dst<<std::endl<<"\tnop"<<std::endl;  
         dst<<endLabel<<":"<<std::endl;
         condTracker.erase(condTracker.begin());
@@ -270,7 +285,8 @@ public:
         sequence->code_gen(dst,inner_context);
         dst<<condLabel<<":"<<std::endl;
         condition->code_gen(dst,context);
-        dst<<"\tbne\t$s"<<context.get_current_register()<<",$0,"<<seqLabel;  
+        dst<<"\tlw\t$s0,"<<context.get_current_mem()<<"($fp)"<<std::endl;
+        dst<<"\tbne\t$s0,$0,"<<seqLabel;  
         dst<<std::endl<<"\tnop"<<std::endl; 
         dst<<endLabel<<":"<<std::endl;
         condTracker.erase(condTracker.begin());
@@ -314,7 +330,8 @@ public:
         increment->code_gen(dst, cond_context);
         dst<<condLabel<<":"<<std::endl;
         condition->code_gen(dst, cond_context);
-        dst<<"\tbne\t$s"<<cond_context.get_current_register()<<",$0,"<<seqLabel<<std::endl;
+        dst<<"\tlw\t$s0,"<<cond_context.get_current_mem()<<"($fp)"<<std::endl;
+        dst<<"\tbne\t$s0,$0,"<<seqLabel<<std::endl;
         dst<<endLabel<<":"<<std::endl;
         condTracker.erase(condTracker.begin());
         endTracker.erase(endTracker.begin());
@@ -389,12 +406,13 @@ public:
     virtual void code_gen(std::ostream &dst, Context &context) const override
     {
         if(condition!=NULL){
-        Context cond_context = new Context(context);
-        switchTracker[0]->code_gen(dst, cond_context);
-        int switch_reg = cond_context.get_current_register();
-        condition->code_gen(dst,cond_context);
-        dst<<"\tbne\t$s"<<cond_context.get_current_register()<<",$s"<< switch_reg <<","<<endLabel;
-        dst<<std::endl<<"\tnop"<<std::endl;
+            Context cond_context = new Context(context);
+            switchTracker[0]->code_gen(dst, cond_context);
+            dst<<"\tlw\t$s0,"<<cond_context.get_current_mem()<<"($fp)"<<std::endl;
+            condition->code_gen(dst,cond_context);
+            dst<<"\tlw\t$s1,"<<cond_context.get_current_mem()<<"($fp)"<<std::endl;
+            dst<<"\tbne\t$s1,$s0,"<<endLabel<<std::endl;
+            dst<<"\tnop"<<std::endl;
         }
         Context inner_context = new Context(context);
         sequence->code_gen(dst,inner_context);

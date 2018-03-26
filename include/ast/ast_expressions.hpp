@@ -6,18 +6,20 @@
 class FunctionInvocation : public Node
 {
 protected:
-    NodePtr input_args;
+    NodePtr input_params;
     std::string identifier;
 public:
-    FunctionInvocation(std::string &_identifier, NodePtr _input_args)
+    FunctionInvocation(std::string &_identifier, NodePtr _input_params)
         : identifier(_identifier)
-        , input_args(_input_args)
+        , input_params(_input_params)
     {
     }
     virtual void translate(int level, std::ostream &dst) const override
     {
         dst<<identifier<<"(";
-        input_args->translate(0,dst);
+        if (input_params != nullptr) {//there could be no input parameters into a function
+            input_params->translate(0,dst);
+        }
         dst<<")";
     }
 
@@ -27,32 +29,50 @@ public:
     }
 };
 
-class UnaryFunctionInvocation : public Node
+class InputParams : public Node
 {
 protected:
-    std::string identifier;
+    NodePtr list, parameter;
 public:
-    UnaryFunctionInvocation(std::string &_identifier)
-        : identifier(_identifier)
-    {
-    }
+    InputParams(NodePtr _list, NodePtr _parameter)
+            : list(_list),
+            parameter(_parameter)
+        {}
     virtual void translate(int level, std::ostream &dst) const override
     {
-        dst<<identifier<<"()";
+        //parameter list could contain one parameter
+       if (list != nullptr) {
+            list->translate(0,dst);
+        }
+        dst << ", ";
+        parameter->translate(0,dst);
+    }
+
+    unsigned int get_num() const
+    {
+        const ParameterList* params = dynamic_cast<const ParameterList *>(list);
+        unsigned int num = 1;
+        if (list != nullptr) {
+            num += params->get_num();
+        }
+        return num;
     }
 
     virtual void code_gen(std::ostream &dst, Context &context) const override
     {
-        throw std::runtime_error("UnaryFunctionInvocation::code_gen is not implemented.");
+        if (list != nullptr) {
+            list->code_gen(dst, context);
+        }
+        parameter->code_gen(dst, context);
     }
 };
 
-class NodeList : public Node
+class ExprList : public Node
 {
 protected:
     NodePtr expr_list, expr;
 public:
-    NodeList(NodePtr _expr_list, NodePtr _expr)
+    ExprList(NodePtr _expr_list, NodePtr _expr)
             : expr_list(_expr_list),
             expr(_expr)
         {}

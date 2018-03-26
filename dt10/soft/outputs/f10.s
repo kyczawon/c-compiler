@@ -3,7 +3,6 @@
 	.global	factorial
 	.set	nomips16
 	.set	nomicromips
-	.type	factorial, @function
 	.ent	factorial
 	.type	factorial, @function
 factorial:

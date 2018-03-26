@@ -3,31 +3,85 @@
 	.global	main
 	.set	nomips16
 	.set	nomicromips
-	.type	main, @function
 	.ent	main
 	.type	main, @function
 main:
 	.set	noreorder
 	.set	nomacro
-	addiu	$sp,$sp,-0
+	addiu	$sp,$sp,-112
+	sw	$31, 4($sp)
+	sw	$30, 8($sp)
+	sw	$29, 12($sp)
+	sw	$28, 16($sp)
+	sw	$s7, 20($sp)
+	sw	$s6, 24($sp)
+	sw	$s5, 28($sp)
+	sw	$s4, 32($sp)
+	sw	$s3, 36($sp)
+	sw	$s2, 40($sp)
+	sw	$s1, 44($sp)
+	sw	$s0, 48($sp)
+	move	$fp,$sp
 	li	$s0,1
-	li	$s1,2
-	mul	$s2,$s0,$s1
-	li	$s3,3
-	li	$s4,4
-	mul	$s5,$s3,$s4
-	addu	$s6,$s4,$s5
-	li	$s7,5
-	li	$s8,6
-	mul	$s9,$s7,$s8
-	addu	$s10,$s8,$s9
-	li	$s11,7
-	li	$s12,8
-	mul	$s13,$s11,$s12
-	addu	$s14,$s12,$s13
-	addi	$v0,$s14,0
+	sw	$s0,52($fp)
+	li	$s0,2
+	sw	$s0,56($fp)
+	lw	$s0,52($fp)
+	lw	$s1,56($fp)
+	mul	$s2,$s1,$s0
+	sw	$s2,60($fp)
+	li	$s0,3
+	sw	$s0,64($fp)
+	li	$s0,4
+	sw	$s0,68($fp)
+	lw	$s0,64($fp)
+	lw	$s1,68($fp)
+	mul	$s2,$s1,$s0
+	sw	$s2,72($fp)
+	lw	$s0,60($fp)
+	lw	$s1,72($fp)
+	addu	$s2,$s1,$s0
+	sw	$s2,76($fp)
+	li	$s0,5
+	sw	$s0,80($fp)
+	li	$s0,6
+	sw	$s0,84($fp)
+	lw	$s0,80($fp)
+	lw	$s1,84($fp)
+	mul	$s2,$s1,$s0
+	sw	$s2,88($fp)
+	lw	$s0,76($fp)
+	lw	$s1,88($fp)
+	addu	$s2,$s1,$s0
+	sw	$s2,92($fp)
+	li	$s0,7
+	sw	$s0,96($fp)
+	li	$s0,8
+	sw	$s0,100($fp)
+	lw	$s0,96($fp)
+	lw	$s1,100($fp)
+	mul	$s2,$s1,$s0
+	sw	$s2,104($fp)
+	lw	$s0,92($fp)
+	lw	$s1,104($fp)
+	addu	$s2,$s1,$s0
+	sw	$s2,108($fp)
+	lw	$v0,108($fp)
+	move	$sp,$fp
+	lw	$31, 4($sp)
+	lw	$30, 8($sp)
+	lw	$29, 12($sp)
+	lw	$28, 16($sp)
+	lw	$s7, 20($sp)
+	lw	$s6, 24($sp)
+	lw	$s5, 28($sp)
+	lw	$s4, 32($sp)
+	lw	$s3, 36($sp)
+	lw	$s2, 40($sp)
+	lw	$s1, 44($sp)
+	lw	$s0, 48($sp)
 	j	$31
-	addiu	$sp,$sp,0
+	addiu	$sp,$sp,112
 	.set	macro
 	.set	reorder
 	.end	main
