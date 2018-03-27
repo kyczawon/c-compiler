@@ -23,7 +23,7 @@ f:
 	sw	$s1, 44($sp)
 	sw	$s0, 48($sp)
 	move	$fp,$sp
-	sw	$a,52($fp)
+	sw	$a0,52($fp)
 	li	$s0,10
 	sw	$s0,56($fp)
 	lw	$v0,56($fp)

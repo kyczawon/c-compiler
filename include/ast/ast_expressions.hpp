@@ -25,7 +25,7 @@ public:
 
     virtual void code_gen(std::ostream &dst, Context &context) const override
     {
-        input_params->code_gen(dst,context);
+        if (input_params != nullptr) input_params->code_gen(dst,context);
         context.reset_registers();//reset the registers used by input parameters
         dst<<"\tjal\t"<<identifier<<std::endl;
         dst<<"\tnop"<<std::endl;
