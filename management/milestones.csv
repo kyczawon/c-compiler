@@ -24,8 +24,9 @@ IfElseStatements,,4,ms6616,,Compile and test if else statements
 ForWhileStatements,,6,ms6616,,Compile and test for and while statements
 ContinueBreakStatements,,5,ms6616,,Compile and test continue and break statements
 SwitchStatement,,4,ms6616,,Compile and test switch statement
-CompileAllMajorOperators,,8,lkn16,,Compile all non unary and non postfix operators
+CompileAllMajorOperators,,8,lkn16,acb5c23f4a34dd1102b541afc53165d74abb1cb8,Compile all non unary and non postfix operators
 FunctionBindings,,3,lkn16,this,Add bindings to functions to allow function calls
-SaveToMem,,8,lkn16,,"Instead of using consecutive registers for a statement, each expression needs to save into memory allowing expressions to be binded together"
+SaveToMem,,8,lkn16,3ca4363e1b468362819e9bf11e6ae631610ba120,"Instead of using consecutive registers for a statement, each expression needs to save into memory allowing expressions to be binded together"
 SupportGlobals,,4,lkn16,,Compile globals - create a data section and create a way of distinguishing between globals and scopes
-FunctionCalls,,2,lkn16,,compile function calls - both nullary and with many parameters. Get rid of nullaryfunctionInvocation and parse both as one
+FunctionCalls,,2,lkn16,d751308ececb80221c10bbb25ad594edcb0db367,compile function calls - both nullary and with many parameters. Get rid of nullaryfunctionInvocation and parse both as one
+GoToStatements,,2,ms6616,,Compile and test go to statements
