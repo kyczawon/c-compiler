@@ -117,7 +117,12 @@ goto			{return T_GOTO; }
 [,]             { return T_COMMA; }
 [.]				{ return T_PERIOD; }
 
-[0-9]+([.][0-9]*)? { yylval.number=strtod(yytext, 0); return T_NUMBER; }
+%{
+//other
+//[0-9]+[.][0-9]+ { yylval.doubl=strtod(yytext, 0); return T_DOUBLE; }
+%}
+
+[0-9]+  { yylval.integer=strtod(yytext, 0); return T_INTEGER; }
 [a-zA-Z]+          { yylval.string=new std::string(yytext); return T_STRING; }
 
 [ \t\r\n]+		{;}

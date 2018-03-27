@@ -55,6 +55,7 @@ private:
     int current_register = -1;
     std::unordered_map<std::string,unsigned int> bindings;
     std::unordered_map<std::string,std::string> types;
+    std::unordered_map<std::string,std::pair<std::string,unsigned int> > Arrtypes;
     std::unordered_map<std::string,unsigned int> functions;
     Context* parent;
 public:
@@ -67,23 +68,23 @@ public:
         if(_parent != NULL) current_mem = (*_parent).mem_init();
     }
 
-    unsigned int set_binding(std::string key, std::string reg, std::ostream &dst) {
+    unsigned int set_binding(std::string key, std::string reg, std::ostream &dst, int offset) {
         int address = get_binding(key);
         if (address < 0) { //global
             dst<<"\tla\t$t0,"<<key<<std::endl;
             dst<<"\tsw\t$"<<reg<<",($t0)"<<std::endl;
         } else {
-            dst<<"\tsw\t$"<<reg<<","<<get_binding(key)<<"($fp)"<<std::endl;
+            dst<<"\tsw\t$"<<reg<<","<<get_binding(key)+offset<<"($fp)"<<std::endl;
         }
     }
 
-    unsigned int load_binding(std::string key, std::string reg, std::ostream &dst) {
+    unsigned int load_binding(std::string key, std::string reg, std::ostream &dst, int offset) {
         int address = get_binding(key);
         if (address < 0) { //global
             dst<<"\tla\t$t0,"<<key<<std::endl;
             dst<<"\tlw\t$"<<reg<<",($t0)"<<std::endl;
         } else {
-            dst<<"\tlw\t$"<<reg<<","<<get_binding(key)<<"($fp)"<<std::endl;
+            dst<<"\tlw\t$"<<reg<<","<<get_binding(key)+offset<<"($fp)"<<std::endl;
         }
     }
 
@@ -97,8 +98,8 @@ public:
         } else return it->second;
     }
 
-    std::string get_type(std::string key) {
-        std::unordered_map<std::string,std::string>::iterator it = types.find(key);
+    std::string get_type(std::string key) const {
+        auto it = types.find(key);
         
         if (it == types.end()) {
             if (parent != nullptr) return parent->get_type(key);
@@ -106,9 +107,33 @@ public:
         } else return it->second;
     }
 
+    std::string get_arr_type(std::string key) {
+        std::unordered_map<std::string,std::pair<std::string,unsigned int> >::iterator it = Arrtypes.find(key);
+        
+        if (it == Arrtypes.end()) {
+            if (parent != nullptr) return parent->get_arr_type(key);
+            else throw std::runtime_error("error: '" + key + "' undeclared");
+        } else return it->second.first; //get the type within the pair
+    }
+
+    unsigned int get_size_bind(std::string const& key) const {
+        unsigned int size = get_size(get_type(key));
+        if (size != 0) return size;
+        else return get_arr_size(key);
+    }
+
     unsigned int get_size (std::string const& type) const {
         if (type == "int") return 4;
-        else throw std::runtime_error("type: " + type + "not implemented");
+        else return 0;
+    }
+
+    unsigned int get_arr_size (std::string const& key) const {
+        auto it = Arrtypes.find(key);
+        
+        if (it == Arrtypes.end()) {
+            if (parent != nullptr) return parent->get_arr_size(key);
+            else throw std::runtime_error("error: '" + key + "' undeclared");
+        } else return it->second.second; //get the size within the pair
     }
 
     unsigned int get_function(std::string key) {
@@ -132,6 +157,18 @@ public:
             _size += bytes;
 
             types[key] = type;
+        } else throw std::runtime_error("redefinition of '"+key+"'");
+    }
+
+    void add_arr_binding(std::string type, std::string key, unsigned int size) {
+
+        std::unordered_map<std::string,unsigned int>::iterator it = bindings.find(key);
+            
+        if (it == bindings.end()) {
+            bindings[key] = _size;
+            _size += size*get_size(type);
+
+            Arrtypes[key] = std::make_pair(type, size);
         } else throw std::runtime_error("redefinition of '"+key+"'");
     }
 

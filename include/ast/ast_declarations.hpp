@@ -32,7 +32,7 @@ public:
         context.add_binding(type, id);
         value->code_gen(dst, context);
         // dst<<"\tlw\t$s0,"<<context.get_current_mem()<<"($fp)"<<std::endl;
-        context.set_binding(id,"s0",dst);
+        context.set_binding(id,"s0",dst,0);
     }
 };
 
@@ -121,7 +121,7 @@ public:
     {
         context.add_binding(type,id);
         std::string reg = "a"+std::to_string(context.next_register());
-        context.set_binding(id,reg,dst);
+        context.set_binding(id,reg,dst,0);
     }
 };
 
@@ -247,8 +247,7 @@ public:
     }
 };
 
-class VariableDeclaration
-    : public Node
+class VariableDeclaration : public Node
 {
 private:
     std::string type, id;
@@ -269,6 +268,96 @@ public:
     virtual void code_gen(std::ostream &dst, Context &context) const override
     {
         context.add_binding(type, id);
+    }
+};
+
+class ArrayDeclaration : public Node
+{
+private:
+    std::string type, id;
+    int size;
+public:
+    ArrayDeclaration(const std::string &_type, const std::string &_id, int _size)
+        : type(_type),
+        id(_id),
+        size(_size)
+    {}
+
+    const std::string getId() const
+    { return id; }
+
+    virtual void translate(int level, std::ostream &dst) const override
+    {
+        throw std::runtime_error("ArrayDeclaration::translate is not implemented.");
+    }
+
+    virtual void code_gen(std::ostream &dst, Context &context) const override
+    {
+        context.add_arr_binding(type,id,size);
+    }
+};
+
+class InitParams : public Node
+{
+protected:
+    NodePtr list, expr;
+public:
+    InitParams(NodePtr _list, NodePtr _expr)
+            : list(_list),
+            expr(_expr)
+        {}
+    virtual void translate(int level, std::ostream &dst) const override
+    {
+        throw std::runtime_error("InitParams::translate is not implemented.");
+    }
+
+    //undefined behaviour
+    virtual void code_gen(std::ostream &dst, Context &context) const override
+    {
+        throw std::runtime_error("InitParams::code_gen more input parameters to this function need to be supplied");
+    }
+
+    virtual void code_gen(std::ostream &dst, Context &context,const int& mem,const int& type_size, int& current) const
+    {
+        if (list != nullptr) {
+            current++;
+            const InitParams* params = dynamic_cast<const InitParams *>(list);
+            params->code_gen(dst, context, mem,type_size, current);
+        }
+        expr->code_gen(dst,context);
+        dst<<"\tlw\t$s0"<<","<<context.get_current_mem()<<"($fp)"<<std::endl;
+        dst<<"\tsw\t$s0"<<","<<mem+type_size*current<<"($fp)"<<std::endl;
+    }
+};
+
+class InitialisedArrayDeclaration : public Node
+{
+private:
+    std::string type, id;
+    int size;
+    NodePtr init;
+public:
+    InitialisedArrayDeclaration(const std::string &_type, const std::string &_id, int _size, NodePtr _init)
+        : type(_type),
+        id(_id),
+        size(_size),
+        init(_init)
+    {}
+
+    const std::string getId() const
+    { return id; }
+
+    virtual void translate(int level, std::ostream &dst) const override
+    {
+        throw std::runtime_error("InitialisedArrayDeclaration::translate is not implemented.");
+    }
+
+    virtual void code_gen(std::ostream &dst, Context &context) const override
+    {
+        context.add_arr_binding(type,id,size);
+        const InitParams* params = dynamic_cast<const InitParams *>(init);
+        int num = 0;
+        params->code_gen(dst,context, context.get_binding(id), context.get_size(type),num);
     }
 };
 

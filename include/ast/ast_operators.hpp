@@ -575,7 +575,13 @@ public:
     
     virtual void code_gen(std::ostream &dst, Context &context) const override
     {
-        throw std::runtime_error("Array::code_gen not implemented.");
+        expr_list->code_gen(dst, context);
+        dst<<"\tlw\t$s0"<<","<<context.get_current_mem()<<"($fp)"<<std::endl;
+        context.load_binding(id,"s1",dst,0);
+        dst<<"\taddu\t$t0,$s0,$s1"<<std::endl;
+        dst<<"\taddu\t$t0,$fp,$t0"<<std::endl;
+        dst<<"\tlw\t$s0,($t0)"<<std::endl;
+        dst<<"\tsw\t$s0,"<<context.next_mem()<<"($fp)"<<std::endl;
     }
 };
 
@@ -595,9 +601,9 @@ public:
     
     virtual void code_gen(std::ostream &dst, Context &context) const override
     {
-        context.load_binding(id, "s0", dst);
+        context.load_binding(id, "s0", dst,0);
         dst<<"\taddiu\t$s1,$s0,1"<<std::endl;
-        context.set_binding(id, "s1", dst);
+        context.set_binding(id, "s1", dst,0);
     }
 };
 
@@ -617,9 +623,9 @@ public:
     
     virtual void code_gen(std::ostream &dst, Context &context) const override
     {
-        context.load_binding(id, "s0", dst);
+        context.load_binding(id, "s0", dst,0);
         dst<<"\taddiu\t$s0,$s0,1"<<std::endl;
-        context.set_binding(id, "s0", dst);
+        context.set_binding(id, "s0", dst,0);
     }
 };
 
@@ -639,9 +645,9 @@ public:
     
     virtual void code_gen(std::ostream &dst, Context &context) const override
     {
-        context.load_binding(id, "s0", dst);
+        context.load_binding(id, "s0", dst,0);
         dst<<"\taddiu\t$s1,$s0,-1"<<std::endl;
-        context.set_binding(id, "s1", dst);
+        context.set_binding(id, "s1", dst,0);
     }
 };
 
@@ -661,9 +667,9 @@ public:
     
     virtual void code_gen(std::ostream &dst, Context &context) const override
     {
-        context.load_binding(id, "s0", dst);
+        context.load_binding(id, "s0", dst,0);
         dst<<"\taddiu\t$s0,$s0,-1"<<std::endl;
-        context.set_binding(id, "s0", dst);
+        context.set_binding(id, "s0", dst,0);
     }
 };
 
@@ -732,7 +738,7 @@ public:
     
     virtual void code_gen(std::ostream &dst, Context &context) const override
     {
-        int size = context.get_size(context.get_type(id));
+        int size = context.get_size_bind(id);
         dst<<"\tli\t$s0,"<<size<<std::endl;
         dst<<"\tsw\t$s0,"<<context.next_mem()<<"($fp)"<<std::endl;
     }
@@ -806,13 +812,14 @@ private:
     }
 protected:
     std::string id, assign_operator;
-    NodePtr right;
+    NodePtr offset, right;
 
     virtual const std::string getOpcode() const
     { return assign_operator; }
 public:
-    AssignmentOperator(std::string &_id, std::string &_assign_operator, NodePtr _right)
+    AssignmentOperator(std::string &_id, NodePtr _offset, std::string &_assign_operator, NodePtr _right)
         : id(_id),
+        offset(_offset),
         assign_operator(_assign_operator),
         right(_right)
     {}
@@ -897,7 +904,15 @@ public:
                 throw std::runtime_error("AssignmentOperator::code_gen is not implemented.");
         }
         dst<<"\tlw\t$s0,"<<context.get_current_mem()<<"($fp)"<<std::endl;
-        context.set_binding(id, "s0", dst);
+        if (offset != nullptr) {
+            offset->code_gen(dst, context);
+            dst<<"\tlw\t$s0"<<","<<context.get_current_mem()<<"($fp)"<<std::endl;
+            context.load_binding(id,"s1",dst,0);
+            dst<<"\taddu\t$t0,$s0,$s1"<<std::endl;
+            dst<<"\taddu\t$t0,$fp,$t0"<<std::endl;
+            dst<<"\tlw\t$s0,($t0)"<<std::endl;
+            dst<<"\tsw\t$s0,"<<context.next_mem()<<"($fp)"<<std::endl;
+        } else context.set_binding(id, "s0", dst, 0);
     }
 };
 
