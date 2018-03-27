@@ -31,7 +31,7 @@ for testfile in ${cases}/* ; do
     
     mips-linux-gnu-gcc -static -o ${testdir}/${testname} ${testdir}/${testname}.s ${cases}/${testname}/${testname}_driver.c
     
-    qemu-mips ${testdir}/${testname}
+    timeout 2 qemu-mips ${testdir}/${testname}
 
     GOT=$?
 
@@ -41,6 +41,9 @@ for testfile in ${cases}/* ; do
         echo "$testname, Pass"
         ((COUNT++))
         ((PASSED++))
+    elif [[ $GOT -eq 124 ]] ; then 
+        echo "$testname, Fail, Timeout exception"
+        ((COUNT++))
     else 
         echo "$testname, Fail, Expected 0, got $GOT"
         ((COUNT++))
