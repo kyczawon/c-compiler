@@ -16,7 +16,8 @@
 // AST node.
 %union{
   const Node *expr;
-  double number;
+  unsigned int integer;
+  double doubl;
   std::string *string;
 }
 
@@ -39,14 +40,14 @@
 %token T_INT T_IF T_ELSE T_WHILE T_FOR T_RETURN T_CASE T_SWITCH T_CONTINUE T_BREAK T_DO T_DEFAULT T_GOTO
 //symbols
 %token T_LBRACKET T_RBRACKET T_LCURLY T_RCURLY T_SEMI T_COMMA T_LSQUARE T_RSQUARE
-%token T_NUMBER T_STRING T_PERIOD
+%token T_INTEGER T_STRING T_PERIOD
 
 %type <expr> FACTOR STATEMENT DECLARATION FUNCTION_DECLARATION COMPOUND_STATEMENT SEQUENCE SEQUENCE_PROG
 %type <expr> CONDITIONAL_STATEMENT PARAMETER_LIST PARAMETER EXPR_LIST GLOBAL_DECLARATION GLOBAL_VARIABLE_DECLARATION IF_STATEMENT
-%type <expr> EMPTY CASE_COMPOUND CASE_STATEMENT 
+%type <expr> EMPTY CASE_COMPOUND CASE_STATEMENT INPUT_PARAMS INIT_PARAMS
 %type <expr> ASSIGN_EXPR COND_EXPR LOGICAL_OR_EXPR LOGICAL_AND_EXPR BIT_OR_EXPR BIT_XOR_EXPR BIT_AND_EXPR EQUALITY_EXPR RELATIONAL_EXPR
 %type <expr> ADDITIVE_EXPR MULTIPLICATIVE_EXPR SHIFT_EXPR CAST_EXPR UNARY_EXPR POSTFIX_EXPR 
-%type <number> T_NUMBER
+%type <integer> T_INTEGER
 %type <string> T_STRING T_INT TYPE T_IF T_ELSE T_WHILE T_COMMA ASSIGN_OPERATOR UNARY_OPERATOR
 %type <string> T_EQUALS_EQUALS T_NOT_EQUALS T_GREATER T_LESS T_AND T_OR
 //assignment operators
@@ -123,11 +124,12 @@ IF_STATEMENT
 
 EXPR_LIST
         : ASSIGN_EXPR
-        | EXPR_LIST T_COMMA ASSIGN_EXPR { $$ = new NodeList($1,$3);}
+        | EXPR_LIST T_COMMA ASSIGN_EXPR { $$ = new ExprList($1,$3);}
 
 ASSIGN_EXPR
         : COND_EXPR
-        | T_STRING ASSIGN_OPERATOR COND_EXPR { $$ = new AssignmentOperator(*$1,*$2,$3);}
+        | T_STRING ASSIGN_OPERATOR COND_EXPR { $$ = new AssignmentOperator(*$1,nullptr,*$2,$3);}
+        | T_STRING T_LSQUARE EXPR_LIST T_RSQUARE ASSIGN_OPERATOR COND_EXPR { $$ = new AssignmentOperator(*$1,$3,*$5,$6);}
 
 ASSIGN_OPERATOR
         : T_EQUALS
@@ -217,28 +219,37 @@ UNARY_OPERATOR
 
 POSTFIX_EXPR
         : FACTOR
-        | T_STRING T_LBRACKET T_RBRACKET { $$ = new UnaryFunctionInvocation(*$1);}
-        | T_STRING T_LBRACKET EXPR_LIST T_RBRACKET { $$ = new FunctionInvocation(*$1, $3);}
+        | T_STRING T_LBRACKET INPUT_PARAMS T_RBRACKET { $$ = new FunctionInvocation(*$1, $3);}
         | T_STRING T_INC { $$ = new PostIncrement(*$1); }
 	| T_STRING T_DEC { $$ = new PostDecrement(*$1); }
         | T_STRING T_LSQUARE EXPR_LIST T_RSQUARE { $$ = new Array(*$1, $3); }
 	| T_STRING T_PERIOD T_STRING  { $$ = new Member(*$1, *$3); }
 	| T_STRING T_PTR T_STRING { $$ = new MemberPtr(*$1, *$3); }
 
+INPUT_PARAMS
+        : EMPTY ASSIGN_EXPR { $$ = new InputParams($1,$2);}
+        | INPUT_PARAMS T_COMMA ASSIGN_EXPR { $$ = new InputParams($1,$3);}
+        | EMPTY
 FACTOR
-        : T_MINUS T_NUMBER   {$$ = new NegativeNumber($2);}
-        | T_NUMBER          {$$ = new Number( $1 );}
+        : T_MINUS T_INTEGER   {$$ = new NegativeNumber($2);}
+        | T_INTEGER          {$$ = new Number( $1 );}
         | T_STRING          {$$ = new Variable(*$1);}
         | T_LBRACKET EXPR_LIST T_RBRACKET { $$ = $2;}
 
 GLOBAL_VARIABLE_DECLARATION
         : TYPE T_STRING T_SEMI { $$ = new GlobalVariableDeclaration(*$1, *$2 );}
-        | TYPE T_STRING T_EQUALS EXPR_LIST T_SEMI { $$ = new InitialisedGlobalVariableDeclaration(*$1, *$2, $4 );}
+        | TYPE T_STRING T_EQUALS T_INTEGER T_SEMI { $$ = new InitialisedGlobalVariableDeclaration(*$1, *$2, $4 );}
 
 DECLARATION
         : TYPE T_STRING T_SEMI    { $$ = new VariableDeclaration(*$1, *$2 );}
         | TYPE T_STRING T_EQUALS EXPR_LIST T_SEMI { $$ = new InitialisedVariableDeclaration(*$1, *$2, $4 );}
+        | TYPE T_STRING T_LSQUARE T_INTEGER T_RSQUARE T_SEMI { $$ = new ArrayDeclaration(*$1, *$2, $4);}
+        | TYPE T_STRING T_LSQUARE T_INTEGER T_RSQUARE T_EQUALS T_LCURLY INIT_PARAMS T_RCURLY T_SEMI { $$ = new InitialisedArrayDeclaration(*$1, *$2, $4, $8);}
 
+INIT_PARAMS
+        : EMPTY ASSIGN_EXPR { $$ = new InitParams($1,$2);}
+        | INIT_PARAMS T_COMMA ASSIGN_EXPR { $$ = new InitParams($1,$3);}
+        | EMPTY
 
 TYPE
         : T_INT

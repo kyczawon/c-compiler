@@ -1,2 +1,12 @@
 dt10/soft/outputs/f08.s: Assembler messages:
-dt10/soft/outputs/f08.s: Warning: missing .end at end of assembly
+dt10/soft/outputs/f08.s:85: Warning: no .cprestore pseudo-op used in PIC code
+dt10/soft/outputs/f08.s:85: Warning: macro instruction expanded into multiple instructions
+dt10/soft/outputs/f08.s:88: Warning: no .cprestore pseudo-op used in PIC code
+dt10/soft/outputs/f08.s:88: Warning: macro instruction expanded into multiple instructions
+/tmp/ccGywKLl.o: In function `f':
+(.text+0x38): undefined reference to `x'
+/tmp/ccGywKLl.o: In function `f':
+(.text+0x60): undefined reference to `x'
+/tmp/ccGywKLl.o: In function `f':
+(.text+0x68): undefined reference to `x'
+collect2: error: ld returned 1 exit status

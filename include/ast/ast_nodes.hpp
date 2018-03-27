@@ -5,6 +5,7 @@
 #include <iostream>
 #include <map>
 #include <unordered_map>
+#include <vector>
 
 #include <memory>
 #include <regex>
@@ -25,9 +26,8 @@ static std::string make_name(std::string base)
 
 class Node
 {
-protected:
-    static std::unordered_map<std::string,NodePtr>& getGlobals()  { static std::unordered_map<std::string,NodePtr> globals; return globals; }
 public:
+    static std::vector<std::string>& getGlobals()  { static std::vector<std::string> globals; return globals; }
     virtual ~Node()
     {}
 
@@ -50,28 +50,56 @@ public:
 
 class Context {
 private:
-    unsigned int _size = 0;
+    unsigned int _size = 52;
+    int current_mem = -4;
     int current_register = -1;
     std::unordered_map<std::string,unsigned int> bindings;
     std::unordered_map<std::string,std::string> types;
+    std::unordered_map<std::string,std::pair<std::string,unsigned int> > Arrtypes;
     std::unordered_map<std::string,unsigned int> functions;
     Context* parent;
 public:
+    bool is_first_global = true;
+    bool is_first_text = true;
+    
     Context(Context* _parent)
         : parent(_parent)
-    {}
+    {
+        if(_parent != NULL) current_mem = (*_parent).mem_init();
+    }
 
-    unsigned int get_binding(std::string key) {
+    unsigned int set_binding(std::string key, std::string reg, std::ostream &dst, int offset) {
+        int address = get_binding(key);
+        if (address < 0) { //global
+            dst<<"\tla\t$t0,"<<key<<std::endl;
+            dst<<"\tsw\t$"<<reg<<",($t0)"<<std::endl;
+        } else {
+            dst<<"\tsw\t$"<<reg<<","<<get_binding(key)+offset<<"($fp)"<<std::endl;
+        }
+    }
+
+    unsigned int load_binding(std::string key, std::string reg, std::ostream &dst, int offset) {
+        int address = get_binding(key);
+        if (address < 0) { //global
+            dst<<"\tla\t$t0,"<<key<<std::endl;
+            dst<<"\tlw\t$"<<reg<<",($t0)"<<std::endl;
+        } else {
+            dst<<"\tlw\t$"<<reg<<","<<get_binding(key)+offset<<"($fp)"<<std::endl;
+        }
+    }
+
+    int get_binding(std::string key) {
         std::unordered_map<std::string,unsigned int>::iterator it = bindings.find(key);
         
         if (it == bindings.end()) {
             if (parent != nullptr) return parent->get_binding(key);
+            else if (std::find(Node::getGlobals().begin(), Node::getGlobals().end(),key) != Node::getGlobals().end()) return -1;
             else throw std::runtime_error("error: '" + key + "' undeclared");
         } else return it->second;
     }
 
-    std::string get_type(std::string key) {
-        std::unordered_map<std::string,std::string>::iterator it = types.find(key);
+    std::string get_type(std::string key) const {
+        auto it = types.find(key);
         
         if (it == types.end()) {
             if (parent != nullptr) return parent->get_type(key);
@@ -79,9 +107,33 @@ public:
         } else return it->second;
     }
 
+    std::string get_arr_type(std::string key) {
+        std::unordered_map<std::string,std::pair<std::string,unsigned int> >::iterator it = Arrtypes.find(key);
+        
+        if (it == Arrtypes.end()) {
+            if (parent != nullptr) return parent->get_arr_type(key);
+            else throw std::runtime_error("error: '" + key + "' undeclared");
+        } else return it->second.first; //get the type within the pair
+    }
+
+    unsigned int get_size_bind(std::string const& key) const {
+        unsigned int size = get_size(get_type(key));
+        if (size != 0) return size;
+        else return get_arr_size(key);
+    }
+
     unsigned int get_size (std::string const& type) const {
         if (type == "int") return 4;
-        else throw std::runtime_error("type: " + type + "not implemented");
+        else return 0;
+    }
+
+    unsigned int get_arr_size (std::string const& key) const {
+        auto it = Arrtypes.find(key);
+        
+        if (it == Arrtypes.end()) {
+            if (parent != nullptr) return parent->get_arr_size(key);
+            else throw std::runtime_error("error: '" + key + "' undeclared");
+        } else return it->second.second; //get the size within the pair
     }
 
     unsigned int get_function(std::string key) {
@@ -108,6 +160,18 @@ public:
         } else throw std::runtime_error("redefinition of '"+key+"'");
     }
 
+    void add_arr_binding(std::string type, std::string key, unsigned int size) {
+
+        std::unordered_map<std::string,unsigned int>::iterator it = bindings.find(key);
+            
+        if (it == bindings.end()) {
+            bindings[key] = _size;
+            _size += size*get_size(type);
+
+            Arrtypes[key] = std::make_pair(type, size);
+        } else throw std::runtime_error("redefinition of '"+key+"'");
+    }
+
     void add_function(std::string key, unsigned int param_num) {
 
         std::unordered_map<std::string,unsigned int>::iterator it = functions.find(key);
@@ -118,7 +182,7 @@ public:
     }
 
     unsigned int size() {
-        return _size;
+        return _size+current_mem+4;
     }
 
     int next_register() {
@@ -137,6 +201,28 @@ public:
 
     void reset_registers() {
         current_register = -1;
+    }
+
+    int next_mem() {
+        current_mem = current_mem + 4;
+        return _size+current_mem;
+    }
+
+    int get_current_mem() {
+        return _size+current_mem;
+    }
+
+    int mem_init() {
+        return current_mem;
+    }
+
+    int reset_last_mem(){
+        current_mem = current_mem - 4;
+        return _size+current_mem;
+    }
+
+    void reset_mem() {
+        current_mem = 0;
     }
 };
 

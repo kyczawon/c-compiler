@@ -1,5 +1,13 @@
 dt10/soft/outputs/f10.s: Assembler messages:
-dt10/soft/outputs/f10.s: Warning: missing .end at end of assembly
-/usr/lib/gcc-cross/mips-linux-gnu/5/../../../../mips-linux-gnu/lib/../lib/crt1.o: In function `__start':
-(.text+0x18): undefined reference to `main'
-collect2: error: ld returned 1 exit status
+dt10/soft/outputs/f10.s:75: Warning: no .cprestore pseudo-op used in PIC code
+dt10/soft/outputs/f10.s:75: Warning: macro instruction expanded into multiple instructions
+dt10/soft/outputs/f10.s:87: Warning: no .cprestore pseudo-op used in PIC code
+dt10/soft/outputs/f10.s:87: Warning: macro instruction expanded into multiple instructions
+dt10/soft/outputs/f10.s:142: Warning: no .cprestore pseudo-op used in PIC code
+dt10/soft/outputs/f10.s:142: Warning: macro instruction expanded into multiple instructions
+dt10/soft/outputs/f10.s:148: Warning: no .cprestore pseudo-op used in PIC code
+dt10/soft/outputs/f10.s:148: Warning: macro instruction expanded into multiple instructions
+dt10/soft/outputs/f10.s:158: Warning: no .cprestore pseudo-op used in PIC code
+dt10/soft/outputs/f10.s:158: Warning: macro instruction expanded into multiple instructions
+dt10/soft/outputs/f10.s:168: Warning: no .cprestore pseudo-op used in PIC code
+dt10/soft/outputs/f10.s:168: Warning: macro instruction expanded into multiple instructions
