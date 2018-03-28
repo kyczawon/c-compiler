@@ -1,10 +1,7 @@
-int f(int* x);
+int f();
 
 int main(){
-    int x = 0;
-    if (f(&x) == 3)
+    if (f() == 3)
         return 0;
     return 1;
-    
-
 }

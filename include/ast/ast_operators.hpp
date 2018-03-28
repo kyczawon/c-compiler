@@ -604,6 +604,8 @@ public:
         context.load_binding(id, "s0", dst,0);
         dst<<"\taddiu\t$s1,$s0,1"<<std::endl;
         context.set_binding(id, "s1", dst,0);
+        dst<<"\tsw\t$s0,"<<context.next_mem()<<"($fp)"<<std::endl;
+
     }
 };
 
@@ -626,6 +628,7 @@ public:
         context.load_binding(id, "s0", dst,0);
         dst<<"\taddiu\t$s0,$s0,1"<<std::endl;
         context.set_binding(id, "s0", dst,0);
+        dst<<"\tsw\t$s0,"<<context.next_mem()<<"($fp)"<<std::endl;
     }
 };
 
@@ -648,6 +651,8 @@ public:
         context.load_binding(id, "s0", dst,0);
         dst<<"\taddiu\t$s1,$s0,-1"<<std::endl;
         context.set_binding(id, "s1", dst,0);
+        dst<<"\tsw\t$s0,"<<context.next_mem()<<"($fp)"<<std::endl;
+
     }
 };
 
@@ -670,6 +675,7 @@ public:
         context.load_binding(id, "s0", dst,0);
         dst<<"\taddiu\t$s0,$s0,-1"<<std::endl;
         context.set_binding(id, "s0", dst,0);
+        dst<<"\tsw\t$s0,"<<context.next_mem()<<"($fp)"<<std::endl;
     }
 };
 
@@ -713,6 +719,16 @@ public:
                 {
                     dst<<"\tsltu\t$s0,$s0,1"<<std::endl;
                     dst<<"\tandi\t$s0,$s0,0x00ff"<<std::endl;
+                    dst<<"\tsw\t$s0,"<<context.next_mem()<<"($fp)"<<std::endl;
+                    break;
+                }
+            case 5:
+                {
+                    break;
+                }
+            case 6:
+                {
+                    dst<<"\tsubu\t$s0,$0,$s0\n";
                     dst<<"\tsw\t$s0,"<<context.next_mem()<<"($fp)"<<std::endl;
                     break;
                 }

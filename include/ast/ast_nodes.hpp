@@ -138,11 +138,11 @@ public:
 
     unsigned int get_function(std::string key) {
         if (parent != nullptr) parent->get_function(key);
-        else {
-            std::unordered_map<std::string,unsigned int>::iterator it = functions.find(key);
-            if (it == functions.end()) throw std::runtime_error("error: '" + key + "' undeclared");
-            else return it->second;
-        }
+        // else {
+        //     std::unordered_map<std::string,unsigned int>::iterator it = functions.find(key);
+        //     if (it == functions.end()) throw std::runtime_error("error: '" + key + "' undeclared");
+        //     else return it->second;
+        // }
     }
 
     //add variable bindings

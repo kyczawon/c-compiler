@@ -66,7 +66,7 @@ public:
             dst<<"\t.data\t"<<std::endl;
             context.is_first_global = false;
         }
-        dst<<"\t.allign\t2"<<std::endl;
+        dst<<"\t.align\t2"<<std::endl;
         dst<<"\t.type\t"<<id<<", @object"<<std::endl;
         dst<<"\t.size\t"<<id<<", "<<context.get_size(type)<<std::endl;
         dst<<id<<":"<<std::endl;
