@@ -577,7 +577,9 @@ public:
     {
         expr_list->code_gen(dst, context);
         dst<<"\tlw\t$s0"<<","<<context.get_current_mem()<<"($fp)"<<std::endl;
-        context.load_binding(id,"s1",dst,0);
+        dst<<"\tli\t$s1,"<<context.get_size(context.get_arr_type(id))<<std::endl;
+        dst<<"\tmul\t$s0,$s1,$s0"<<std::endl;
+        dst<<"\tli\t$s1,"<<context.get_binding(id)<<std::endl;
         dst<<"\taddu\t$t0,$s0,$s1"<<std::endl;
         dst<<"\taddu\t$t0,$fp,$t0"<<std::endl;
         dst<<"\tlw\t$s0,($t0)"<<std::endl;
@@ -919,16 +921,17 @@ public:
             default:
                 throw std::runtime_error("AssignmentOperator::code_gen is not implemented.");
         }
-        dst<<"\tlw\t$s0,"<<context.get_current_mem()<<"($fp)"<<std::endl;
-        if (offset != nullptr) {
+        dst<<"\tlw\t$s5,"<<context.get_current_mem()<<"($fp)"<<std::endl;
+        if (offset != nullptr) {//it is an array
             offset->code_gen(dst, context);
-            dst<<"\tlw\t$s0"<<","<<context.get_current_mem()<<"($fp)"<<std::endl;
-            context.load_binding(id,"s1",dst,0);
-            dst<<"\taddu\t$t0,$s0,$s1"<<std::endl;
+            dst<<"\tlw\t$s1,"<<context.get_current_mem()<<"($fp)"<<std::endl;
+            dst<<"\tli\t$s2,"<<context.get_size(context.get_arr_type(id))<<std::endl;
+            dst<<"\tmul\t$s1,$s1,$s2"<<std::endl;
+            dst<<"\tli\t$s2,"<<context.get_binding(id)<<std::endl;
+            dst<<"\taddu\t$t0,$s1,$s2"<<std::endl;
             dst<<"\taddu\t$t0,$fp,$t0"<<std::endl;
-            dst<<"\tlw\t$s0,($t0)"<<std::endl;
-            dst<<"\tsw\t$s0,"<<context.next_mem()<<"($fp)"<<std::endl;
-        } else context.set_binding(id, "s0", dst, 0);
+            dst<<"\tsw\t$s5,($t0)"<<std::endl;
+        } else context.set_binding(id, "s5", dst, 0);
     }
 };
 
