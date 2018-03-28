@@ -18,6 +18,7 @@ static const std::regex reNum("^-?[0-9]+$");
 static const std::regex reId("^[a-z][a-z0-9]*$");
 
 static int NameUnq=0;
+static std::vector<std::string> FnTracker;
 
 static std::string make_name(std::string base)
 {

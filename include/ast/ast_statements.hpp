@@ -29,21 +29,23 @@ public:
     {
         expr->code_gen(dst,context);
         dst<<"\tlw\t$v0,"<<context.get_current_mem()<<"($fp)"<<std::endl;
-        dst<<"\tmove\t$sp,$fp"<<std::endl;
-		dst<<"\tlw\t$31, 4($sp)\n";
-        dst<<"\tlw\t$30, 8($sp)\n";
-        dst<<"\tlw\t$29, 12($sp)\n";
-        dst<<"\tlw\t$28, 16($sp)\n";
-        dst<<"\tlw\t$s7, 20($sp)\n";
-        dst<<"\tlw\t$s6, 24($sp)\n";
-        dst<<"\tlw\t$s5, 28($sp)\n";
-        dst<<"\tlw\t$s4, 32($sp)\n";
-        dst<<"\tlw\t$s3, 36($sp)\n";
-        dst<<"\tlw\t$s2, 40($sp)\n";
-        dst<<"\tlw\t$s1, 44($sp)\n";
-        dst<<"\tlw\t$s0, 48($sp)\n";
-        dst<<"\tj\t$31"<<std::endl;
-        dst <<"\taddiu\t$sp,$sp,"<<context.size()<<std::endl;
+        dst<<"\tb\t"<<FnTracker[0];
+        dst<<"\n\tnop\n";
+        // dst<<"\tmove\t$sp,$fp"<<std::endl;
+		// dst<<"\tlw\t$31, 4($sp)\n";
+        // dst<<"\tlw\t$30, 8($sp)\n";
+        // dst<<"\tlw\t$29, 12($sp)\n";
+        // dst<<"\tlw\t$28, 16($sp)\n";
+        // dst<<"\tlw\t$s7, 20($sp)\n";
+        // dst<<"\tlw\t$s6, 24($sp)\n";
+        // dst<<"\tlw\t$s5, 28($sp)\n";
+        // dst<<"\tlw\t$s4, 32($sp)\n";
+        // dst<<"\tlw\t$s3, 36($sp)\n";
+        // dst<<"\tlw\t$s2, 40($sp)\n";
+        // dst<<"\tlw\t$s1, 44($sp)\n";
+        // dst<<"\tlw\t$s0, 48($sp)\n";
+        // dst<<"\tj\t$31"<<std::endl;
+        // dst <<"\taddiu\t$sp,$sp,"<<context.size()<<std::endl;
     }
 };
 
@@ -148,8 +150,7 @@ public:
         dst<<"\tlw\t$s0,"<<context.get_current_mem()<<"($fp)"<<std::endl;
         dst<<"\tbeq\t$s0,$0,"<<endLabel;
         dst<<std::endl<<"\tnop"<<std::endl;
-        Context inner_context = new Context(context);
-        sequence->code_gen(dst,inner_context);
+        sequence->code_gen(dst,context);
         dst<<endLabel<<":"<<std::endl;
     }
 };
@@ -238,10 +239,10 @@ public:
         dst<<"\tb\t"<<condLabel<<std::endl;
         dst<<"\tnop\n";
         dst<<seqLabel<<":"<<std::endl;
-        sequence->code_gen(dst,inner_context);
+        sequence->code_gen(dst,context);
         dst<<condLabel<<":"<<std::endl;
-        condition->code_gen(dst,cond_context);
-        dst<<"\tlw\t$s0,"<<cond_context.get_current_mem()<<"($fp)"<<std::endl;
+        condition->code_gen(dst,context);
+        dst<<"\tlw\t$s0,"<<context.get_current_mem()<<"($fp)"<<std::endl;
         dst<<"\tbne\t$s0,$0,"<<seqLabel;  
         dst<<std::endl<<"\tnop"<<std::endl;  
         dst<<endLabel<<":"<<std::endl;
@@ -273,21 +274,18 @@ public:
         }
     virtual void translate(int level, std::ostream &dst) const override
     {
-        dst<<"while (";
-        condition->translate(0,dst);
-        dst<< "):";
-        sequence->translate(level, dst);
-        dst<<std::endl;
+       throw std::runtime_error("doWhileLoop::translate is not implemented.");
+
     }
     virtual void code_gen(std::ostream &dst, Context &context) const override
     {
         Context inner_context = new Context(context);
         Context cond_context = new Context(context);
         dst<<seqLabel<<":"<<std::endl;
-        sequence->code_gen(dst,inner_context);
+        sequence->code_gen(dst,context);
         dst<<condLabel<<":"<<std::endl;
-        condition->code_gen(dst,cond_context);
-        dst<<"\tlw\t$s0,"<<cond_context.get_current_mem()<<"($fp)"<<std::endl;
+        condition->code_gen(dst,context);
+        dst<<"\tlw\t$s0,"<<context.get_current_mem()<<"($fp)"<<std::endl;
         dst<<"\tbne\t$s0,$0,"<<seqLabel;  
         dst<<std::endl<<"\tnop"<<std::endl; 
         dst<<endLabel<<":"<<std::endl;
@@ -324,15 +322,15 @@ public:
     {
         Context cond_context = new Context(context);
         Context inner_context = new Context(context);
-        initializer->code_gen(dst, cond_context);
+        initializer->code_gen(dst, context);
         dst<<"\tb\t"<<condLabel<<"\n\tnop\n";
         dst<<seqLabel<<":\n";
-        sequence->code_gen(dst, inner_context);
+        sequence->code_gen(dst, context);
         dst<<incLabel<<":\n";
-        increment->code_gen(dst, cond_context);
+        increment->code_gen(dst, context);
         dst<<condLabel<<":"<<std::endl;
-        condition->code_gen(dst, cond_context);
-        dst<<"\tlw\t$s0,"<<cond_context.get_current_mem()<<"($fp)"<<std::endl;
+        condition->code_gen(dst, context);
+        dst<<"\tlw\t$s0,"<<context.get_current_mem()<<"($fp)"<<std::endl;
         dst<<"\tbne\t$s0,$0,"<<seqLabel<<std::endl;
         dst<<endLabel<<":"<<std::endl;
         condTracker.erase(condTracker.begin());

@@ -1,3 +1,9 @@
+int foo() {
+    return 11;
+}
+
 int main(){
-    return 0;
+    if (foo()==11) 
+        return 0;
+    return 1;
 }

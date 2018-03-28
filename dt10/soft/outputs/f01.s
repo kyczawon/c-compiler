@@ -32,6 +32,9 @@ main:
 	addu	$s2,$s1,$s0
 	sw	$s2,60($fp)
 	lw	$v0,60($fp)
+	b	mainEND
+	nop
+mainEND:
 	move	$sp,$fp
 	lw	$31, 4($sp)
 	lw	$30, 8($sp)

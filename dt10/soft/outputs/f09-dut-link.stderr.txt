@@ -1,9 +1,2 @@
 dt10/soft/outputs/f09.s: Assembler messages:
-dt10/soft/outputs/f09.s:182: Warning: no .cprestore pseudo-op used in PIC code
-dt10/soft/outputs/f09.s:182: Warning: macro instruction expanded into multiple instructions
-dt10/soft/outputs/f09.s:191: Warning: no .cprestore pseudo-op used in PIC code
-dt10/soft/outputs/f09.s:191: Warning: macro instruction expanded into multiple instructions
-dt10/soft/outputs/f09.s:204: Warning: no .cprestore pseudo-op used in PIC code
-dt10/soft/outputs/f09.s:204: Warning: macro instruction expanded into multiple instructions
-dt10/soft/outputs/f09.s:217: Warning: no .cprestore pseudo-op used in PIC code
-dt10/soft/outputs/f09.s:217: Warning: macro instruction expanded into multiple instructions
+dt10/soft/outputs/f09.s:212: Error: symbol `mainEND' is already defined
