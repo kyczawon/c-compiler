@@ -91,22 +91,22 @@ function:
 	mul	$s2,$s1,$s0
 	sw	$s2,84($fp)
 	lw	$v0,84($fp)
-	b	mainEND
+	b	functionEND
 	nop
 $IL0:
 $IL1:
 	lw	$s0,56($fp)
 	sw	$s0,88($fp)
 	lw	$v0,88($fp)
-	b	mainEND
+	b	functionEND
 	nop
 $IL2:
 	li	$s0,13
 	sw	$s0,92($fp)
 	lw	$v0,92($fp)
-	b	mainEND
+	b	functionEND
 	nop
-mainEND:
+functionEND:
 	move	$sp,$fp
 	lw	$31, 4($sp)
 	lw	$30, 8($sp)

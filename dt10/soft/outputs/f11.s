@@ -60,9 +60,9 @@ $WL2:
 	lw	$s0,56($fp)
 	sw	$s0,80($fp)
 	lw	$v0,80($fp)
-	b	mainEND
+	b	geoEND
 	nop
-mainEND:
+geoEND:
 	move	$sp,$fp
 	lw	$31, 4($sp)
 	lw	$30, 8($sp)

@@ -6,10 +6,10 @@
 	.ent	main
 	.type	main, @function
 main:
-	.frame	$fp,72,$31
+	.frame	$fp,64,$31
 	.set	noreorder
 	.set	nomacro
-	addiu	$sp,$sp,-72
+	addiu	$sp,$sp,-64
 	sw	$31, 4($sp)
 	sw	$30, 8($sp)
 	sw	$29, 12($sp)
@@ -42,15 +42,15 @@ main:
 	nop
 $IEL0:
 	li	$s0,13
-	sw	$s0,64($fp)
-	lw	$v0,64($fp)
+	sw	$s0,60($fp)
+	lw	$v0,60($fp)
 	b	mainEND
 	nop
 $IEL1:
 $IL0:
 	li	$s0,11
-	sw	$s0,68($fp)
-	lw	$v0,68($fp)
+	sw	$s0,60($fp)
+	lw	$v0,60($fp)
 	b	mainEND
 	nop
 mainEND:
@@ -68,7 +68,7 @@ mainEND:
 	lw	$s1, 44($sp)
 	lw	$s0, 48($sp)
 	j	$31
-	addiu	$sp,$sp,72
+	addiu	$sp,$sp,64
 	.set	macro
 	.set	reorder
 	.end	main

@@ -1,2 +1,0 @@
-dt10/soft/outputs/f03.s: Assembler messages:
-dt10/soft/outputs/f03.s:93: Error: symbol `mainEND' is already defined

@@ -1,2 +1,7 @@
-dt10/soft/outputs/f08.s: Assembler messages:
-dt10/soft/outputs/f08.s:105: Error: symbol `mainEND' is already defined
+/tmp/ccTL6abF.o: In function `f':
+(.text+0x38): undefined reference to `x'
+/tmp/ccTL6abF.o: In function `f':
+(.text+0x60): undefined reference to `x'
+/tmp/ccTL6abF.o: In function `f':
+(.text+0x68): undefined reference to `x'
+collect2: error: ld returned 1 exit status

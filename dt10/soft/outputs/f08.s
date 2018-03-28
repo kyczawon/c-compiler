@@ -39,9 +39,9 @@ f:
 	lw	$s0,($t0)
 	sw	$s0,56($fp)
 	lw	$v0,56($fp)
-	b	mainEND
+	b	fEND
 	nop
-mainEND:
+fEND:
 	move	$sp,$fp
 	lw	$31, 4($sp)
 	lw	$30, 8($sp)

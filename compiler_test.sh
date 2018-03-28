@@ -8,7 +8,6 @@ fi
 
 cases="./test/test_cases"
 results="./test/test_results"
-rmdir -p "$results"
 mkdir -p "$results"
 
 echo " "
