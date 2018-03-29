@@ -121,8 +121,13 @@ public:
     virtual void code_gen(std::ostream &dst, Context &context) const override
     {
         context.add_binding(type,id);
-        std::string reg = "a"+std::to_string(context.next_register());
-        context.set_binding(id,reg,dst,0);
+        if(context.get_current_register()<3){
+            std::string reg = "a"+std::to_string(context.next_register());
+            context.set_binding(id,reg,dst,0);
+        } else {
+            dst<<"\tlw\t$s0,"<<context.next_register()*4<<"($t1)\n";
+            context.set_binding(id,"s0",dst,0);
+        }
     }
 };
 
@@ -217,31 +222,37 @@ public:
         dst<<identifier<<":"<<std::endl; //.frame goes after the identifier
         init<<"\t.set\tnoreorder"<<std::endl;
         init<<"\t.set\tnomacro"<<std::endl;
+
+        int param_num = 1;
         std::stringstream inner_compiled; 
         Context inner_context = new Context(context);
         if(parameter_list != NULL){
             parameter_list->code_gen(inner_compiled,inner_context);
+            param_num = inner_context.next_register();
             inner_context.reset_registers(); //after the parameter list
         }
+        if(param_num>4){
+            param_num = param_num - 3;
+        } else param_num = 1;
         FnTracker.push_back(identifier+"END");
+        inner_context.set_mem(param_num*4+40);
         compound->code_gen(inner_compiled, inner_context);
         dst<<"\t.frame\t$fp,"<<inner_context.size()<<",$31"<<std::endl;
-        dst<<"\t.mask\t0x40000000,-4\n";
-        dst<<"\t.fmask\t0x00000000,0\n";
         dst<<init.str();
+        dst<<"\taddiu\t$t1,$sp,0\n";
         dst<<"\taddiu\t$sp,$sp,-"<<inner_context.size()<<std::endl;
-        dst<<"\tsw\t$31, 4($sp)\n";
-        dst<<"\tsw\t$30, 8($sp)\n";
-        dst<<"\tsw\t$29, 12($sp)\n";
-        dst<<"\tsw\t$28, 16($sp)\n";
-        dst<<"\tsw\t$s7, 20($sp)\n";
-        dst<<"\tsw\t$s6, 24($sp)\n";
-        dst<<"\tsw\t$s5, 28($sp)\n";
-        dst<<"\tsw\t$s4, 32($sp)\n";
-        dst<<"\tsw\t$s3, 36($sp)\n";
-        dst<<"\tsw\t$s2, 40($sp)\n";
-        dst<<"\tsw\t$s1, 44($sp)\n";
-        dst<<"\tsw\t$s0, 48($sp)\n";
+        dst<<"\tsw\t$31, 0($sp)\n";
+        dst<<"\tsw\t$30, 4($sp)\n";
+        dst<<"\tsw\t$29, 8($sp)\n";
+        dst<<"\tsw\t$28, 12($sp)\n";
+        dst<<"\tsw\t$s7,"<< param_num*4+12 <<"($sp)\n";
+        dst<<"\tsw\t$s6,"<< param_num*4+16 <<"($sp)\n";
+        dst<<"\tsw\t$s5,"<< param_num*4+20 <<"($sp)\n";
+        dst<<"\tsw\t$s4,"<< param_num*4+24 <<"($sp)\n";
+        dst<<"\tsw\t$s3,"<< param_num*4+28 <<"($sp)\n";
+        dst<<"\tsw\t$s2,"<< param_num*4+32 <<"($sp)\n";
+        dst<<"\tsw\t$s1,"<< param_num*4+36 <<"($sp)\n";
+        dst<<"\tsw\t$s0,"<< param_num*4+40 <<"($sp)\n";
         dst<<"\tmove\t$fp,$sp"<<std::endl;
         dst<<inner_compiled.str();
         // dst << "\taddiu	$sp,$sp," << inner_context.size()<<std::endl;
@@ -262,19 +273,18 @@ public:
                 break;
         }
 
-        dst<<"\tmove\t$sp,$fp"<<std::endl;
-		dst<<"\tlw\t$31, 4($sp)\n";
-        dst<<"\tlw\t$30, 8($sp)\n";
-        dst<<"\tlw\t$29, 12($sp)\n";
-        dst<<"\tlw\t$28, 16($sp)\n";
-        dst<<"\tlw\t$s7, 20($sp)\n";
-        dst<<"\tlw\t$s6, 24($sp)\n";
-        dst<<"\tlw\t$s5, 28($sp)\n";
-        dst<<"\tlw\t$s4, 32($sp)\n";
-        dst<<"\tlw\t$s3, 36($sp)\n";
-        dst<<"\tlw\t$s2, 40($sp)\n";
-        dst<<"\tlw\t$s1, 44($sp)\n";
-        dst<<"\tlw\t$s0, 48($sp)\n";
+        dst<<"\tlw\t$31, 0($sp)\n";
+        dst<<"\tlw\t$30, 4($sp)\n";
+        dst<<"\tlw\t$29, 8($sp)\n";
+        dst<<"\tlw\t$28, 12($sp)\n";
+        dst<<"\tlw\t$s7,"<< param_num*4+12 <<"($sp)\n";
+        dst<<"\tlw\t$s6,"<< param_num*4+16 <<"($sp)\n";
+        dst<<"\tlw\t$s5,"<< param_num*4+20 <<"($sp)\n";
+        dst<<"\tlw\t$s4,"<< param_num*4+24 <<"($sp)\n";
+        dst<<"\tlw\t$s3,"<< param_num*4+28 <<"($sp)\n";
+        dst<<"\tlw\t$s2,"<< param_num*4+32 <<"($sp)\n";
+        dst<<"\tlw\t$s1,"<< param_num*4+36 <<"($sp)\n";
+        dst<<"\tlw\t$s0,"<< param_num*4+40 <<"($sp)\n";
         dst<<"\tj\t$31"<<std::endl;
         dst <<"\taddiu\t$sp,$sp,"<<inner_context.size()<<std::endl;
         dst<<"\n\t.set\tmacro"<<std::endl;

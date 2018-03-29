@@ -32,6 +32,7 @@ FunctionCalls,,2,lkn16,d751308ececb80221c10bbb25ad594edcb0db367,compile function
 GoToStatements,,2,ms6616,,Compile and test go to statements
 CompileLocalArrays,,5,lkn16,0f59472213cce6998ef386d954c5e10d558085d5,"Compile and test local arrays - declarations, invocations and assignments"
 CompilePointers,,4,lkn16,this,"Compile and test pointers - declarations, address operator and indirection operator "
-Recursion,,2,ms6616,this,Implement self recursion
+Recursion,,5,ms6616,this,Implement self recursion
 PointerToFunc,,2,lkn16,this,Be able to pass pointers to functions as arguments
 CharAndShortTypes,,3,lkn16,00861c649f5add10ab5189871a3f0db09b2f7cdd,Parse and compile character and short data types in everywhere including return types and operations
+Over4Parameters,,4,ms6616,this,Support 5 or more parameters for function calls and declarations

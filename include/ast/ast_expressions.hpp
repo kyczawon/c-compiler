@@ -70,7 +70,12 @@ public:
             list->code_gen(dst, context);
         }
         expr->code_gen(dst, context);
-        dst<<"\tlw\t$a"<<context.next_register()<<","<<context.get_current_mem()<<"($fp)"<<std::endl;
+        if(context.get_current_register()<3){
+            dst<<"\tlw\t$a"<<context.next_register()<<","<<context.get_current_mem()<<"($fp)"<<std::endl;
+        } else {
+            dst<<"\tlw\t$t2,"<<context.get_current_mem()<<"($fp)"<<std::endl;
+            dst<<"\tsw\t$t2,"<<context.next_register()*4<<"($sp)\n";
+        }
     }
 };
 

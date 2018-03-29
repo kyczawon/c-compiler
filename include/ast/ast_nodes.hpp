@@ -60,6 +60,12 @@ public:
         if(_parent != NULL) current_mem = (*_parent).mem_init();
     }
 
+    // Context(Context* _parent, int input_params)
+    //     : parent(_parent)
+    // {
+    //     if(_parent != NULL) current_mem = (*_parent).mem_init() + 4*(input_params-1);
+    // }
+
     unsigned int set_binding(std::string key, std::string reg, std::ostream &dst, int offset) {
         int address = get_binding(key);
         if (address < 0) { //global
@@ -210,6 +216,10 @@ public:
 
     void reset_mem() {
         current_mem = 0;
+    }
+
+    void set_mem(int mem){
+        current_mem = mem;
     }
 };
 
