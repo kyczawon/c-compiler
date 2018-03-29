@@ -15,10 +15,12 @@
 	.ent	f
 	.type	f, @function
 f:
-	.frame	$fp,60,$31
+	.frame	$fp,68,$31
+	.mask	0x40000000,-4
+	.fmask	0x00000000,0
 	.set	noreorder
 	.set	nomacro
-	addiu	$sp,$sp,-60
+	addiu	$sp,$sp,-68
 	sw	$31, 4($sp)
 	sw	$30, 8($sp)
 	sw	$29, 12($sp)
@@ -46,8 +48,8 @@ f:
 	sw	$s5,0($t0)
 	la	$t0,x
 	lw	$s0,0($t0)
-	sw	$s0,56($fp)
-	lw	$v0,56($fp)
+	sw	$s0,64($fp)
+	lw	$v0,64($fp)
 	b	fEND
 	nop
 fEND:
@@ -65,11 +67,12 @@ fEND:
 	lw	$s1, 44($sp)
 	lw	$s0, 48($sp)
 	j	$31
-	addiu	$sp,$sp,60
+	addiu	$sp,$sp,68
+
 	.set	macro
 	.set	reorder
 	.end	f
-
+	.size	f, .-f
 	.align	2
 	.global	main
 	.set	nomips16
@@ -78,6 +81,8 @@ fEND:
 	.type	main, @function
 main:
 	.frame	$fp,64,$31
+	.mask	0x40000000,-4
+	.fmask	0x00000000,0
 	.set	noreorder
 	.set	nomacro
 	addiu	$sp,$sp,-64
@@ -131,7 +136,8 @@ mainEND:
 	lw	$s0, 48($sp)
 	j	$31
 	addiu	$sp,$sp,64
+
 	.set	macro
 	.set	reorder
 	.end	main
-
+	.size	main, .-main

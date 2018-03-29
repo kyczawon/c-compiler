@@ -15,6 +15,8 @@
 	.type	main, @function
 main:
 	.frame	$fp,56,$31
+	.mask	0x40000000,-4
+	.fmask	0x00000000,0
 	.set	noreorder
 	.set	nomacro
 	addiu	$sp,$sp,-56
@@ -52,7 +54,8 @@ mainEND:
 	lw	$s0, 48($sp)
 	j	$31
 	addiu	$sp,$sp,56
+
 	.set	macro
 	.set	reorder
 	.end	main
-
+	.size	main, .-main

@@ -14,10 +14,12 @@
 	.ent	function
 	.type	function, @function
 function:
-	.frame	$fp,96,$31
+	.frame	$fp,140,$31
+	.mask	0x40000000,-4
+	.fmask	0x00000000,0
 	.set	noreorder
 	.set	nomacro
-	addiu	$sp,$sp,-96
+	addiu	$sp,$sp,-140
 	sw	$31, 4($sp)
 	sw	$30, 8($sp)
 	sw	$29, 12($sp)
@@ -56,62 +58,62 @@ function:
 	lw	$s5,80($fp)
 	sw	$s5,52($fp)
 	lw	$s0,52($fp)
-	sw	$s0,64($fp)
+	sw	$s0,84($fp)
 	lw	$s0,56($fp)
-	sw	$s0,68($fp)
-	lw	$s1,64($fp)
-	lw	$s0,68($fp)
+	sw	$s0,88($fp)
+	lw	$s1,84($fp)
+	lw	$s0,88($fp)
 	slt	$s0,$s0,$s1
 	andi	$s0,$s0,0x00ff
-	sw	$s0,72($fp)
-	lw	$s0,72($fp)
+	sw	$s0,92($fp)
+	lw	$s0,92($fp)
 	beq	$s0,$0,$IL1
 	nop
 	lw	$s0,56($fp)
-	sw	$s0,76($fp)
+	sw	$s0,96($fp)
 	li	$s0,3
-	sw	$s0,80($fp)
-	lw	$s1,76($fp)
-	lw	$s0,80($fp)
+	sw	$s0,100($fp)
+	lw	$s1,96($fp)
+	lw	$s0,100($fp)
 	addu	$s2,$s1,$s0
-	sw	$s2,84($fp)
-	lw	$s5,84($fp)
+	sw	$s2,104($fp)
+	lw	$s5,104($fp)
 	sw	$s5,56($fp)
 	lw	$s0,52($fp)
-	sw	$s0,64($fp)
+	sw	$s0,108($fp)
 	lw	$s0,56($fp)
-	sw	$s0,68($fp)
-	lw	$s1,64($fp)
-	lw	$s0,68($fp)
+	sw	$s0,112($fp)
+	lw	$s1,108($fp)
+	lw	$s0,112($fp)
 	xor	$s0,$s1,$s0
 	sltu	$s0,$s0,1
 	andi	$s0,$s0,0x00ff
-	sw	$s0,72($fp)
-	lw	$s0,72($fp)
+	sw	$s0,116($fp)
+	lw	$s0,116($fp)
 	beq	$s0,$0,$IL0
 	nop
 	lw	$s0,52($fp)
-	sw	$s0,76($fp)
+	sw	$s0,120($fp)
 	lw	$s0,56($fp)
-	sw	$s0,80($fp)
-	lw	$s1,76($fp)
-	lw	$s0,80($fp)
+	sw	$s0,124($fp)
+	lw	$s1,120($fp)
+	lw	$s0,124($fp)
 	mul	$s2,$s1,$s0
-	sw	$s2,84($fp)
-	lw	$v0,84($fp)
+	sw	$s2,128($fp)
+	lw	$v0,128($fp)
 	b	functionEND
 	nop
 $IL0:
 $IL1:
 	lw	$s0,56($fp)
-	sw	$s0,88($fp)
-	lw	$v0,88($fp)
+	sw	$s0,132($fp)
+	lw	$v0,132($fp)
 	b	functionEND
 	nop
 $IL2:
 	li	$s0,13
-	sw	$s0,92($fp)
-	lw	$v0,92($fp)
+	sw	$s0,136($fp)
+	lw	$v0,136($fp)
 	b	functionEND
 	nop
 functionEND:
@@ -129,11 +131,12 @@ functionEND:
 	lw	$s1, 44($sp)
 	lw	$s0, 48($sp)
 	j	$31
-	addiu	$sp,$sp,96
+	addiu	$sp,$sp,140
+
 	.set	macro
 	.set	reorder
 	.end	function
-
+	.size	function, .-function
 	.align	2
 	.global	main
 	.set	nomips16
@@ -142,6 +145,8 @@ functionEND:
 	.type	main, @function
 main:
 	.frame	$fp,112,$31
+	.mask	0x40000000,-4
+	.fmask	0x00000000,0
 	.set	noreorder
 	.set	nomacro
 	addiu	$sp,$sp,-112
@@ -241,7 +246,8 @@ mainEND:
 	lw	$s0, 48($sp)
 	j	$31
 	addiu	$sp,$sp,112
+
 	.set	macro
 	.set	reorder
 	.end	main
-
+	.size	main, .-main
