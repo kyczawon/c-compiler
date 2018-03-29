@@ -1,3 +1,11 @@
+	.file	1 "dt10/soft/inputs/f09.c"
+	.section .mdebug.abi32
+	.previous
+	.nan	legacy
+	.module fp=xx
+	.module nooddspreg
+	.abicalls
+
 	.text	
 	.align	2
 	.global	function
@@ -156,9 +164,11 @@ main:
 	li	$s0,0
 	sw	$s0,56($fp)
 	lw	$a1,56($fp)
+
 	.option pic0
 	jal	function
 	nop
+
 	.option pic2
 	sw	$v0,60($fp)
 	li	$s0,1
@@ -167,9 +177,11 @@ main:
 	li	$s0,2
 	sw	$s0,68($fp)
 	lw	$a1,68($fp)
+
 	.option pic0
 	jal	function
 	nop
+
 	.option pic2
 	sw	$v0,72($fp)
 	lw	$s1,60($fp)
@@ -182,9 +194,11 @@ main:
 	li	$s0,3
 	sw	$s0,84($fp)
 	lw	$a1,84($fp)
+
 	.option pic0
 	jal	function
 	nop
+
 	.option pic2
 	sw	$v0,88($fp)
 	lw	$s1,76($fp)
@@ -197,9 +211,11 @@ main:
 	li	$s0,7
 	sw	$s0,100($fp)
 	lw	$a1,100($fp)
+
 	.option pic0
 	jal	function
 	nop
+
 	.option pic2
 	sw	$v0,104($fp)
 	lw	$s1,92($fp)

@@ -1,3 +1,12 @@
+	.file	1 "dt10/soft/inputs/f07.c"
+	.section .mdebug.abi32
+	.previous
+	.nan	legacy
+	.module fp=xx
+	.module nooddspreg
+	.abicalls
+
+	.comm	x,4,4
 	.text	
 	.align	2
 	.global	main
@@ -27,9 +36,9 @@ main:
 	sw	$s0,52($fp)
 	lw	$s5,52($fp)
 	la	$t0,x
-	sw	$s5,($t0)
+	sw	$s5,0($t0)
 	la	$t0,x
-	lw	$s0,($t0)
+	lw	$s0,0($t0)
 	sw	$s0,56($fp)
 	lw	$v0,56($fp)
 	b	mainEND

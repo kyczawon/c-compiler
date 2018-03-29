@@ -1,3 +1,12 @@
+	.file	1 "dt10/soft/inputs/f08.c"
+	.section .mdebug.abi32
+	.previous
+	.nan	legacy
+	.module fp=xx
+	.module nooddspreg
+	.abicalls
+
+	.comm	x,4,4
 	.text	
 	.align	2
 	.global	f
@@ -24,7 +33,7 @@ f:
 	sw	$s0, 48($sp)
 	move	$fp,$sp
 	la	$t0,x
-	lw	$s0,($t0)
+	lw	$s0,0($t0)
 	sw	$s0,52($fp)
 	li	$s0,1
 	sw	$s0,56($fp)
@@ -34,9 +43,9 @@ f:
 	sw	$s2,60($fp)
 	lw	$s5,60($fp)
 	la	$t0,x
-	sw	$s5,($t0)
+	sw	$s5,0($t0)
 	la	$t0,x
-	lw	$s0,($t0)
+	lw	$s0,0($t0)
 	sw	$s0,56($fp)
 	lw	$v0,56($fp)
 	b	fEND
@@ -85,14 +94,18 @@ main:
 	sw	$s1, 44($sp)
 	sw	$s0, 48($sp)
 	move	$fp,$sp
+
 	.option pic0
 	jal	f
 	nop
+
 	.option pic2
 	sw	$v0,52($fp)
+
 	.option pic0
 	jal	f
 	nop
+
 	.option pic2
 	sw	$v0,56($fp)
 	lw	$s1,52($fp)

@@ -5,7 +5,7 @@
 
 void print_python(FILE* is, std::ostream &os);
 void check_files_opened(FILE *source_file, std::ofstream &out_file, char *argv[]);
-void print_code_gen(FILE* is, std::ostream &os);
+void print_code_gen(FILE* is, std::ostream &os, std::string fileName);
 
 int ifElseStatement::ifElseCounter = 0;
 int ifStatement::ifCounter = 0;
@@ -31,11 +31,12 @@ int main(int argc, char *argv[])
     }
 
     if (strcmp(argv[1],"-S")==0 && strcmp(argv[3],"-o")==0) {
+        std::string fileName = argv[2];
         FILE *source_file =fopen(argv[2], "r");
         std::ofstream out_file(argv[4]);
         check_files_opened(source_file, out_file, argv);
 
-        print_code_gen(source_file, out_file);
+        print_code_gen(source_file, out_file, fileName);
     }
 
     //translation
@@ -68,10 +69,14 @@ void check_files_opened(FILE *source_file, std::ofstream &out_file, char *argv[]
     }
 }
 
-void print_code_gen(FILE* is, std::ostream &os) {
+void print_code_gen(FILE* is, std::ostream &os, std::string fileName) {
         yyin = is;
         const Node *ast=parseAST();
         Context context = new Context(nullptr);
+        os<<"\t.file\t1 \""<<fileName<<"\"\n";
+        os<<"\t.section .mdebug.abi32\n\t.previous\n";
+        os<<"\t.nan\tlegacy\n\t.module fp=xx\n";
+        os<<"\t.module nooddspreg\n\t.abicalls\n\n";
         ast->code_gen(os, context);
 }
 

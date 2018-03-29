@@ -73,7 +73,7 @@ public:
         int address = get_binding(key);
         if (address < 0) { //global
             dst<<"\tla\t$t0,"<<key<<std::endl;
-            dst<<"\tsw\t$"<<reg<<",($t0)"<<std::endl;
+            dst<<"\tsw\t$"<<reg<<",0($t0)"<<std::endl;
         } else {
             dst<<"\tsw\t$"<<reg<<","<<get_binding(key)+offset<<"($fp)"<<std::endl;
         }
@@ -83,7 +83,7 @@ public:
         int address = get_binding(key);
         if (address < 0) { //global
             dst<<"\tla\t$t0,"<<key<<std::endl;
-            dst<<"\tlw\t$"<<reg<<",($t0)"<<std::endl;
+            dst<<"\tlw\t$"<<reg<<",0($t0)"<<std::endl;
         } else {
             dst<<"\tlw\t$"<<reg<<","<<get_binding(key)+offset<<"($fp)"<<std::endl;
         }

@@ -1,3 +1,11 @@
+	.file	1 "dt10/soft/inputs/f02.c"
+	.section .mdebug.abi32
+	.previous
+	.nan	legacy
+	.module fp=xx
+	.module nooddspreg
+	.abicalls
+
 	.text	
 	.align	2
 	.global	f
@@ -72,9 +80,11 @@ main:
 	sw	$s1, 44($sp)
 	sw	$s0, 48($sp)
 	move	$fp,$sp
+
 	.option pic0
 	jal	f
 	nop
+
 	.option pic2
 	sw	$v0,52($fp)
 	lw	$v0,52($fp)

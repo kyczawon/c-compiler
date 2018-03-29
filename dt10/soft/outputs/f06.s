@@ -1,3 +1,11 @@
+	.file	1 "dt10/soft/inputs/f06.c"
+	.section .mdebug.abi32
+	.previous
+	.nan	legacy
+	.module fp=xx
+	.module nooddspreg
+	.abicalls
+
 	.text	
 	.align	2
 	.global	main

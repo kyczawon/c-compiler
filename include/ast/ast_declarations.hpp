@@ -96,6 +96,7 @@ public:
 
     virtual void code_gen(std::ostream &dst, Context &context) const override
     {
+        dst<<"\t.comm\t"<<id<<",4,4\n";
     }
 };
 
@@ -258,9 +259,10 @@ public:
         dst<<"\tlw\t$s0, 48($sp)\n";
         dst<<"\tj\t$31"<<std::endl;
         dst <<"\taddiu\t$sp,$sp,"<<inner_context.size()<<std::endl;
-        dst<<"\t.set\tmacro"<<std::endl;
+        dst<<"\n\t.set\tmacro"<<std::endl;
         dst<<"\t.set\treorder"<<std::endl;
-        dst<<"\t.end\t"<<identifier<<std::endl<<std::endl;
+        dst<<"\t.end\t"<<identifier<<"\n\t";
+        dst<<".size\t"<<identifier<<", .-"<<identifier<<std::endl;
         FnTracker.erase(FnTracker.begin());
     }
 };

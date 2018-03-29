@@ -27,10 +27,10 @@ public:
     {
         if (input_params != nullptr) input_params->code_gen(dst,context);
         context.reset_registers();//reset the registers used by input parameters
-        dst<<"\t.option pic0\n";
+        dst<<"\n\t.option pic0\n";
         dst<<"\tjal\t"<<identifier<<std::endl;
         dst<<"\tnop"<<std::endl;
-        dst<<"\t.option pic2\n";
+        dst<<"\n\t.option pic2\n";
         dst<<"\tsw\t$v0,"<<context.next_mem()<<"($fp)"<<std::endl;
     }
 };

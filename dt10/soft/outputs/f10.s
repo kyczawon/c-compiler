@@ -1,3 +1,11 @@
+	.file	1 "dt10/soft/inputs/f10.c"
+	.section .mdebug.abi32
+	.previous
+	.nan	legacy
+	.module fp=xx
+	.module nooddspreg
+	.abicalls
+
 	.text	
 	.align	2
 	.global	factorial
@@ -59,9 +67,11 @@ $IEL0:
 	sub	$s2,$s1,$s0
 	sw	$s2,80($fp)
 	lw	$a0,80($fp)
+
 	.option pic0
 	jal	factorial
 	nop
+
 	.option pic2
 	sw	$v0,84($fp)
 	lw	$s0,52($fp)
@@ -73,9 +83,11 @@ $IEL0:
 	sub	$s2,$s1,$s0
 	sw	$s2,96($fp)
 	lw	$a0,96($fp)
+
 	.option pic0
 	jal	factorial
 	nop
+
 	.option pic2
 	sw	$v0,100($fp)
 	lw	$s1,84($fp)
@@ -133,17 +145,21 @@ main:
 	li	$s0,4
 	sw	$s0,52($fp)
 	lw	$a0,52($fp)
+
 	.option pic0
 	jal	factorial
 	nop
+
 	.option pic2
 	sw	$v0,56($fp)
 	li	$s0,2
 	sw	$s0,60($fp)
 	lw	$a0,60($fp)
+
 	.option pic0
 	jal	factorial
 	nop
+
 	.option pic2
 	sw	$v0,64($fp)
 	lw	$s1,56($fp)
@@ -153,9 +169,11 @@ main:
 	li	$s0,1
 	sw	$s0,72($fp)
 	lw	$a0,72($fp)
+
 	.option pic0
 	jal	factorial
 	nop
+
 	.option pic2
 	sw	$v0,76($fp)
 	lw	$s1,68($fp)
@@ -165,9 +183,11 @@ main:
 	li	$s0,0
 	sw	$s0,84($fp)
 	lw	$a0,84($fp)
+
 	.option pic0
 	jal	factorial
 	nop
+
 	.option pic2
 	sw	$v0,88($fp)
 	lw	$s1,80($fp)

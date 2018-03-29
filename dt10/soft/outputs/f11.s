@@ -1,3 +1,11 @@
+	.file	1 "dt10/soft/inputs/f11.c"
+	.section .mdebug.abi32
+	.previous
+	.nan	legacy
+	.module fp=xx
+	.module nooddspreg
+	.abicalls
+
 	.text	
 	.align	2
 	.global	geo
@@ -109,17 +117,21 @@ main:
 	li	$s0,4
 	sw	$s0,52($fp)
 	lw	$a0,52($fp)
+
 	.option pic0
 	jal	geo
 	nop
+
 	.option pic2
 	sw	$v0,56($fp)
 	li	$s0,3
 	sw	$s0,60($fp)
 	lw	$a0,60($fp)
+
 	.option pic0
 	jal	geo
 	nop
+
 	.option pic2
 	sw	$v0,64($fp)
 	lw	$s1,56($fp)
@@ -129,9 +141,11 @@ main:
 	li	$s0,2
 	sw	$s0,72($fp)
 	lw	$a0,72($fp)
+
 	.option pic0
 	jal	geo
 	nop
+
 	.option pic2
 	sw	$v0,76($fp)
 	lw	$s1,68($fp)

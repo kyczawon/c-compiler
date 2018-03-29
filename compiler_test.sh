@@ -24,16 +24,17 @@ for testfile in ${cases}/* ; do
     testdir=${results}/${testname}
     mkdir -p "$testdir"
 
+    rm ${testdir}/${testname}
+
     $compiler -S ${testfile}/${testname}.c -o ${testdir}/${testname}.s
 
-    mips-linux-gnu-gcc -S ${testfile}/${testname}.c -o ${testdir}/${testname}_ref.s
+    mips-linux-gnu-gcc -pedantic -std=c89 -O0 -S ${testfile}/${testname}.c -o ${testdir}/${testname}_ref.s
     
     mips-linux-gnu-gcc -static -o ${testdir}/${testname} ${testdir}/${testname}.s ${cases}/${testname}/${testname}_driver.c
-    
+
     timeout 2 qemu-mips ${testdir}/${testname}
 
     GOT=$?
-
    
 
     if [[ $GOT -eq 0 ]] ; then 
