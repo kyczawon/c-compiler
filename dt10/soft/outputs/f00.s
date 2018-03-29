@@ -26,6 +26,9 @@ main:
 	li	$s0,10
 	sw	$s0,52($fp)
 	lw	$v0,52($fp)
+	b	mainEND
+	nop
+mainEND:
 	move	$sp,$fp
 	lw	$31, 4($sp)
 	lw	$30, 8($sp)

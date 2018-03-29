@@ -66,7 +66,7 @@ for i in ${input_dir}/*.c ; do
             
             if [[ -f ${working_dir}/$base.mips.elf ]] ; then
                 echo "Executing the MIPS executable."
-                run_log "qemu-mips ${working_dir}/$base.mips.elf" $base-dut-qemu
+                run_log "timeout 2 qemu-mips ${working_dir}/$base.mips.elf" $base-dut-qemu
                 GOT_C_OUT=$?
                 echo "GOT_C_OUT=${GOT_C_OUT}"
                 

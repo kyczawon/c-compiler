@@ -6,10 +6,10 @@
 	.ent	geo
 	.type	geo, @function
 geo:
-	.frame	$fp,88,$31
+	.frame	$fp,84,$31
 	.set	noreorder
 	.set	nomacro
-	addiu	$sp,$sp,-88
+	addiu	$sp,$sp,-84
 	sw	$31, 4($sp)
 	sw	$30, 8($sp)
 	sw	$29, 12($sp)
@@ -26,42 +26,43 @@ geo:
 	sw	$a0,52($fp)
 	li	$s0,0
 	sw	$s0,60($fp)
-	lw	$s0,60($fp)
 	sw	$s0,56($fp)
 	lw	$s0,52($fp)
 	sw	$s0,68($fp)
-	lw	$s0,68($fp)
 	sw	$s0,60($fp)
 	b	$WL1
 	nop
 $WL0:
 	lw	$s0,56($fp)
-	sw	$s0,52($fp)
-	lw	$s0,60($fp)
-	sw	$s0,56($fp)
-	lw	$s1,52($fp)
-	lw	$s0,56($fp)
-	addu	$s2,$s1,$s0
-	sw	$s2,60($fp)
-	lw	$s0,60($fp)
-	sw	$s0,56($fp)
-$WL1:
-	lw	$s0,60($fp)
 	sw	$s0,72($fp)
-	lw	$s0,52($fp)
+	lw	$s0,60($fp)
 	sw	$s0,76($fp)
 	lw	$s1,72($fp)
 	lw	$s0,76($fp)
+	addu	$s2,$s1,$s0
+	sw	$s2,80($fp)
+	lw	$s5,80($fp)
+	sw	$s5,56($fp)
+$WL1:
+	lw	$s0,60($fp)
+	sw	$s0,68($fp)
+	lw	$s0,52($fp)
+	sw	$s0,72($fp)
+	lw	$s1,68($fp)
+	lw	$s0,72($fp)
 	sltu	$s0,$s1,$s0
 	andi	$s0,$s0,0x00ff
-	sw	$s0,80($fp)
-	lw	$s0,80($fp)
+	sw	$s0,76($fp)
+	lw	$s0,76($fp)
 	bne	$s0,$0,$WL0
 	nop
 $WL2:
 	lw	$s0,56($fp)
-	sw	$s0,84($fp)
-	lw	$v0,84($fp)
+	sw	$s0,80($fp)
+	lw	$v0,80($fp)
+	b	geoEND
+	nop
+geoEND:
 	move	$sp,$fp
 	lw	$31, 4($sp)
 	lw	$30, 8($sp)
@@ -76,7 +77,7 @@ $WL2:
 	lw	$s1, 44($sp)
 	lw	$s0, 48($sp)
 	j	$31
-	addiu	$sp,$sp,88
+	addiu	$sp,$sp,84
 	.set	macro
 	.set	reorder
 	.end	geo
@@ -108,14 +109,18 @@ main:
 	li	$s0,4
 	sw	$s0,52($fp)
 	lw	$a0,52($fp)
+	.option pic0
 	jal	geo
 	nop
+	.option pic2
 	sw	$v0,56($fp)
 	li	$s0,3
 	sw	$s0,60($fp)
 	lw	$a0,60($fp)
+	.option pic0
 	jal	geo
 	nop
+	.option pic2
 	sw	$v0,64($fp)
 	lw	$s1,56($fp)
 	lw	$s0,64($fp)
@@ -124,14 +129,19 @@ main:
 	li	$s0,2
 	sw	$s0,72($fp)
 	lw	$a0,72($fp)
+	.option pic0
 	jal	geo
 	nop
+	.option pic2
 	sw	$v0,76($fp)
 	lw	$s1,68($fp)
 	lw	$s0,76($fp)
 	addu	$s2,$s1,$s0
 	sw	$s2,80($fp)
 	lw	$v0,80($fp)
+	b	mainEND
+	nop
+mainEND:
 	move	$sp,$fp
 	lw	$31, 4($sp)
 	lw	$30, 8($sp)

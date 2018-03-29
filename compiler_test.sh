@@ -8,7 +8,6 @@ fi
 
 cases="./test/test_cases"
 results="./test/test_results"
-rmdir -p "$results"
 mkdir -p "$results"
 
 echo " "
@@ -25,9 +24,9 @@ for testfile in ${cases}/* ; do
     testdir=${results}/${testname}
     mkdir -p "$testdir"
 
-    echo "  --   Performing ${testname} Test   --  "
-
     $compiler -S ${testfile}/${testname}.c -o ${testdir}/${testname}.s
+
+    mips-linux-gnu-gcc -S ${testfile}/${testname}.c -o ${testdir}/${testname}_ref.s
     
     mips-linux-gnu-gcc -static -o ${testdir}/${testname} ${testdir}/${testname}.s ${cases}/${testname}/${testname}_driver.c
     

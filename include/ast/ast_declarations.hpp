@@ -66,7 +66,7 @@ public:
             dst<<"\t.data\t"<<std::endl;
             context.is_first_global = false;
         }
-        dst<<"\t.allign\t2"<<std::endl;
+        dst<<"\t.align\t2"<<std::endl;
         dst<<"\t.type\t"<<id<<", @object"<<std::endl;
         dst<<"\t.size\t"<<id<<", "<<context.get_size(type)<<std::endl;
         dst<<id<<":"<<std::endl;
@@ -222,6 +222,7 @@ public:
             parameter_list->code_gen(inner_compiled,inner_context);
             inner_context.reset_registers(); //after the parameter list
         }
+        FnTracker.push_back(identifier+"END");
         compound->code_gen(inner_compiled, inner_context);
         dst<<"\t.frame\t$fp,"<<inner_context.size()<<",$31"<<std::endl;
         dst<<init.str();
@@ -241,9 +242,26 @@ public:
         dst<<"\tmove\t$fp,$sp"<<std::endl;
         dst<<inner_compiled.str();
         // dst << "\taddiu	$sp,$sp," << inner_context.size()<<std::endl;
+        dst<<FnTracker[0]<<":\n";
+        dst<<"\tmove\t$sp,$fp"<<std::endl;
+		dst<<"\tlw\t$31, 4($sp)\n";
+        dst<<"\tlw\t$30, 8($sp)\n";
+        dst<<"\tlw\t$29, 12($sp)\n";
+        dst<<"\tlw\t$28, 16($sp)\n";
+        dst<<"\tlw\t$s7, 20($sp)\n";
+        dst<<"\tlw\t$s6, 24($sp)\n";
+        dst<<"\tlw\t$s5, 28($sp)\n";
+        dst<<"\tlw\t$s4, 32($sp)\n";
+        dst<<"\tlw\t$s3, 36($sp)\n";
+        dst<<"\tlw\t$s2, 40($sp)\n";
+        dst<<"\tlw\t$s1, 44($sp)\n";
+        dst<<"\tlw\t$s0, 48($sp)\n";
+        dst<<"\tj\t$31"<<std::endl;
+        dst <<"\taddiu\t$sp,$sp,"<<inner_context.size()<<std::endl;
         dst<<"\t.set\tmacro"<<std::endl;
         dst<<"\t.set\treorder"<<std::endl;
         dst<<"\t.end\t"<<identifier<<std::endl<<std::endl;
+        FnTracker.erase(FnTracker.begin());
     }
 };
 

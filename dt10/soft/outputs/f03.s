@@ -27,6 +27,9 @@ f:
 	li	$s0,10
 	sw	$s0,56($fp)
 	lw	$v0,56($fp)
+	b	fEND
+	nop
+fEND:
 	move	$sp,$fp
 	lw	$31, 4($sp)
 	lw	$30, 8($sp)
@@ -73,8 +76,10 @@ main:
 	li	$s0,11
 	sw	$s0,52($fp)
 	lw	$a0,52($fp)
+	.option pic0
 	jal	f
 	nop
+	.option pic2
 	sw	$v0,56($fp)
 	li	$s0,7
 	sw	$s0,60($fp)
@@ -83,6 +88,9 @@ main:
 	addu	$s2,$s1,$s0
 	sw	$s2,64($fp)
 	lw	$v0,64($fp)
+	b	mainEND
+	nop
+mainEND:
 	move	$sp,$fp
 	lw	$31, 4($sp)
 	lw	$30, 8($sp)

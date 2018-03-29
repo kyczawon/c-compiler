@@ -6,10 +6,10 @@
 	.ent	f
 	.type	f, @function
 f:
-	.frame	$fp,56,$31
+	.frame	$fp,60,$31
 	.set	noreorder
 	.set	nomacro
-	addiu	$sp,$sp,-56
+	addiu	$sp,$sp,-60
 	sw	$31, 4($sp)
 	sw	$30, 8($sp)
 	sw	$29, 12($sp)
@@ -32,13 +32,16 @@ f:
 	lw	$s0,56($fp)
 	addu	$s2,$s1,$s0
 	sw	$s2,60($fp)
-	lw	$s0,60($fp)
+	lw	$s5,60($fp)
 	la	$t0,x
-	sw	$s0,($t0)
+	sw	$s5,($t0)
 	la	$t0,x
 	lw	$s0,($t0)
-	sw	$s0,52($fp)
-	lw	$v0,52($fp)
+	sw	$s0,56($fp)
+	lw	$v0,56($fp)
+	b	fEND
+	nop
+fEND:
 	move	$sp,$fp
 	lw	$31, 4($sp)
 	lw	$30, 8($sp)
@@ -53,7 +56,7 @@ f:
 	lw	$s1, 44($sp)
 	lw	$s0, 48($sp)
 	j	$31
-	addiu	$sp,$sp,56
+	addiu	$sp,$sp,60
 	.set	macro
 	.set	reorder
 	.end	f
@@ -82,17 +85,24 @@ main:
 	sw	$s1, 44($sp)
 	sw	$s0, 48($sp)
 	move	$fp,$sp
+	.option pic0
 	jal	f
 	nop
+	.option pic2
 	sw	$v0,52($fp)
+	.option pic0
 	jal	f
 	nop
+	.option pic2
 	sw	$v0,56($fp)
 	lw	$s1,52($fp)
 	lw	$s0,56($fp)
 	addu	$s2,$s1,$s0
 	sw	$s2,60($fp)
 	lw	$v0,60($fp)
+	b	mainEND
+	nop
+mainEND:
 	move	$sp,$fp
 	lw	$31, 4($sp)
 	lw	$30, 8($sp)

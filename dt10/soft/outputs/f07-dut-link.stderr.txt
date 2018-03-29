@@ -1,5 +1,5 @@
-/tmp/cc9S5stB.o: In function `main':
+/tmp/ccifcoqg.o: In function `main':
 (.text+0x44): undefined reference to `x'
-/tmp/cc9S5stB.o: In function `main':
+/tmp/ccifcoqg.o: In function `main':
 (.text+0x4c): undefined reference to `x'
 collect2: error: ld returned 1 exit status

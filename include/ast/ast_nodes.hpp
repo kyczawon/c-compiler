@@ -18,6 +18,7 @@ static const std::regex reNum("^-?[0-9]+$");
 static const std::regex reId("^[a-z][a-z0-9]*$");
 
 static int NameUnq=0;
+static std::vector<std::string> FnTracker;
 
 static std::string make_name(std::string base)
 {
@@ -138,11 +139,11 @@ public:
 
     unsigned int get_function(std::string key) {
         if (parent != nullptr) parent->get_function(key);
-        else {
-            std::unordered_map<std::string,unsigned int>::iterator it = functions.find(key);
-            if (it == functions.end()) throw std::runtime_error("error: '" + key + "' undeclared");
-            else return it->second;
-        }
+        // else {
+        //     std::unordered_map<std::string,unsigned int>::iterator it = functions.find(key);
+        //     if (it == functions.end()) throw std::runtime_error("error: '" + key + "' undeclared");
+        //     else return it->second;
+        // }
     }
 
     //add variable bindings
