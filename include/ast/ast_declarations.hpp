@@ -226,6 +226,8 @@ public:
         FnTracker.push_back(identifier+"END");
         compound->code_gen(inner_compiled, inner_context);
         dst<<"\t.frame\t$fp,"<<inner_context.size()<<",$31"<<std::endl;
+        dst<<"\t.mask\t0x40000000,-4\n";
+        dst<<"\t.fmask\t0x00000000,0\n";
         dst<<init.str();
         dst<<"\taddiu\t$sp,$sp,-"<<inner_context.size()<<std::endl;
         dst<<"\tsw\t$31, 4($sp)\n";

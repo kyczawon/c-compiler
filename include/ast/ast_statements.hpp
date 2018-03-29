@@ -116,7 +116,7 @@ public:
     virtual void code_gen(std::ostream &dst, Context &context) const override
     {
         expr->code_gen(dst,context);
-        context.reset_mem();
+        // context.reset_mem();
     }
 };
 
@@ -191,13 +191,11 @@ public:
         dst<<"\tlw\t$s0,"<<context.get_current_mem()<<"($fp)"<<std::endl;
         dst<<"\tbeq\t$s0,$0,"<<elseLabel;
         dst<<std::endl<<"\tnop"<<std::endl;
-        Context if_context = new Context(context);
-        ifSequence->code_gen(dst,if_context);
+        ifSequence->code_gen(dst,context);
         dst<<"\tbeq\t$0,$0,"<<endLabel;
         dst<<std::endl<<"\tnop"<<std::endl;
         dst<<elseLabel<<":"<<std::endl;
-        Context else_context = new Context(context);
-        elseSequence->code_gen(dst,else_context);
+        elseSequence->code_gen(dst,context);
         dst<<endLabel<<":"<<std::endl;
     }
     
@@ -234,8 +232,6 @@ public:
     }
     virtual void code_gen(std::ostream &dst, Context &context) const override
     {
-        Context inner_context = new Context(context);
-        Context cond_context = new Context(context);
         dst<<"\tb\t"<<condLabel<<std::endl;
         dst<<"\tnop\n";
         dst<<seqLabel<<":"<<std::endl;
@@ -279,8 +275,6 @@ public:
     }
     virtual void code_gen(std::ostream &dst, Context &context) const override
     {
-        Context inner_context = new Context(context);
-        Context cond_context = new Context(context);
         dst<<seqLabel<<":"<<std::endl;
         sequence->code_gen(dst,context);
         dst<<condLabel<<":"<<std::endl;
@@ -320,8 +314,6 @@ public:
     }
     virtual void code_gen(std::ostream &dst, Context &context) const override
     {
-        Context cond_context = new Context(context);
-        Context inner_context = new Context(context);
         if (initializer != nullptr) initializer->code_gen(dst, context); //initializer could be empty
         dst<<"\tb\t"<<condLabel<<"\n\tnop\n";
         dst<<seqLabel<<":\n";
@@ -412,16 +404,14 @@ public:
     virtual void code_gen(std::ostream &dst, Context &context) const override
     {
         if(condition!=NULL){
-            Context cond_context = new Context(context);
-            switchTracker[0]->code_gen(dst, cond_context);
-            dst<<"\tlw\t$t0,"<<cond_context.get_current_mem()<<"($fp)"<<std::endl;
-            condition->code_gen(dst,cond_context);
-            dst<<"\tlw\t$s1,"<<cond_context.get_current_mem()<<"($fp)"<<std::endl;
+            switchTracker[0]->code_gen(dst, context);
+            dst<<"\tlw\t$t0,"<<context.get_current_mem()<<"($fp)"<<std::endl;
+            condition->code_gen(dst,context);
+            dst<<"\tlw\t$s1,"<<context.get_current_mem()<<"($fp)"<<std::endl;
             dst<<"\tbne\t$s1,$t0,"<<endLabel<<std::endl;
             dst<<"\tnop"<<std::endl;
         }
-        Context inner_context = new Context(context);
-        sequence->code_gen(dst,inner_context);
+        sequence->code_gen(dst,context);
         std::string label = endTracker[0];
         dst<<"\tb\t"<<label;
         dst<<"\n\tnop\n";

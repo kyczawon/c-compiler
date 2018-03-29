@@ -362,12 +362,16 @@ class ConditionalOperator : public Node
 {
 private:
     NodePtr cond, if_exp, else_exp;
+    std::string elseLabel, endLabel;
 public:
     ConditionalOperator(NodePtr _cond, NodePtr _if_exp, NodePtr _else_exp)
         : cond(_cond),
         if_exp(_if_exp),
         else_exp(_else_exp)
-    {}
+    {
+        elseLabel = makeIfElseLabel();
+        endLabel = makeIfElseLabel();
+    }
 
     virtual void translate(int level, std::ostream &dst) const override
     {
@@ -376,9 +380,24 @@ public:
     
     virtual void code_gen(std::ostream &dst, Context &context) const override
     {
-        ifElseStatement *ifElse = new ifElseStatement(cond,if_exp,else_exp);
-        ifElse->code_gen(dst,context);
-        context.reset_last_mem();
+        cond->code_gen(dst,context);
+        dst<<"\tlw\t$s0,"<<context.get_current_mem()<<"($fp)"<<std::endl;
+        dst<<"\tbeq\t$s0,$0,"<<elseLabel;
+        dst<<std::endl<<"\tnop"<<std::endl;
+        if_exp->code_gen(dst,context);
+        dst<<"\tlw\t$s4,"<<context.get_current_mem()<<"($fp)\n";
+        dst<<"\tbeq\t$0,$0,"<<endLabel;
+        dst<<"\n\tnop"<<std::endl;
+        dst<<elseLabel<<":"<<std::endl;
+        else_exp->code_gen(dst,context);
+        dst<<"\tlw\t$s4,"<<context.get_current_mem()<<"($fp)\n";
+        dst<<endLabel<<":"<<std::endl;
+        dst<<"\tsw\t$s4,"<<context.next_mem()<<"($fp)\n";
+    }
+
+    std::string makeIfElseLabel()
+    {
+        return "$IEL"+std::to_string(ifElseStatement::ifElseCounter++);
     }
 };
 

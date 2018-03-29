@@ -217,11 +217,6 @@ public:
         return current_mem;
     }
 
-    int reset_last_mem(){
-        current_mem = current_mem - 4;
-        return _size+current_mem;
-    }
-
     void reset_mem() {
         current_mem = 0;
     }

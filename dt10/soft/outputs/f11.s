@@ -14,10 +14,12 @@
 	.ent	geo
 	.type	geo, @function
 geo:
-	.frame	$fp,84,$31
+	.frame	$fp,100,$31
+	.mask	0x40000000,-4
+	.fmask	0x00000000,0
 	.set	noreorder
 	.set	nomacro
-	addiu	$sp,$sp,-84
+	addiu	$sp,$sp,-100
 	sw	$31, 4($sp)
 	sw	$30, 8($sp)
 	sw	$29, 12($sp)
@@ -53,21 +55,21 @@ $WL0:
 	sw	$s5,56($fp)
 $WL1:
 	lw	$s0,60($fp)
-	sw	$s0,68($fp)
+	sw	$s0,84($fp)
 	lw	$s0,52($fp)
-	sw	$s0,72($fp)
-	lw	$s1,68($fp)
-	lw	$s0,72($fp)
+	sw	$s0,88($fp)
+	lw	$s1,84($fp)
+	lw	$s0,88($fp)
 	sltu	$s0,$s1,$s0
 	andi	$s0,$s0,0x00ff
-	sw	$s0,76($fp)
-	lw	$s0,76($fp)
+	sw	$s0,92($fp)
+	lw	$s0,92($fp)
 	bne	$s0,$0,$WL0
 	nop
 $WL2:
 	lw	$s0,56($fp)
-	sw	$s0,80($fp)
-	lw	$v0,80($fp)
+	sw	$s0,96($fp)
+	lw	$v0,96($fp)
 	b	geoEND
 	nop
 geoEND:
@@ -85,11 +87,12 @@ geoEND:
 	lw	$s1, 44($sp)
 	lw	$s0, 48($sp)
 	j	$31
-	addiu	$sp,$sp,84
+	addiu	$sp,$sp,100
+
 	.set	macro
 	.set	reorder
 	.end	geo
-
+	.size	geo, .-geo
 	.align	2
 	.global	main
 	.set	nomips16
@@ -98,6 +101,8 @@ geoEND:
 	.type	main, @function
 main:
 	.frame	$fp,84,$31
+	.mask	0x40000000,-4
+	.fmask	0x00000000,0
 	.set	noreorder
 	.set	nomacro
 	addiu	$sp,$sp,-84
@@ -171,7 +176,8 @@ mainEND:
 	lw	$s0, 48($sp)
 	j	$31
 	addiu	$sp,$sp,84
+
 	.set	macro
 	.set	reorder
 	.end	main
-
+	.size	main, .-main

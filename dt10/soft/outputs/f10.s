@@ -14,10 +14,12 @@
 	.ent	factorial
 	.type	factorial, @function
 factorial:
-	.frame	$fp,76,$31
+	.frame	$fp,116,$31
+	.mask	0x40000000,-4
+	.fmask	0x00000000,0
 	.set	noreorder
 	.set	nomacro
-	addiu	$sp,$sp,-76
+	addiu	$sp,$sp,-116
 	sw	$31, 4($sp)
 	sw	$30, 8($sp)
 	sw	$29, 12($sp)
@@ -51,50 +53,50 @@ factorial:
 	beq	$s0,$0,$IEL0
 	nop
 	li	$s0,1
-	sw	$s0,72($fp)
-	lw	$v0,72($fp)
+	sw	$s0,76($fp)
+	lw	$v0,76($fp)
 	b	factorialEND
 	nop
 	beq	$0,$0,$IEL1
 	nop
 $IEL0:
 	lw	$s0,52($fp)
-	sw	$s0,72($fp)
+	sw	$s0,80($fp)
 	li	$s0,1
-	sw	$s0,76($fp)
-	lw	$s1,72($fp)
-	lw	$s0,76($fp)
+	sw	$s0,84($fp)
+	lw	$s1,80($fp)
+	lw	$s0,84($fp)
 	sub	$s2,$s1,$s0
-	sw	$s2,80($fp)
-	lw	$a0,80($fp)
+	sw	$s2,88($fp)
+	lw	$a0,88($fp)
 
 	.option pic0
 	jal	factorial
 	nop
 
 	.option pic2
-	sw	$v0,84($fp)
+	sw	$v0,92($fp)
 	lw	$s0,52($fp)
-	sw	$s0,88($fp)
+	sw	$s0,96($fp)
 	li	$s0,2
-	sw	$s0,92($fp)
-	lw	$s1,88($fp)
-	lw	$s0,92($fp)
+	sw	$s0,100($fp)
+	lw	$s1,96($fp)
+	lw	$s0,100($fp)
 	sub	$s2,$s1,$s0
-	sw	$s2,96($fp)
-	lw	$a0,96($fp)
+	sw	$s2,104($fp)
+	lw	$a0,104($fp)
 
 	.option pic0
 	jal	factorial
 	nop
 
 	.option pic2
-	sw	$v0,100($fp)
-	lw	$s1,84($fp)
-	lw	$s0,100($fp)
+	sw	$v0,108($fp)
+	lw	$s1,92($fp)
+	lw	$s0,108($fp)
 	addu	$s2,$s1,$s0
-	sw	$s2,104($fp)
-	lw	$v0,104($fp)
+	sw	$s2,112($fp)
+	lw	$v0,112($fp)
 	b	factorialEND
 	nop
 $IEL1:
@@ -113,11 +115,12 @@ factorialEND:
 	lw	$s1, 44($sp)
 	lw	$s0, 48($sp)
 	j	$31
-	addiu	$sp,$sp,76
+	addiu	$sp,$sp,116
+
 	.set	macro
 	.set	reorder
 	.end	factorial
-
+	.size	factorial, .-factorial
 	.align	2
 	.global	main
 	.set	nomips16
@@ -126,6 +129,8 @@ factorialEND:
 	.type	main, @function
 main:
 	.frame	$fp,96,$31
+	.mask	0x40000000,-4
+	.fmask	0x00000000,0
 	.set	noreorder
 	.set	nomacro
 	addiu	$sp,$sp,-96
@@ -213,7 +218,8 @@ mainEND:
 	lw	$s0, 48($sp)
 	j	$31
 	addiu	$sp,$sp,96
+
 	.set	macro
 	.set	reorder
 	.end	main
-
+	.size	main, .-main
