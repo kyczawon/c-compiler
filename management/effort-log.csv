@@ -23,9 +23,9 @@ Date,Effort,Developers,Milestones
 22.03,9,ms6616,SwitchStatement;CompileAllMajorOperators
 23.03,3,ms6616,GoToStatements
 23.03,4,lkn16,FunctionBindings
-25.05,6,lkn16;ms6616,SaveToMem
-26.06,6,lkn16,SaveToMem;SupportGlobals;FunctionCalls
-27.05,5,lkn16,CompileLocalArrays
-28.05,2,lkn16,CompileLocalArrays;CompilePointers
-28.05,6,ms6616,SaveToMem;Recursion
-29.05,3,lkn16,CompilePointers;PointerToFunc
+25.03,6,lkn16;ms6616,SaveToMem
+26.03,6,lkn16,SaveToMem;SupportGlobals;FunctionCalls
+27.03,5,lkn16,CompileLocalArrays
+28.03,2,lkn16,CompileLocalArrays;CompilePointers
+28.03,6,ms6616,SaveToMem;Recursion
+29.03,6,lkn16,CompilePointers;PointerToFunc;CharAndShortTypes
