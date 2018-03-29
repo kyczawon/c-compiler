@@ -28,4 +28,4 @@ Date,Effort,Developers,Milestones
 27.03,5,lkn16,CompileLocalArrays
 28.03,2,lkn16,CompileLocalArrays;CompilePointers
 28.03,6,ms6616,SaveToMem;Recursion
-29.03,7,lkn16,CompilePointers;PointerToFunc;CharAndShortTypes;ConstVolatile;SignedUnsigned
+29.03,10,lkn16,CompilePointers;PointerToFunc;CharAndShortTypes;ConstVolatile;SignedUnsigned;ListDeclarations

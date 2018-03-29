@@ -37,7 +37,7 @@ public:
 
     //! Generate the mips code to the given stream
     virtual void code_gen(std::ostream &dst, Context &context) const
-    { throw std::runtime_error("Not implemented."); }
+    { throw std::runtime_error("NODE Not implemented."); }
 };
 
 class Context {

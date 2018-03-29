@@ -795,7 +795,8 @@ public:
 
     virtual void code_gen(std::ostream &dst, Context &context) const override
     {
-        dst<<"\tlui\t$s0,"<<context.get_binding(id)<<std::endl;
+        dst<<"\taddu\t$s0,$0,$0"<<std::endl;
+        dst<<"\tli\t$s0,"<<context.get_binding(id)<<std::endl;
         dst<<"\taddu\t$s0,$s0,$fp"<<std::endl;
         dst<<"\tsw\t$s0,"<<context.next_mem()<<"($fp)"<<std::endl;
     }

@@ -6,36 +6,6 @@
 #include <cmath>
 #include <sstream>
 
-class InitialisedVariableDeclaration : public Node
-{
-private:
-    std::string type, id;
-    NodePtr value;
-public:
-    InitialisedVariableDeclaration(const std::string &_type, const std::string &_id, const NodePtr _value)
-        : type(_type),
-        id(_id),
-        value(_value)
-    {}
-
-    const std::string getId() const
-    { return id; }
-
-    virtual void translate(int level, std::ostream &dst) const override
-    {
-        dst<<id<<"=";
-        value->translate(0, dst);
-    }
-
-    virtual void code_gen(std::ostream &dst, Context &context) const override
-    {
-        context.add_binding(type, id);
-        value->code_gen(dst, context);
-        // dst<<"\tlw\t$s0,"<<context.get_current_mem()<<"($fp)"<<std::endl;
-        context.set_binding(id,"s0",dst,0);
-    }
-};
-
 //currently global variable can only be a number (but in c it can be an expression evaluated at compile time)
 class InitialisedGlobalVariableDeclaration : public Node
 {
@@ -285,53 +255,103 @@ public:
     }
 };
 
-class VariableDeclaration : public Node
+class List : public Node {
+public:
+    virtual void code_gen(std::ostream &dst, Context &context) const override //required by Node
+    {
+    }
+    virtual void code_gen(std::ostream &dst, Context &context, const std::string &type) const =0;
+};
+
+class DeclarationList : public List
 {
 private:
-    std::string type, id;
+    std::string id;
+    NodePtr list, value;
 public:
-    VariableDeclaration(const std::string &_type, const std::string &_id)
-        : type(_type),
-        id(_id)
+    DeclarationList(NodePtr _list, const std::string &_id, NodePtr _value)
+        : list(_list),
+        id(_id),
+        value(_value)
     {}
-
-    const std::string getId() const
-    { return id; }
 
     virtual void translate(int level, std::ostream &dst) const override
     {
-        dst<<id<<"=0";
+        if (value != nullptr) {
+            dst<<id<<"=";
+            value->translate(0, dst);
+        } else dst<<id<<"=0";
     }
 
-    virtual void code_gen(std::ostream &dst, Context &context) const override
+    
+
+    virtual void code_gen(std::ostream &dst, Context &context, const std::string &type) const override
     {
         context.add_binding(type, id);
+        if (value != nullptr) {
+            value->code_gen(dst, context);
+            dst<<"\tlw\t$s0,"<<context.get_current_mem()<<"($fp)"<<std::endl;
+            context.set_binding(id,"s0",dst,0);
+        }
+        if (list != nullptr) {
+            const List* declarations = dynamic_cast<const List *>(list);
+            declarations->code_gen(dst, context,type);
+        }
     }
 };
 
-class ArrayDeclaration : public Node
+class PointerDeclarationList : public List
 {
 private:
-    std::string type, id;
-    int size;
+    std::string id;
+    NodePtr list, value;
 public:
-    ArrayDeclaration(const std::string &_type, const std::string &_id, int _size)
-        : type(_type),
+    PointerDeclarationList(NodePtr _list, const std::string &_id, NodePtr _value)
+        : list(_list),
         id(_id),
-        size(_size)
+        value(_value)
     {}
-
-    const std::string getId() const
-    { return id; }
 
     virtual void translate(int level, std::ostream &dst) const override
     {
-        throw std::runtime_error("ArrayDeclaration::translate is not implemented.");
+        throw std::runtime_error("PointerDeclarationList::translate is not implemented.");
+    }
+
+    virtual void code_gen(std::ostream &dst, Context &context, const std::string &type) const override
+    {
+        context.add_binding(type, id);
+        if (value != nullptr) {
+            value->code_gen(dst, context);
+            dst<<"\tlw\t$s0,"<<context.get_current_mem()<<"($fp)"<<std::endl;
+            context.set_binding(id,"s0",dst,0);
+        }
+        if (list != nullptr) {
+            const List* declarations = dynamic_cast<const List *>(list);
+            declarations->code_gen(dst, context,type);
+        }
+    }
+};
+
+class VariableDeclaration : public Node
+{
+private:
+    std::string type;
+    NodePtr list;
+public:
+    VariableDeclaration(const std::string &_type, NodePtr _list)
+        : type(_type),
+        list(_list)
+    {}
+
+    virtual void translate(int level, std::ostream &dst) const override
+    {
+        list->translate(level,dst);
     }
 
     virtual void code_gen(std::ostream &dst, Context &context) const override
     {
-        context.add_arr_binding(type,id,size);
+        const List* declarations = dynamic_cast<const List *>(list);
+        declarations->code_gen(dst, context,type);
     }
 };
 
@@ -358,9 +378,9 @@ public:
     virtual void code_gen(std::ostream &dst, Context &context,const int& mem,const int& type_size, int& current) const
     {
         if (list != nullptr) {
-            current++;
             const InitParams* params = dynamic_cast<const InitParams *>(list);
             params->code_gen(dst, context, mem,type_size, current);
+            current++;
         }
         expr->code_gen(dst,context);
         dst<<"\tlw\t$s0"<<","<<context.get_current_mem()<<"($fp)"<<std::endl;
@@ -368,87 +388,37 @@ public:
     }
 };
 
-class InitialisedArrayDeclaration : public Node
+class ArrayDeclarationList : public List
 {
 private:
-    std::string type, id;
+    std::string id;
     int size;
-    NodePtr init;
+    NodePtr list, init;
 public:
-    InitialisedArrayDeclaration(const std::string &_type, const std::string &_id, int _size, NodePtr _init)
-        : type(_type),
+    ArrayDeclarationList(NodePtr _list, const std::string &_id, int _size, NodePtr _init)
+        : list(_list),
         id(_id),
         size(_size),
         init(_init)
     {}
 
-    const std::string getId() const
-    { return id; }
-
     virtual void translate(int level, std::ostream &dst) const override
     {
-        throw std::runtime_error("InitialisedArrayDeclaration::translate is not implemented.");
+        throw std::runtime_error("ArrayDeclarationList::translate is not implemented.");
     }
 
-    virtual void code_gen(std::ostream &dst, Context &context) const override
+    virtual void code_gen(std::ostream &dst, Context &context, const std::string &type) const override
     {
         context.add_arr_binding(type,id,size);
-        const InitParams* params = dynamic_cast<const InitParams *>(init);
-        int num = 0;
-        params->code_gen(dst,context, context.get_binding(id), context.get_size(type),num);
-    }
-};
-
-class PointerDeclaration : public Node
-{
-private:
-    std::string type, id;
-public:
-    PointerDeclaration(const std::string &_type, const std::string &_id)
-        : type(_type),
-        id(_id)
-    {}
-
-    const std::string getId() const
-    { return id; }
-
-    virtual void translate(int level, std::ostream &dst) const override
-    {
-        throw std::runtime_error("PointerDeclaration::translate is not implemented.");
-    }
-
-    virtual void code_gen(std::ostream &dst, Context &context) const override
-    {
-        context.add_binding(type,id);
-    }
-};
-
-class InitialisedPointerDeclaration : public Node
-{
-private:
-    std::string type, id;
-    NodePtr value;
-public:
-    InitialisedPointerDeclaration(const std::string &_type, const std::string &_id, const NodePtr _value)
-        : type(_type),
-        id(_id),
-        value(_value)
-    {}
-
-    const std::string getId() const
-    { return id; }
-
-    virtual void translate(int level, std::ostream &dst) const override
-    {
-        throw std::runtime_error("InitialisedPointerDeclaration::translate is not implemented.");
-    }
-
-    virtual void code_gen(std::ostream &dst, Context &context) const override
-    {
-        context.add_binding(type, id);
-        value->code_gen(dst, context);
-        dst<<"\tlw\t$s0,"<<context.get_current_mem()<<"($fp)"<<std::endl;
-        context.set_binding(id,"s0",dst,0);
+        if (init != nullptr) {
+            const InitParams* params = dynamic_cast<const InitParams *>(init);
+            int num = 0;
+            params->code_gen(dst,context, context.get_binding(id), context.get_size(type),num);
+        }
+        if (list != nullptr) {
+            const List* declarations = dynamic_cast<const List *>(list);
+            declarations->code_gen(dst, context,type);
+        }
     }
 };
 

@@ -48,7 +48,7 @@
 %type <expr> CONDITIONAL_STATEMENT PARAMETER_LIST PARAMETER EXPR_LIST GLOBAL_DECLARATION GLOBAL_VARIABLE_DECLARATION IF_STATEMENT
 %type <expr> EMPTY CASE_COMPOUND CASE_STATEMENT INPUT_PARAMS INIT_PARAMS FOR_IN
 %type <expr> ASSIGN_EXPR COND_EXPR LOGICAL_OR_EXPR LOGICAL_AND_EXPR BIT_OR_EXPR BIT_XOR_EXPR BIT_AND_EXPR EQUALITY_EXPR RELATIONAL_EXPR
-%type <expr> ADDITIVE_EXPR MULTIPLICATIVE_EXPR SHIFT_EXPR CAST_EXPR UNARY_EXPR POSTFIX_EXPR 
+%type <expr> ADDITIVE_EXPR MULTIPLICATIVE_EXPR SHIFT_EXPR CAST_EXPR UNARY_EXPR POSTFIX_EXPR DECLARATION_LIST
 %type <integer> T_INTEGER
 //types
 %type <string> T_INT T_SHORT T_CHAR T_VOID T_CHARACTER
@@ -253,12 +253,21 @@ GLOBAL_VARIABLE_DECLARATION
         | DECLARATION_SPECIFIER T_STRING T_EQUALS T_INTEGER T_SEMI { $$ = new InitialisedGlobalVariableDeclaration(*$1, *$2, $4 );}
 
 DECLARATION
-        : DECLARATION_SPECIFIER T_STRING T_SEMI    { $$ = new VariableDeclaration(*$1, *$2 );}
-        | DECLARATION_SPECIFIER T_STRING T_EQUALS EXPR_LIST T_SEMI { $$ = new InitialisedVariableDeclaration(*$1, *$2, $4 );}
-        | DECLARATION_SPECIFIER T_STRING T_LSQUARE T_INTEGER T_RSQUARE T_SEMI { $$ = new ArrayDeclaration(*$1, *$2, $4);}
-        | DECLARATION_SPECIFIER T_STRING T_LSQUARE T_INTEGER T_RSQUARE T_EQUALS T_LCURLY INIT_PARAMS T_RCURLY T_SEMI { $$ = new InitialisedArrayDeclaration(*$1, *$2, $4, $8);}
-        | DECLARATION_SPECIFIER T_TIMES T_STRING T_SEMI { $$ = new PointerDeclaration(*$1, *$3);}
-        | DECLARATION_SPECIFIER T_TIMES T_STRING T_EQUALS EXPR_LIST T_SEMI { $$ = new InitialisedPointerDeclaration(*$1, *$3, $5);}
+        : DECLARATION_SPECIFIER DECLARATION_LIST    { $$ = new VariableDeclaration(*$1, $2 );}
+
+DECLARATION_LIST
+        : T_STRING T_SEMI { $$ = new DeclarationList(nullptr, *$1, nullptr);}
+        | T_STRING T_COMMA DECLARATION_LIST { $$ = new DeclarationList($3, *$1, nullptr);}
+        | T_STRING T_EQUALS EXPR_LIST T_SEMI { $$ = new DeclarationList(nullptr, *$1, $3);}
+        | T_STRING T_EQUALS EXPR_LIST T_COMMA DECLARATION_LIST { $$ = new DeclarationList($5, *$1, $3);}
+        | T_TIMES T_STRING T_SEMI { $$ = new PointerDeclarationList(nullptr, *$2, nullptr);}
+        | T_TIMES T_STRING T_COMMA DECLARATION_LIST { $$ = new PointerDeclarationList($4, *$2, nullptr);}
+        | T_TIMES T_STRING T_EQUALS EXPR_LIST T_SEMI { $$ = new PointerDeclarationList(nullptr, *$2, $4);}
+        | T_TIMES T_STRING T_EQUALS EXPR_LIST T_COMMA DECLARATION_LIST { $$ = new PointerDeclarationList($6, *$2, $4);}
+        | T_STRING T_LSQUARE T_INTEGER T_RSQUARE T_SEMI { $$ = new ArrayDeclarationList(nullptr, *$1, $3, nullptr);}
+        | T_STRING T_LSQUARE T_INTEGER T_RSQUARE T_COMMA DECLARATION_LIST { $$ = new ArrayDeclarationList($6, *$1, $3, nullptr);}
+        | T_STRING T_LSQUARE T_INTEGER T_RSQUARE T_EQUALS T_LCURLY INIT_PARAMS T_RCURLY T_SEMI { $$ = new ArrayDeclarationList(nullptr, *$1, $3, $7);}
+        | T_STRING T_LSQUARE T_INTEGER T_RSQUARE T_EQUALS T_LCURLY INIT_PARAMS T_RCURLY T_COMMA DECLARATION_LIST { $$ = new ArrayDeclarationList($10, *$1, $3, $7);}
 
 INIT_PARAMS
         : EMPTY ASSIGN_EXPR { $$ = new InitParams($1,$2);}
