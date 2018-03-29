@@ -130,6 +130,7 @@ ASSIGN_EXPR
         : COND_EXPR
         | T_STRING ASSIGN_OPERATOR COND_EXPR { $$ = new AssignmentOperator(*$1,nullptr,*$2,$3);}
         | T_STRING T_LSQUARE EXPR_LIST T_RSQUARE ASSIGN_OPERATOR COND_EXPR { $$ = new AssignmentOperator(*$1,$3,*$5,$6);}
+        | T_TIMES T_STRING ASSIGN_OPERATOR COND_EXPR { $$ = new PointerAssignment(*$2,*$3,$4);}
 
 ASSIGN_OPERATOR
         : T_EQUALS
@@ -203,6 +204,8 @@ CAST_EXPR
 UNARY_EXPR
 	: POSTFIX_EXPR
         | UNARY_OPERATOR CAST_EXPR { $$ = new UnaryOperator(*$1, $2); }
+        | T_TIMES T_STRING { $$ = new IndirectionOperator(*$2); }
+        | T_BIT_AND T_STRING { $$ = new AddressOperator(*$2); }
 	| T_INC T_STRING { $$ = new PreIncrement(*$2); }
 	| T_DEC T_STRING { $$ = new PreDecrement(*$2); }
         | T_SIZE_OF T_STRING { $$ = new SizeOf(*$2); }
@@ -210,9 +213,7 @@ UNARY_EXPR
         | T_SIZE_OF T_LBRACKET T_STRING T_RBRACKET { $$ = new SizeOf(*$3); }
 
 UNARY_OPERATOR
-	: T_TIMES
-        | T_BIT_AND
-        | T_NOT
+	: T_NOT
         | T_NEGATION
         | T_ADD
         | T_MINUS
@@ -245,6 +246,8 @@ DECLARATION
         | TYPE T_STRING T_EQUALS EXPR_LIST T_SEMI { $$ = new InitialisedVariableDeclaration(*$1, *$2, $4 );}
         | TYPE T_STRING T_LSQUARE T_INTEGER T_RSQUARE T_SEMI { $$ = new ArrayDeclaration(*$1, *$2, $4);}
         | TYPE T_STRING T_LSQUARE T_INTEGER T_RSQUARE T_EQUALS T_LCURLY INIT_PARAMS T_RCURLY T_SEMI { $$ = new InitialisedArrayDeclaration(*$1, *$2, $4, $8);}
+        | TYPE T_TIMES T_STRING T_SEMI { $$ = new PointerDeclaration(*$1, *$3);}
+        | TYPE T_TIMES T_STRING T_EQUALS EXPR_LIST T_SEMI { $$ = new InitialisedPointerDeclaration(*$1, *$3, $5);}
 
 INIT_PARAMS
         : EMPTY ASSIGN_EXPR { $$ = new InitParams($1,$2);}

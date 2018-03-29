@@ -31,3 +31,5 @@ SupportGlobals,,4,lkn16,,Compile globals - create a data section and create a wa
 FunctionCalls,,2,lkn16,d751308ececb80221c10bbb25ad594edcb0db367,compile function calls - both nullary and with many parameters. Get rid of nullaryfunctionInvocation and parse both as one
 GoToStatements,,2,ms6616,,Compile and test go to statements
 CompileLocalArrays,,5,lkn16,0f59472213cce6998ef386d954c5e10d558085d5,"Compile and test local arrays - declarations, invocations and assignments"
+CompilePointers,,4,lkn16,this,"Compile and test pointers - declarations, address operator and indirection operator "
+CompileRecursion,,3,ms6616,,Get recursive function calls to compile

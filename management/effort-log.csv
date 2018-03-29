@@ -26,4 +26,5 @@ Date,Effort,Developers,Milestones
 25.05,6,lkn16;ms6616,SaveToMem
 26.06,6,lkn16,SaveToMem;SupportGlobals;FunctionCalls
 27.05,5,lkn16,CompileLocalArrays
-28.05,1,lkn16,CompileLocalArrays
+28.05,2,lkn16,CompileLocalArrays;CompilePointers
+29.05,2,lkn16,CompilePointers

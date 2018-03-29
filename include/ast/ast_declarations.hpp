@@ -361,4 +361,57 @@ public:
     }
 };
 
+class PointerDeclaration : public Node
+{
+private:
+    std::string type, id;
+public:
+    PointerDeclaration(const std::string &_type, const std::string &_id)
+        : type(_type),
+        id(_id)
+    {}
+
+    const std::string getId() const
+    { return id; }
+
+    virtual void translate(int level, std::ostream &dst) const override
+    {
+        throw std::runtime_error("PointerDeclaration::translate is not implemented.");
+    }
+
+    virtual void code_gen(std::ostream &dst, Context &context) const override
+    {
+        context.add_binding(type,id);
+    }
+};
+
+class InitialisedPointerDeclaration : public Node
+{
+private:
+    std::string type, id;
+    NodePtr value;
+public:
+    InitialisedPointerDeclaration(const std::string &_type, const std::string &_id, const NodePtr _value)
+        : type(_type),
+        id(_id),
+        value(_value)
+    {}
+
+    const std::string getId() const
+    { return id; }
+
+    virtual void translate(int level, std::ostream &dst) const override
+    {
+        throw std::runtime_error("InitialisedPointerDeclaration::translate is not implemented.");
+    }
+
+    virtual void code_gen(std::ostream &dst, Context &context) const override
+    {
+        context.add_binding(type, id);
+        value->code_gen(dst, context);
+        dst<<"\tlw\t$s0,"<<context.get_current_mem()<<"($fp)"<<std::endl;
+        context.set_binding(id,"s0",dst,0);
+    }
+};
+
 #endif
