@@ -42,7 +42,7 @@
 %token T_INT T_SHORT T_CHAR T_VOID
 //symbols
 %token T_LBRACKET T_RBRACKET T_LCURLY T_RCURLY T_SEMI T_COMMA T_LSQUARE T_RSQUARE
-%token T_INTEGER T_STRING T_PERIOD T_CHARACTER
+%token T_INTEGER T_STRING T_PERIOD T_CHARACTER T_CONST T_VOLATILE
 
 %type <expr> FACTOR STATEMENT DECLARATION FUNCTION_DECLARATION COMPOUND_STATEMENT SEQUENCE SEQUENCE_PROG
 %type <expr> CONDITIONAL_STATEMENT PARAMETER_LIST PARAMETER EXPR_LIST GLOBAL_DECLARATION GLOBAL_VARIABLE_DECLARATION IF_STATEMENT
@@ -52,7 +52,7 @@
 %type <integer> T_INTEGER
 //types
 %type <string> T_INT T_SHORT T_CHAR T_VOID T_CHARACTER
-%type <string> T_STRING TYPE T_IF T_ELSE T_WHILE T_COMMA ASSIGN_OPERATOR UNARY_OPERATOR
+%type <string> T_STRING DECLARATION_SPECIFIER TYPE T_IF T_ELSE T_WHILE T_COMMA ASSIGN_OPERATOR UNARY_OPERATOR
 %type <string> T_EQUALS_EQUALS T_NOT_EQUALS T_GREATER T_LESS T_AND T_OR
 //assignment operators
 %type <string> T_EQUALS T_ADD_EQUALS T_SUB_EQUALS T_TIMES_EQUALS T_DIV_EQUALS T_MOD_EQUALS
@@ -75,7 +75,7 @@ GLOBAL_DECLARATION
         | FUNCTION_DECLARATION       
 
 FUNCTION_DECLARATION
-        : TYPE T_STRING T_LBRACKET PARAMETER_LIST T_RBRACKET COMPOUND_STATEMENT { $$ = new Function(*$1, *$2, $4, $6);}
+        : DECLARATION_SPECIFIER T_STRING T_LBRACKET PARAMETER_LIST T_RBRACKET COMPOUND_STATEMENT { $$ = new Function(*$1, *$2, $4, $6);}
 
 PARAMETER_LIST
         : EMPTY PARAMETER { $$ = new ParameterList($1,$2);}
@@ -83,8 +83,8 @@ PARAMETER_LIST
         | EMPTY
 
 PARAMETER
-        : TYPE T_STRING { $$ = new Parameter(*$1, *$2);}
-        | TYPE T_TIMES T_STRING { $$ = new Parameter(*$1, *$3);}
+        : DECLARATION_SPECIFIER T_STRING { $$ = new Parameter(*$1, *$2);}
+        | DECLARATION_SPECIFIER T_TIMES T_STRING { $$ = new Parameter(*$1, *$3);}
 
 COMPOUND_STATEMENT
         : T_LCURLY SEQUENCE T_RCURLY { $$ = new CompoundStatement($2);}
@@ -249,27 +249,39 @@ FACTOR
         | T_CHARACTER {$$ = new Character(*$1);}
 
 GLOBAL_VARIABLE_DECLARATION
-        : TYPE T_STRING T_SEMI { $$ = new GlobalVariableDeclaration(*$1, *$2 );}
-        | TYPE T_STRING T_EQUALS T_INTEGER T_SEMI { $$ = new InitialisedGlobalVariableDeclaration(*$1, *$2, $4 );}
+        : DECLARATION_SPECIFIER T_STRING T_SEMI { $$ = new GlobalVariableDeclaration(*$1, *$2 );}
+        | DECLARATION_SPECIFIER T_STRING T_EQUALS T_INTEGER T_SEMI { $$ = new InitialisedGlobalVariableDeclaration(*$1, *$2, $4 );}
 
 DECLARATION
-        : TYPE T_STRING T_SEMI    { $$ = new VariableDeclaration(*$1, *$2 );}
-        | TYPE T_STRING T_EQUALS EXPR_LIST T_SEMI { $$ = new InitialisedVariableDeclaration(*$1, *$2, $4 );}
-        | TYPE T_STRING T_LSQUARE T_INTEGER T_RSQUARE T_SEMI { $$ = new ArrayDeclaration(*$1, *$2, $4);}
-        | TYPE T_STRING T_LSQUARE T_INTEGER T_RSQUARE T_EQUALS T_LCURLY INIT_PARAMS T_RCURLY T_SEMI { $$ = new InitialisedArrayDeclaration(*$1, *$2, $4, $8);}
-        | TYPE T_TIMES T_STRING T_SEMI { $$ = new PointerDeclaration(*$1, *$3);}
-        | TYPE T_TIMES T_STRING T_EQUALS EXPR_LIST T_SEMI { $$ = new InitialisedPointerDeclaration(*$1, *$3, $5);}
+        : DECLARATION_SPECIFIER T_STRING T_SEMI    { $$ = new VariableDeclaration(*$1, *$2 );}
+        | DECLARATION_SPECIFIER T_STRING T_EQUALS EXPR_LIST T_SEMI { $$ = new InitialisedVariableDeclaration(*$1, *$2, $4 );}
+        | DECLARATION_SPECIFIER T_STRING T_LSQUARE T_INTEGER T_RSQUARE T_SEMI { $$ = new ArrayDeclaration(*$1, *$2, $4);}
+        | DECLARATION_SPECIFIER T_STRING T_LSQUARE T_INTEGER T_RSQUARE T_EQUALS T_LCURLY INIT_PARAMS T_RCURLY T_SEMI { $$ = new InitialisedArrayDeclaration(*$1, *$2, $4, $8);}
+        | DECLARATION_SPECIFIER T_TIMES T_STRING T_SEMI { $$ = new PointerDeclaration(*$1, *$3);}
+        | DECLARATION_SPECIFIER T_TIMES T_STRING T_EQUALS EXPR_LIST T_SEMI { $$ = new InitialisedPointerDeclaration(*$1, *$3, $5);}
 
 INIT_PARAMS
         : EMPTY ASSIGN_EXPR { $$ = new InitParams($1,$2);}
         | INIT_PARAMS T_COMMA ASSIGN_EXPR { $$ = new InitParams($1,$3);}
         | EMPTY
 
+DECLARATION_SPECIFIER
+        : TYPE_QUALIFIER_LIST TYPE { $$ = $2;}
+
 TYPE
         : T_INT
         | T_CHAR
         | T_SHORT
         | T_VOID
+
+TYPE_QUALIFIER_LIST
+        : TYPE_QUALIFIER
+        | TYPE_QUALIFIER_LIST TYPE_QUALIFIER
+        | %empty
+
+TYPE_QUALIFIER
+        : T_CONST
+        | T_VOLATILE
 
 %%
 
