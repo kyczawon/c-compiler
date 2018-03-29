@@ -322,17 +322,23 @@ public:
     {
         Context cond_context = new Context(context);
         Context inner_context = new Context(context);
-        initializer->code_gen(dst, context);
+        if (initializer != nullptr) initializer->code_gen(dst, context); //initializer could be empty
         dst<<"\tb\t"<<condLabel<<"\n\tnop\n";
         dst<<seqLabel<<":\n";
         sequence->code_gen(dst, context);
-        dst<<incLabel<<":\n";
-        increment->code_gen(dst, context);
-        dst<<condLabel<<":"<<std::endl;
-        condition->code_gen(dst, context);
-        dst<<"\tlw\t$s0,"<<context.get_current_mem()<<"($fp)"<<std::endl;
-        dst<<"\tbne\t$s0,$0,"<<seqLabel<<std::endl;
-        dst<<endLabel<<":"<<std::endl;
+        if (increment != nullptr) {
+            dst<<incLabel<<":\n";
+            increment->code_gen(dst, context); //increment could be empty
+            dst<<condLabel<<":"<<std::endl;
+        }
+        if (condition != nullptr) { //condition could be empty
+            condition->code_gen(dst, context);
+            dst<<"\tlw\t$s0,"<<context.get_current_mem()<<"($fp)"<<std::endl;
+            dst<<"\tbne\t$s0,$0,"<<seqLabel<<std::endl;
+            dst<<endLabel<<":"<<std::endl;
+        } else {
+            dst<<"\tb\t"<<seqLabel<<std::endl;
+        }
         condTracker.erase(condTracker.begin());
         endTracker.erase(endTracker.begin());
     }
