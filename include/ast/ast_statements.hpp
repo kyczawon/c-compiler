@@ -31,21 +31,6 @@ public:
         dst<<"\tlw\t$v0,"<<context.get_current_mem()<<"($fp)"<<std::endl;
         dst<<"\tb\t"<<FnTracker[0];
         dst<<"\n\tnop\n";
-        // dst<<"\tmove\t$sp,$fp"<<std::endl;
-		// dst<<"\tlw\t$31, 4($sp)\n";
-        // dst<<"\tlw\t$30, 8($sp)\n";
-        // dst<<"\tlw\t$29, 12($sp)\n";
-        // dst<<"\tlw\t$28, 16($sp)\n";
-        // dst<<"\tlw\t$s7, 20($sp)\n";
-        // dst<<"\tlw\t$s6, 24($sp)\n";
-        // dst<<"\tlw\t$s5, 28($sp)\n";
-        // dst<<"\tlw\t$s4, 32($sp)\n";
-        // dst<<"\tlw\t$s3, 36($sp)\n";
-        // dst<<"\tlw\t$s2, 40($sp)\n";
-        // dst<<"\tlw\t$s1, 44($sp)\n";
-        // dst<<"\tlw\t$s0, 48($sp)\n";
-        // dst<<"\tj\t$31"<<std::endl;
-        // dst <<"\taddiu\t$sp,$sp,"<<context.size()<<std::endl;
     }
 };
 

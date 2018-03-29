@@ -40,15 +40,6 @@ public:
     { throw std::runtime_error("Not implemented."); }
 };
 
-class Expression : public Node
-{
-public:
-
-    //! Generate the mips code to the given stream
-    virtual void code_gen(std::ostream &dst, Context &context) const override
-    { throw std::runtime_error("Expressions Not implemented."); }
-};
-
 class Context {
 private:
     unsigned int _size = 52;
@@ -125,6 +116,8 @@ public:
 
     unsigned int get_size (std::string const& type) const {
         if (type == "int") return 4;
+        if (type == "short") return 2;
+        if (type == "char") return 1;
         else return 0;
     }
 
@@ -149,13 +142,11 @@ public:
     //add variable bindings
     void add_binding(std::string type, std::string key) {
 
-        unsigned int bytes = get_size(type);
-
         std::unordered_map<std::string,unsigned int>::iterator it = bindings.find(key);
             
         if (it == bindings.end()) {
             bindings[key] = _size;
-            _size += bytes;
+            _size += 4;
 
             types[key] = type;
         } else throw std::runtime_error("redefinition of '"+key+"'");

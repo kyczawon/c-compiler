@@ -6,8 +6,7 @@
 #include <string>
 #include <iostream>
 
-class Variable
-    : public Node
+class Variable : public Node
 {
 private:
     std::string id;
@@ -31,17 +30,16 @@ public:
     }
 };
 
-class Number
-    : public Node
+class Number : public Node
 {
 private:
-    double value;
+    int value;
 public:
-    Number(double _value)
+    Number(int _value)
         : value(_value)
     {}
 
-    double getValue() const
+    int getValue() const
     { return value; }
 
     virtual void translate(int level, std::ostream &dst) const override
@@ -56,17 +54,38 @@ public:
     }
 };
 
-class NegativeNumber
-    : public Node
+class Character : public Node
 {
 private:
-    double value;
+    std::string value;
 public:
-    NegativeNumber(double _value)
+    Character(const std::string &_value)
+        : value(_value)
+    {}
+
+    virtual void translate(int level, std::ostream &dst) const override
+    {
+        dst<<std::string(level,'\t')<<value;
+    }
+
+    virtual void code_gen(std::ostream &dst, Context &context) const override
+    {
+        int i = value[1];
+        dst<<"\tli\t$s0,"<<i<<std::endl;
+        dst<<"\tsw\t$s0,"<<context.next_mem()<<"($fp)"<<std::endl;
+    }
+};
+
+class NegativeNumber : public Node
+{
+private:
+    int value;
+public:
+    NegativeNumber(int _value)
         : value(-1*_value)
     {}
 
-    double getValue() const
+    int getValue() const
     { return value; }
 
     virtual void translate(int level, std::ostream &dst) const override

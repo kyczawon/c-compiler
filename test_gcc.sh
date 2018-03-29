@@ -9,18 +9,18 @@ fi
 
 echo "    -----   Force Builidng Compiler    -----    "
 echo " "
-make -B all
+# make -B all
 echo " "
 
     echo "  --   Performing Test   --  "
     tmp="test/tmp"
     rm ${tmp}
 
-    ${compiler} -S ./test/test.c -o ./test/test.s
+    mips-linux-gnu-gcc -S ./test/test.c -o ./test/test3.s
 
     mips-linux-gnu-gcc -pedantic -std=c89 -O0 -S ./test/test.c -o ./test/test_ref.s
     
-    mips-linux-gnu-gcc -Wall -static -o test/tmp test/test.s ./test/test_driver.c
+    mips-linux-gnu-gcc -Wall -static -o test/tmp test/test3.s ./test/test_driver.c
     
     qemu-mips test/tmp
 

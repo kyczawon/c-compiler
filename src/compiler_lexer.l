@@ -16,6 +16,9 @@ void comment();
 //types
 %}
 int { yylval.string=new std::string(yytext); return T_INT;}
+short { yylval.string=new std::string(yytext); return T_SHORT;}
+char { yylval.string=new std::string(yytext); return T_CHAR;}
+void { yylval.string=new std::string(yytext); return T_VOID;}
 
 %{
 //keywords
@@ -124,7 +127,7 @@ goto			{return T_GOTO; }
 
 [0-9]+  { yylval.integer=strtod(yytext, 0); return T_INTEGER; }
 [a-zA-Z]+          { yylval.string=new std::string(yytext); return T_STRING; }
-
+'[\x00-\x7F]' { yylval.string=new std::string(yytext); return T_CHARACTER;}
 [ \t\r\n]+		{;}
 
 .               { fprintf(stderr, "Invalid token\n"); exit(1); }
