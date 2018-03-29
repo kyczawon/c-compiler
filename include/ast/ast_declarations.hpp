@@ -246,6 +246,22 @@ public:
         dst<<inner_compiled.str();
         // dst << "\taddiu	$sp,$sp," << inner_context.size()<<std::endl;
         dst<<FnTracker[0]<<":\n";
+
+        switch(context.get_size(type)) {//return value must be sign extended to the correct num of bits
+            case 1:
+                dst<<"\tsll\t$v0,$v0,24"<<std::endl;
+                dst<<"\tsra\t$v0,$v0,24"<<std::endl;
+                break;
+            case 2:
+                dst<<"\tsll\t$v0,$v0,16"<<std::endl;
+                dst<<"\tsra\t$v0,$v0,16"<<std::endl;
+                break;
+            case 12:
+                dst<<"\tsll\t$v1,$v1,16"<<std::endl;    
+                dst<<"\tsra\t$v1,$v1,16"<<std::endl;
+                break;
+        }
+
         dst<<"\tmove\t$sp,$fp"<<std::endl;
 		dst<<"\tlw\t$31, 4($sp)\n";
         dst<<"\tlw\t$30, 8($sp)\n";

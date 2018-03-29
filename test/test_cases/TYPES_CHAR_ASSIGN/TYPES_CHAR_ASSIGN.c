@@ -1,4 +1,5 @@
-short f(short x, short y) {
-    short z = 1000;
-    return x + y + z;
+char f() {
+    char z = 'c';
+    char s = '2';
+    return z + s;
 }

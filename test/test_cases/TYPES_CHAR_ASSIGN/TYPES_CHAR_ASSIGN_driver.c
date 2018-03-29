@@ -1,9 +1,9 @@
 #include <stdio.h>
 
-short f(short x, short y);
+char f();
 
 int main(){
-    printf("expected 1964, got %d\n",f(64000,2500));
-    if (f(64000,2500) == 1964) return 0;
+    printf("expected -107, got %d\n",f());
+    if (f() == -107) return 0;
     return 1;
 }
