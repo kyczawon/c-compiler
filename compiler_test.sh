@@ -24,7 +24,7 @@ for testfile in ${cases}/* ; do
     testdir=${results}/${testname}
     mkdir -p "$testdir"
 
-    rm ${testdir}/${testname}
+    rm ${testdir}/${testname} 2>/dev/null
 
     $compiler -S ${testfile}/${testname}.c -o ${testdir}/${testname}.s
 

@@ -983,7 +983,7 @@ public:
             default:
                 throw std::runtime_error("AssignmentOperator::code_gen is not implemented.");
         }
-        dst<<"\tlw\t$s5,"<<context.get_current_mem()<<"($fp)"<<std::endl;
+        dst<<"\tlw\t$s3,"<<context.get_current_mem()<<"($fp)"<<std::endl;
         if (offset != nullptr) {//it is an array
             offset->code_gen(dst, context);
             dst<<"\tlw\t$s1,"<<context.get_current_mem()<<"($fp)"<<std::endl;
@@ -992,8 +992,8 @@ public:
             dst<<"\tli\t$s2,"<<context.get_binding(id)<<std::endl;
             dst<<"\taddu\t$t0,$s1,$s2"<<std::endl;
             dst<<"\taddu\t$t0,$fp,$t0"<<std::endl;
-            dst<<"\tsw\t$s5,($t0)"<<std::endl;
-        } else context.set_binding(id, "s5", dst, 0);
+            dst<<"\tsw\t$s3,($t0)"<<std::endl;
+        } else context.set_binding(id, "s3", dst, 0);
     }
 };
 
