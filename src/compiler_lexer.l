@@ -35,6 +35,10 @@ switch 			{return T_SWITCH;}
 case 			{return T_CASE;  }
 default			{return T_DEFAULT;}
 goto			{return T_GOTO; }
+const			{return T_CONST; }
+volatile		{return T_VOLATILE; }
+signed			{return T_SIGNED; }
+unsigned		{return T_UNSIGNED; }
 
 %{
 //comments
