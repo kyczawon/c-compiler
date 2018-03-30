@@ -6,70 +6,6 @@
 #include <cmath>
 #include <sstream>
 
-//currently global variable can only be a number (but in c it can be an expression evaluated at compile time)
-class InitialisedGlobalVariableDeclaration : public Node
-{
-private:
-    std::string type, id;
-    double value;
-public:
-    InitialisedGlobalVariableDeclaration(const std::string &_type, const std::string &_id, const double _value)
-        : type(_type),
-        id(_id),
-        value(_value)
-    {
-        getGlobals().push_back(id);
-    }
-
-    const std::string getId() const
-    { return id; }
-
-    virtual void translate(int level, std::ostream &dst) const override
-    {
-        dst<<id<<"="<<value;
-    }
-
-    virtual void code_gen(std::ostream &dst, Context &context) const override
-    {
-        dst<<"\t.globl\t"<<id<<std::endl;
-        if (context.is_first_global) {
-            dst<<"\t.data"<<std::endl;
-            context.is_first_global = false;
-        }
-        dst<<"\t.align\t2"<<std::endl;
-        dst<<"\t.type\t"<<id<<", @object"<<std::endl;
-        dst<<"\t.size\t"<<id<<", "<<context.get_size(type)<<std::endl;
-        dst<<id<<":"<<std::endl;
-        dst<<"\t.word\t"<<(int)value<<std::endl;
-    }
-};
-
-class GlobalVariableDeclaration : public Node
-{
-private:
-    std::string type, id;
-public:
-    GlobalVariableDeclaration(const std::string &_type, const std::string &_id)
-        : type(_type),
-        id(_id)
-    {
-        getGlobals().push_back(id);
-    }
-
-    const std::string getId() const
-    { return id; }
-
-    virtual void translate(int level, std::ostream &dst) const override
-    {
-        dst<<id<<"=0";
-    }
-
-    virtual void code_gen(std::ostream &dst, Context &context) const override
-    {
-        dst<<"\t.comm\t"<<id<<",4,4\n";
-    }
-};
-
 class Parameter : public Node
 {
 private:
@@ -460,6 +396,74 @@ public:
             int num = 0;
             params->code_gen(dst,context, context.get_binding(id), context.get_size(type),num);
         }
+        if (list != nullptr) {
+            const List* declarations = dynamic_cast<const List *>(list);
+            declarations->code_gen(dst, context,type);
+        }
+    }
+};
+
+//currently global variable can only be a number (but in c it can be an expression evaluated at compile time)
+class GlobalDeclarationList : public List
+{
+private:
+    std::string id;
+    NodePtr list;
+public:
+    GlobalDeclarationList(NodePtr _list, const std::string &_id)
+        : list(_list),
+        id(_id)
+    {
+        getGlobals().push_back(id);
+    }
+
+    virtual void translate(int level, std::ostream &dst) const override
+    {
+        dst<<id<<"=0";
+    }
+
+    virtual void code_gen(std::ostream &dst, Context &context, const std::string &type) const override
+    {
+        dst<<"\t.comm\t"<<id<<",4,4\n";
+        if (list != nullptr) {
+            const List* declarations = dynamic_cast<const List *>(list);
+            declarations->code_gen(dst, context,type);
+        }
+    }
+};
+
+class GlobalDeclarationList2 : public List
+{
+private:
+    std::string id;
+    NodePtr list;
+    int value;
+public:
+    GlobalDeclarationList2(NodePtr _list, const std::string &_id, const int _value)
+        : list(_list),
+        id(_id),
+        value(_value)
+    {
+        getGlobals().push_back(id);
+    }
+
+    virtual void translate(int level, std::ostream &dst) const override
+    {
+        dst<<id<<"="<<value;
+    }
+
+    virtual void code_gen(std::ostream &dst, Context &context, const std::string &type) const override
+    {
+        dst<<"\t.globl\t"<<id<<std::endl;
+        if (context.is_first_global) {
+            dst<<"\t.data"<<std::endl;
+            context.is_first_global = false;
+        }
+        dst<<"\t.align\t2"<<std::endl;
+        dst<<"\t.type\t"<<id<<", @object"<<std::endl;
+        dst<<"\t.size\t"<<id<<", "<<context.get_size(type)<<std::endl;
+        dst<<id<<":"<<std::endl;
+        dst<<"\t.word\t"<<(int)value<<std::endl;
         if (list != nullptr) {
             const List* declarations = dynamic_cast<const List *>(list);
             declarations->code_gen(dst, context,type);
