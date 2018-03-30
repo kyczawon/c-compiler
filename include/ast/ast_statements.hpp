@@ -306,16 +306,16 @@ public:
         if (increment != nullptr) {
             dst<<incLabel<<":\n";
             increment->code_gen(dst, context); //increment could be empty
-            dst<<condLabel<<":"<<std::endl;
         }
+        dst<<condLabel<<":"<<std::endl;
         if (condition != nullptr) { //condition could be empty
             condition->code_gen(dst, context);
             dst<<"\tlw\t$s0,"<<context.get_current_mem()<<"($fp)"<<std::endl;
             dst<<"\tbne\t$s0,$0,"<<seqLabel<<std::endl;
-            dst<<endLabel<<":"<<std::endl;
         } else {
             dst<<"\tb\t"<<seqLabel<<std::endl;
         }
+        dst<<endLabel<<":"<<std::endl;
         condTracker.erase(condTracker.begin());
         endTracker.erase(endTracker.begin());
     }
