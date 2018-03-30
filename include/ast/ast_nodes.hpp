@@ -6,6 +6,7 @@
 #include <map>
 #include <unordered_map>
 #include <vector>
+#include <sstream>
 
 #include <memory>
 #include <regex>
@@ -29,6 +30,8 @@ class Node
 {
 public:
     static std::vector<std::string>& getGlobals()  { static std::vector<std::string> globals; return globals; }
+    static std::stringstream& getGlobalDec()  { static std::stringstream global; return global; }
+    static bool& getRData()  { static bool has_r; return has_r; }
     virtual ~Node()
     {}
 

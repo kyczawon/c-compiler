@@ -77,9 +77,11 @@ GLOBAL_DECLARATION
 
 FUNCTION_DECLARATION
         : DECLARATION_SPECIFIER T_STRING T_LBRACKET PARAMETER_LIST T_RBRACKET T_SEMI { $$ = new FunctionDeclaration(*$1, *$2, $4);}
+        | DECLARATION_SPECIFIER T_TIMES T_STRING T_LBRACKET PARAMETER_LIST T_RBRACKET T_SEMI { std::string* test = new std::string("int"); $$ = new FunctionDeclaration(*test, *$3, $5);}
 
 FUNCTION_DEFINITION
         : DECLARATION_SPECIFIER T_STRING T_LBRACKET PARAMETER_LIST T_RBRACKET COMPOUND_STATEMENT { $$ = new Function(*$1, *$2, $4, $6);}
+        | DECLARATION_SPECIFIER T_TIMES T_STRING T_LBRACKET PARAMETER_LIST T_RBRACKET COMPOUND_STATEMENT { std::string* test = new std::string("int"); $$ = new Function(*test, *$3, $5, $7);}
 
 PARAMETER_LIST
         : EMPTY PARAMETER { $$ = new ParameterList($1,$2);}

@@ -92,7 +92,13 @@ public:
 
     virtual void code_gen(std::ostream &dst, Context &context) const override
     {
-        throw std::runtime_error("Str::code_gen is not implemented.");
+        getRData() = true;
+        *(std::string *)&value = value.substr(0, value.size()-1);
+        std::string label = make_name("LC");
+        getGlobalDec()<<label<<":"<<std::endl<<"\t.ascii\t"<<value<<"\\000\""<<std::endl;
+        dst<<"\tlui\t$s0,%hi("<<label<<")"<<std::endl;
+        dst<<"\taddiu\t$s0,$s0,%lo("<<label<<")"<<std::endl;
+        dst<<"\tsw\t$s0,"<<context.next_mem()<<"($fp)"<<std::endl;
     }
 };
 

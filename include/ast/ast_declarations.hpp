@@ -33,7 +33,7 @@ public:
     {
         dst<<"\t.globl\t"<<id<<std::endl;
         if (context.is_first_global) {
-            dst<<"\t.data\t"<<std::endl;
+            dst<<"\t.data"<<std::endl;
             context.is_first_global = false;
         }
         dst<<"\t.align\t2"<<std::endl;
@@ -175,21 +175,23 @@ public:
             context.add_function(identifier, 0);
         }
 
+
         std::stringstream init;
+        std::stringstream init2;
 
         if (context.is_first_text) {
-            dst<<"\t.text\t"<<std::endl;
+            init2<<"\t.text\t"<<std::endl;
             context.is_first_text = false;
         }
 
-        dst<<"\t.align\t2"<<std::endl;
-        dst<<"\t.global\t"<<identifier<<std::endl;
-        dst<<"\t.set\tnomips16"<<std::endl;
-        dst<<"\t.set\tnomicromips"<<std::endl;
-        dst<<"\t.ent\t"<<identifier<<std::endl;
-        dst<<"\t.type\t"<<identifier<<", @function"<<std::endl;
+        init2<<"\t.align\t2"<<std::endl;
+        init2<<"\t.global\t"<<identifier<<std::endl;
+        init2<<"\t.set\tnomips16"<<std::endl;
+        init2<<"\t.set\tnomicromips"<<std::endl;
+        init2<<"\t.ent\t"<<identifier<<std::endl;
+        init2<<"\t.type\t"<<identifier<<", @function"<<std::endl;
         
-        dst<<identifier<<":"<<std::endl; //.frame goes after the identifier
+        init2<<identifier<<":"<<std::endl; //.frame goes after the identifier
         init<<"\t.set\tnoreorder"<<std::endl;
         init<<"\t.set\tnomacro"<<std::endl;
 
@@ -207,6 +209,11 @@ public:
         FnTracker.push_back(identifier+"END");
         inner_context.set_mem(param_num*4+40);
         compound->code_gen(inner_compiled, inner_context);
+        if (Node::getRData()) {
+            dst<<"\t.rdata"<<std::endl;
+            dst<<Node::getGlobalDec().str();
+        }
+        dst<<init2.str();
         dst<<"\t.frame\t$fp,"<<inner_context.size()<<",$31"<<std::endl;
         dst<<init.str();
         dst<<"\taddiu\t$t1,$sp,0\n";
