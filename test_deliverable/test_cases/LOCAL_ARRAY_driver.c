@@ -12,8 +12,6 @@ int main(){
     evaluateTest("Array declaration, seperate assingment and array operator", 5, f(5), &total, &passed);
     evaluateTest("Array declaration inline assingment and array operator", 2, g(), &total, &passed);
     evaluateTest("Array declaration inline expression assingment and array operator addition",30, h(), &total, &passed);
-    evaluateTest("Char Array declaration inline expression assingment and array operator addition",30, h(), &total, &passed);
-    evaluateTest("Short Array declaration inline expression assingment and array operator addition",30, h(), &total, &passed);
     printf("Passed %d/%d tests\n",passed,total);
     if (total == passed) return 0;
     return 1;

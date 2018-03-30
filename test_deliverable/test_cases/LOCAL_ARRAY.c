@@ -13,13 +13,3 @@ int h() {
     int test[4] = {10,20,2};
     return test[0] + test[1];
 }
-
-int i() {
-    char test[4] = {10,20,2};
-    return test[0] + test[1];
-}
-
-int j() {
-    short test[4] = {10,20,2};
-    return test[0] + test[1];
-}
