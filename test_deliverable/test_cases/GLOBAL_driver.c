@@ -1,6 +1,5 @@
 #include <stdio.h>
 void evaluateTest(char* info, int expect, int result, int* total, int* passed);
-int g(int y);
 int f();
 int x = 12;
 int y;
@@ -9,7 +8,8 @@ int y;
 int main(){
     int total = 0;
     int passed = 0;
-    evaluateTest("Decrementing global variable", 11, f(), &total, &passed);
+    f();
+    evaluateTest("Decrementing global variable", 11, x, &total, &passed);
     evaluateTest("Initialising in compiled file, using value in driver", 12, y, &total, &passed);
     printf("Passed %d/%d tests\n",passed,total);
     if (total == passed) return 0;

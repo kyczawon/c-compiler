@@ -124,14 +124,16 @@ unsigned		{return T_UNSIGNED; }
 [,]             { return T_COMMA; }
 [.]				{ return T_PERIOD; }
 
-%{
-//other
-//[0-9]+[.][0-9]+ { yylval.doubl=strtod(yytext, 0); return T_DOUBLE; }
-%}
 
 [0-9]+  { yylval.integer=strtod(yytext, 0); return T_INTEGER; }
 [a-zA-Z_][a-zA-Z0-9_]* { yylval.string=new std::string(yytext); return T_STRING; }
+%{
+//regex taken 30.03 from https://stackoverflow.com/questions/12993187/regular-expression-to-recognize-variable-declarations-in-c
+%}
 ["][\x00-\x7F]+["] { yylval.string=new std::string(yytext); return T_STR;}
+%{
+//regex taken 30.03 https://stackoverflow.com/questions/3203190/regex-any-ascii-character
+%}
 '[\x00-\x7F]' { yylval.string=new std::string(yytext); return T_CHARACTER;}
 [ \t\r\n]+		{;}
 

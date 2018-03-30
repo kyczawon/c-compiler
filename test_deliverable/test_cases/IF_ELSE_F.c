@@ -1,7 +1,7 @@
-int f(int x) {
-    if(x==5){
+int f(int x){
+    if(x==1){
+        return 1;
+    } else {
         return 5;
-    }else {
-        return 6;
     }
 }

@@ -7,7 +7,7 @@ int f(int x) {
 }
 
 int g(int y){
-    ++y;
+    y = y + 1;
     if(y<3){
         return g(y);
     }
