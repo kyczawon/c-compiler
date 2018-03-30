@@ -1,7 +1,5 @@
 int x;
-int y = 0;
-int z;
-
+int y = 12;
 
 int f() {
     x=x-1;
