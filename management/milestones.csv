@@ -40,3 +40,4 @@ SignedUnsigned,,0.5,lkn16,this,Add signed and unsigned specifiers
 ListDeclarations,,3,lkn16,this,Allow declarations to be listed in a single line
 5+Parameters,,5,ms6616,this,Support 5 or more parameters for function calls and declarations
 FunctionDeclarations,,1,lkn16,this,Add function declarations
+FinshTestDeilverable,,3,ms6616,this,Make sure test suite is up to spec
