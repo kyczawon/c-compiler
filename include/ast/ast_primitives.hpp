@@ -76,6 +76,26 @@ public:
     }
 };
 
+class Str : public Node
+{
+private:
+    std::string value;
+public:
+    Str(const std::string &_value)
+        : value(_value)
+    {}
+
+    virtual void translate(int level, std::ostream &dst) const override
+    {
+        dst<<std::string(level,'\t')<<value;
+    }
+
+    virtual void code_gen(std::ostream &dst, Context &context) const override
+    {
+        throw std::runtime_error("Str::code_gen is not implemented.");
+    }
+};
+
 class NegativeNumber : public Node
 {
 private:

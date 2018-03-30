@@ -265,6 +265,34 @@ public:
     }
 };
 
+class FunctionDeclaration : public Node
+{
+protected:
+    NodePtr compound, parameter_list;
+    std::string type, identifier;
+public:
+    FunctionDeclaration(std::string &_type, std::string &_identifier, NodePtr _parameter_list)
+        : type(_type)
+        , identifier(_identifier)
+        , parameter_list(_parameter_list)
+    {
+    }
+    virtual void translate(int level, std::ostream &dst) const override
+    {
+    }
+
+    virtual void code_gen(std::ostream &dst, Context &context) const override
+    {
+        if (parameter_list != nullptr) {
+            const ParameterList* params = dynamic_cast<const ParameterList *>(parameter_list);
+            context.add_function(identifier, params->get_num());
+        } else {
+            context.add_function(identifier, 0);
+        }
+        context.add_declaration(identifier);
+    }
+};
+
 class List : public Node {
 public:
     virtual void code_gen(std::ostream &dst, Context &context) const override //required by Node

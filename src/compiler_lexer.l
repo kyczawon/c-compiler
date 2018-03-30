@@ -131,6 +131,7 @@ unsigned		{return T_UNSIGNED; }
 
 [0-9]+  { yylval.integer=strtod(yytext, 0); return T_INTEGER; }
 [a-zA-Z]+          { yylval.string=new std::string(yytext); return T_STRING; }
+["][\x00-\x7F]+["] { yylval.string=new std::string(yytext); return T_STR;}
 '[\x00-\x7F]' { yylval.string=new std::string(yytext); return T_CHARACTER;}
 [ \t\r\n]+		{;}
 

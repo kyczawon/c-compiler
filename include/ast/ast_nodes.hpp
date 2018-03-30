@@ -49,6 +49,7 @@ private:
     std::unordered_map<std::string,std::string> types;
     std::unordered_map<std::string,std::pair<std::string,unsigned int> > Arrtypes;
     std::unordered_map<std::string,unsigned int> functions;
+    std::vector<std::string> declarations;
     Context* parent;
 public:
     bool is_first_global = true;
@@ -84,6 +85,10 @@ public:
         } else {
             dst<<"\tlw\t$"<<reg<<","<<get_binding(key)+offset<<"($fp)"<<std::endl;
         }
+    }
+
+    void add_declaration(std::string id) {
+        declarations.push_back(id);
     }
 
     int get_binding(std::string key) {
@@ -173,9 +178,13 @@ public:
     void add_function(std::string key, unsigned int param_num) {
 
         std::unordered_map<std::string,unsigned int>::iterator it = functions.find(key);
+        auto dec = std::find(declarations.begin(), declarations.end(), key);
             
-        if (it == functions.end()) {
+        if (it == functions.end() || dec != declarations.end()) {
             functions[key] = param_num;
+            if (dec != declarations.end()) {
+                declarations.erase(dec);
+            }
         } else throw std::runtime_error("conflicting types for ‘"+key+"’");
     }
 
