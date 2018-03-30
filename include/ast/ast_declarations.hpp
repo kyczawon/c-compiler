@@ -471,4 +471,176 @@ public:
     }
 };
 
+class GlobalPointerDeclarationList : public List
+{
+private:
+    std::string id;
+    NodePtr list;
+public:
+    GlobalPointerDeclarationList(NodePtr _list, const std::string &_id)
+        : list(_list),
+        id(_id)
+    {
+        getGlobals().push_back(id);
+    }
+
+    virtual void translate(int level, std::ostream &dst) const override
+    {
+        throw std::runtime_error("GlobalPointerDeclarationList::translate is not implemented.");
+    }
+
+    virtual void code_gen(std::ostream &dst, Context &context, const std::string &type) const override
+    {
+        dst<<"\t.comm\t"<<id<<",4,4\n";
+        if (list != nullptr) {
+            const List* declarations = dynamic_cast<const List *>(list);
+            declarations->code_gen(dst, context,type);
+        }
+    }
+};
+
+class GlobalPointerDeclarationList2 : public List
+{
+private:
+    std::string id;
+    NodePtr list;
+    int value;
+public:
+    GlobalPointerDeclarationList2(NodePtr _list, const std::string &_id, const int _value)
+        : list(_list),
+        id(_id),
+        value(_value)
+    {
+        getGlobals().push_back(id);
+    }
+
+    virtual void translate(int level, std::ostream &dst) const override
+    {
+        throw std::runtime_error("GlobalPointerDeclarationList::translate is not implemented.");
+    }
+
+    virtual void code_gen(std::ostream &dst, Context &context, const std::string &type) const override
+    {
+        dst<<"\t.globl\t"<<id<<std::endl;
+        if (context.is_first_global_ptr) {
+            dst<<"\t.section\t.data.rel,\"aw\",@progbits"<<std::endl;
+            context.is_first_global_ptr = false;
+        }
+        dst<<"\t.align\t2"<<std::endl;
+        dst<<"\t.type\t"<<id<<", @object"<<std::endl;
+        dst<<"\t.size\t"<<id<<", "<<context.get_size(type)<<std::endl;
+        dst<<id<<":"<<std::endl;
+        dst<<"\t.word\t"<<(int)value<<std::endl;
+        if (list != nullptr) {
+            const List* declarations = dynamic_cast<const List *>(list);
+            declarations->code_gen(dst, context,type);
+        }
+    }
+};
+
+class GlobalPointerDeclarationList3 : public List
+{
+private:
+    std::string id,value;
+    NodePtr list;
+public:
+    GlobalPointerDeclarationList3(NodePtr _list, const std::string &_id, const std::string& _value)
+        : list(_list),
+        id(_id),
+        value(_value)
+    {
+        getGlobals().push_back(id);
+    }
+
+    virtual void translate(int level, std::ostream &dst) const override
+    {
+        throw std::runtime_error("GlobalPointerDeclarationList::translate is not implemented.");
+    }
+
+    virtual void code_gen(std::ostream &dst, Context &context, const std::string &type) const override
+    {
+        dst<<"\t.globl\t"<<id<<std::endl;
+        if (context.is_first_global_ptr) {
+            dst<<"\t.section\t.data.rel,\"aw\",@progbits"<<std::endl;
+            context.is_first_global_ptr = false;
+        }
+        dst<<"\t.align\t2"<<std::endl;
+        dst<<"\t.type\t"<<id<<", @object"<<std::endl;
+        dst<<"\t.size\t"<<id<<", "<<context.get_size(type)<<std::endl;
+        dst<<id<<":"<<std::endl;
+        dst<<"\t.word\t"<<value<<std::endl;
+        if (list != nullptr) {
+            const List* declarations = dynamic_cast<const List *>(list);
+            declarations->code_gen(dst, context,type);
+        }
+    }
+};
+
+class GlobalArrayDeclarationList : public List
+{
+private:
+    std::string id;
+    NodePtr list;
+public:
+    GlobalArrayDeclarationList(NodePtr _list, const std::string &_id)
+        : list(_list),
+        id(_id)
+    {
+        getGlobalsArray().push_back(id);
+    }
+
+    virtual void translate(int level, std::ostream &dst) const override
+    {
+        dst<<id<<"=0";
+    }
+
+    virtual void code_gen(std::ostream &dst, Context &context, const std::string &type) const override
+    {
+        dst<<"\t.comm\t"<<id<<",4,4\n";
+        if (list != nullptr) {
+            const List* declarations = dynamic_cast<const List *>(list);
+            declarations->code_gen(dst, context,type);
+        }
+    }
+};
+
+class GlobalArrayDeclarationList2 : public List
+{
+private:
+    std::string id;
+    NodePtr list;
+    int value;
+public:
+    GlobalArrayDeclarationList2(NodePtr _list, const std::string &_id, const int _value)
+        : list(_list),
+        id(_id),
+        value(_value)
+    {
+        getGlobalsArray().push_back(id);
+    }
+
+    virtual void translate(int level, std::ostream &dst) const override
+    {
+        dst<<id<<"="<<value;
+    }
+
+    virtual void code_gen(std::ostream &dst, Context &context, const std::string &type) const override
+    {
+        dst<<"\t.globl\t"<<id<<std::endl;
+        if (context.is_first_global) {
+            dst<<"\t.data"<<std::endl;
+            context.is_first_global = false;
+        }
+        dst<<"\t.align\t2"<<std::endl;
+        dst<<"\t.type\t"<<id<<", @object"<<std::endl;
+        dst<<"\t.size\t"<<id<<", "<<context.get_size(type)<<std::endl;
+        dst<<id<<":"<<std::endl;
+        dst<<"\t.word\t"<<(int)value<<std::endl;
+        if (list != nullptr) {
+            const List* declarations = dynamic_cast<const List *>(list);
+            declarations->code_gen(dst, context,type);
+        }
+    }
+};
+
 #endif

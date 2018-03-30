@@ -43,3 +43,5 @@ FunctionDeclarations,,1,lkn16,this,Add function declarations
 FinshTestDeilverable,,3,ms6616,1a97dc555c3cd1b8038365287a2bb4cb960dbaf4,Make sure test suite is up to spec
 SupportCStrings,,2,lkn16,this,Add support for c strings and thereby char*
 PointerReturnType,,0.5,lkn16,this,Add support for pointer return types from functions
+InlineGlobals,,1,lkn16,this,Add support for globals declrations with commas (declarations in one line)
+GlobalPointers,,1,lkn16,this,Add support for global variables

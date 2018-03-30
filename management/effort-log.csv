@@ -31,4 +31,4 @@ Date,Effort,Developers,Milestones
 29.03,12,lkn16,CompilePointers;PointerToFunc;CharAndShortTypes;ConstVolatile;SignedUnsigned;ListDeclarations;FunctionDeclarations
 29.03,10,ms6616,Recursion;FunctionCalls;Over4Parameters
 30.3,6,ms6616;lkn16,FinshTestDeilverable
-30.3,3,lkn16,SupportCStrings;PointerReturnType
+30.3,4.5,lkn16,SupportCStrings;PointerReturnType;InlineGlobals;GlobalPointers

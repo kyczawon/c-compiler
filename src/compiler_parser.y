@@ -263,6 +263,13 @@ GLOBAL_DECLARATION_LIST
         | T_STRING T_COMMA DECLARATION_LIST { $$ = new GlobalDeclarationList($3, *$1);}
         | T_STRING T_EQUALS T_INTEGER T_SEMI { $$ = new GlobalDeclarationList2(nullptr, *$1, $3 );}
         | T_STRING T_EQUALS T_INTEGER T_COMMA DECLARATION_LIST { $$ = new GlobalDeclarationList2($5, *$1, $3);}
+        | T_TIMES T_STRING T_SEMI { $$ = new GlobalPointerDeclarationList(nullptr, *$2);}
+        | T_TIMES T_STRING T_COMMA DECLARATION_LIST { $$ = new GlobalPointerDeclarationList($4, *$2);}
+        | T_TIMES T_STRING T_EQUALS T_INTEGER T_SEMI { $$ = new GlobalPointerDeclarationList2(nullptr, *$2,$4);}
+        | T_TIMES T_STRING T_EQUALS T_INTEGER T_COMMA DECLARATION_LIST { $$ = new GlobalPointerDeclarationList2($6, *$2,$4);}
+        | T_TIMES T_STRING T_EQUALS T_BIT_AND T_STRING T_SEMI { $$ = new GlobalPointerDeclarationList3(nullptr, *$2,*$5);}
+        | T_TIMES T_STRING T_EQUALS T_BIT_AND T_STRING T_COMMA DECLARATION_LIST { $$ = new GlobalPointerDeclarationList3($7, *$2,*$5);}
+
 
 DECLARATION
         : DECLARATION_SPECIFIER DECLARATION_LIST    { $$ = new VariableDeclaration(*$1, $2 );}

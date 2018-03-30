@@ -30,6 +30,7 @@ class Node
 {
 public:
     static std::vector<std::string>& getGlobals()  { static std::vector<std::string> globals; return globals; }
+    static std::vector<std::string>& getGlobalsArray()  { static std::vector<std::string> globals; return globals; }
     static std::stringstream& getGlobalDec()  { static std::stringstream global; return global; }
     static bool& getRData()  { static bool has_r; return has_r; }
     virtual ~Node()
@@ -56,6 +57,7 @@ private:
     Context* parent;
 public:
     bool is_first_global = true;
+    bool is_first_global_ptr = true;
     bool is_first_text = true;
     
     Context(Context* _parent)
@@ -84,7 +86,7 @@ public:
         int address = get_binding(key);
         if (address < 0) { //global
             dst<<"\tla\t$t0,"<<key<<std::endl;
-            dst<<"\tlw\t$"<<reg<<",0($t0)"<<std::endl;
+            dst<<"\tlw\t$"<<reg<<","<<offset<<"($t0)"<<std::endl;
         } else {
             dst<<"\tlw\t$"<<reg<<","<<get_binding(key)+offset<<"($fp)"<<std::endl;
         }
@@ -100,6 +102,7 @@ public:
         if (it == bindings.end()) {
             if (parent != nullptr) return parent->get_binding(key);
             else if (std::find(Node::getGlobals().begin(), Node::getGlobals().end(),key) != Node::getGlobals().end()) return -1;
+            else if (std::find(Node::getGlobalsArray().begin(), Node::getGlobalsArray().end(),key) != Node::getGlobalsArray().end()) return -1;
             else throw std::runtime_error("error: '" + key + "' undeclared");
         } else return it->second;
     }
