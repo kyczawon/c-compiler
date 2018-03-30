@@ -39,6 +39,7 @@ const			{return T_CONST; }
 volatile		{return T_VOLATILE; }
 signed			{return T_SIGNED; }
 unsigned		{return T_UNSIGNED; }
+extern			{return T_EXTERN; }
 
 %{
 //comments
