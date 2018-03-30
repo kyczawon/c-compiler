@@ -27,9 +27,9 @@ SwitchStatement,,4,ms6616,dc6c0079e570b6e5a210c8624a8f667e6634c0a8,Compile and t
 CompileAllMajorOperators,,8,lkn16,acb5c23f4a34dd1102b541afc53165d74abb1cb8,Compile all non unary and non postfix operators
 FunctionBindings,,3,lkn16,this,Add bindings to functions to allow function calls
 SaveToMem,,8,lkn16,3ca4363e1b468362819e9bf11e6ae631610ba120,"Instead of using consecutive registers for a statement, each expression needs to save into memory allowing expressions to be binded together"
-SupportGlobals,,4,lkn16,,Compile globals - create a data section and create a way of distinguishing between globals and scopes
+SupportGlobals,,4,lkn16,28b2eb2a86753f1f8dd1f5666b428e191b540500,Compile globals - create a data section and create a way of distinguishing between globals and scopes (for int data type)
 FunctionCalls,,2,lkn16,d751308ececb80221c10bbb25ad594edcb0db367,compile function calls - both nullary and with many parameters. Get rid of nullaryfunctionInvocation and parse both as one
-GoToStatements,,2,ms6616,,Compile and test go to statements
+GoToStatements,,2,ms6616,28b2eb2a86753f1f8dd1f5666b428e191b540500,Compile and test go to statements
 CompileLocalArrays,,5,lkn16,0f59472213cce6998ef386d954c5e10d558085d5,"Compile and test local arrays - declarations, invocations and assignments"
 CompilePointers,,4,lkn16,this,"Compile and test pointers - declarations, address operator and indirection operator "
 Recursion,,5,ms6616,this,Implement self recursion
