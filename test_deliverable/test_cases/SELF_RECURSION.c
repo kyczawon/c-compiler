@@ -1,9 +1,15 @@
-int x;
-
-int f() {
-    x++;
-    if(x < 3){
-        f();
+int f(int x) {
+    if(x <= 1){
+        return 1;
+    } else {
+        return x*f(x-1);
     }
-    return x;
+}
+
+int g(int y){
+    ++y;
+    if(y<3){
+        return g(y);
+    }
+    return y;
 }

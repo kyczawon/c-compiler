@@ -30,3 +30,4 @@ Date,Effort,Developers,Milestones
 28.03,6,ms6616,SaveToMem;Recursion
 29.03,12,lkn16,CompilePointers;PointerToFunc;CharAndShortTypes;ConstVolatile;SignedUnsigned;ListDeclarations;FunctionDeclarations
 29.03,10,ms6616,Recursion;FunctionCalls;Over4Parameters
+30.3,3,ms6616;lkn16,FinshTestDeilverable
