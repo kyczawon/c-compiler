@@ -82,13 +82,25 @@ public:
         }
     }
 
-    unsigned int load_binding(std::string key, std::string reg, std::ostream &dst, int offset) {
+    void load_binding(std::string key, std::string reg, std::ostream &dst, int offset) {
         int address = get_binding(key);
         if (address < 0) { //global
             dst<<"\tla\t$t0,"<<key<<std::endl;
             dst<<"\tlw\t$"<<reg<<","<<offset<<"($t0)"<<std::endl;
         } else {
             dst<<"\tlw\t$"<<reg<<","<<get_binding(key)+offset<<"($fp)"<<std::endl;
+        }
+    }
+
+    void load_array(std::string key, std::string reg, std::ostream &dst) {
+        int address = get_binding(key);
+        if (address < 0) { //global
+            dst<<"\tlw\t$s2,%got("<<key<<")($28)"<<std::endl;
+            dst<<"\taddu\t$"<<reg<<",$s1,$s2"<<std::endl;
+        } else {
+            dst<<"\tli\t$s2,"<<get_binding(key)<<std::endl;
+            dst<<"\taddu\t$"<<reg<<",$s1,$s2"<<std::endl;
+            dst<<"\taddu\t$"<<reg<<",$fp,$t0"<<std::endl;
         }
     }
 
@@ -179,6 +191,10 @@ public:
 
             Arrtypes[key] = std::make_pair(type, size);
         } else throw std::runtime_error("redefinition of '"+key+"'");
+    }
+
+    void add_arr_type(std::string type, std::string key, unsigned int size) {
+        Arrtypes[key] = std::make_pair(type, size);
     }
 
     void add_function(std::string key, unsigned int param_num) {

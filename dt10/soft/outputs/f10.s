@@ -14,11 +14,11 @@
 	.ent	factorial
 	.type	factorial, @function
 factorial:
-	.frame	$fp,116,$31
+	.frame	$fp,164,$31
 	.set	noreorder
 	.set	nomacro
 	addiu	$t1,$sp,0
-	addiu	$sp,$sp,-116
+	addiu	$sp,$sp,-164
 	sw	$31, 0($sp)
 	sw	$30, 4($sp)
 	sw	$29, 8($sp)
@@ -34,68 +34,68 @@ factorial:
 	move	$fp,$sp
 	sw	$a0,52($fp)
 	lw	$s0,52($fp)
-	sw	$s0,56($fp)
+	sw	$s0,104($fp)
 	li	$s0,1
-	sw	$s0,60($fp)
+	sw	$s0,108($fp)
 	li	$s0,1
-	sw	$s0,64($fp)
-	lw	$s1,60($fp)
-	lw	$s0,64($fp)
+	sw	$s0,112($fp)
+	lw	$s1,108($fp)
+	lw	$s0,112($fp)
 	addu	$s2,$s1,$s0
-	sw	$s2,68($fp)
-	lw	$s1,56($fp)
-	lw	$s0,68($fp)
+	sw	$s2,116($fp)
+	lw	$s1,104($fp)
+	lw	$s0,116($fp)
 	sltu	$s0,$s1,$s0
 	andi	$s0,$s0,0x00ff
-	sw	$s0,72($fp)
-	lw	$s0,72($fp)
+	sw	$s0,120($fp)
+	lw	$s0,120($fp)
 	beq	$s0,$0,$IEL0
 	nop
 	li	$s0,1
-	sw	$s0,76($fp)
-	lw	$v0,76($fp)
+	sw	$s0,124($fp)
+	lw	$v0,124($fp)
 	b	factorialEND
 	nop
 	beq	$0,$0,$IEL1
 	nop
 $IEL0:
 	lw	$s0,52($fp)
-	sw	$s0,80($fp)
+	sw	$s0,128($fp)
 	li	$s0,1
-	sw	$s0,84($fp)
-	lw	$s1,80($fp)
-	lw	$s0,84($fp)
+	sw	$s0,132($fp)
+	lw	$s1,128($fp)
+	lw	$s0,132($fp)
 	sub	$s2,$s1,$s0
-	sw	$s2,88($fp)
-	lw	$a0,88($fp)
+	sw	$s2,136($fp)
+	lw	$a0,136($fp)
 
 	.option pic0
 	jal	factorial
 	nop
 
 	.option pic2
-	sw	$v0,92($fp)
+	sw	$v0,140($fp)
 	lw	$s0,52($fp)
-	sw	$s0,96($fp)
+	sw	$s0,144($fp)
 	li	$s0,2
-	sw	$s0,100($fp)
-	lw	$s1,96($fp)
-	lw	$s0,100($fp)
+	sw	$s0,148($fp)
+	lw	$s1,144($fp)
+	lw	$s0,148($fp)
 	sub	$s2,$s1,$s0
-	sw	$s2,104($fp)
-	lw	$a0,104($fp)
+	sw	$s2,152($fp)
+	lw	$a0,152($fp)
 
 	.option pic0
 	jal	factorial
 	nop
 
 	.option pic2
-	sw	$v0,108($fp)
-	lw	$s1,92($fp)
-	lw	$s0,108($fp)
+	sw	$v0,156($fp)
+	lw	$s1,140($fp)
+	lw	$s0,156($fp)
 	addu	$s2,$s1,$s0
-	sw	$s2,112($fp)
-	lw	$v0,112($fp)
+	sw	$s2,160($fp)
+	lw	$v0,160($fp)
 	b	factorialEND
 	nop
 $IEL1:
@@ -113,7 +113,7 @@ factorialEND:
 	lw	$s1,40($sp)
 	lw	$s0,44($sp)
 	j	$31
-	addiu	$sp,$sp,116
+	addiu	$sp,$sp,164
 
 	.set	macro
 	.set	reorder
@@ -126,11 +126,11 @@ factorialEND:
 	.ent	main
 	.type	main, @function
 main:
-	.frame	$fp,96,$31
+	.frame	$fp,144,$31
 	.set	noreorder
 	.set	nomacro
 	addiu	$t1,$sp,0
-	addiu	$sp,$sp,-96
+	addiu	$sp,$sp,-144
 	sw	$31, 0($sp)
 	sw	$30, 4($sp)
 	sw	$29, 8($sp)
@@ -145,58 +145,58 @@ main:
 	sw	$s0,44($sp)
 	move	$fp,$sp
 	li	$s0,4
-	sw	$s0,52($fp)
-	lw	$a0,52($fp)
+	sw	$s0,100($fp)
+	lw	$a0,100($fp)
 
 	.option pic0
 	jal	factorial
 	nop
 
 	.option pic2
-	sw	$v0,56($fp)
+	sw	$v0,104($fp)
 	li	$s0,2
-	sw	$s0,60($fp)
-	lw	$a0,60($fp)
+	sw	$s0,108($fp)
+	lw	$a0,108($fp)
 
 	.option pic0
 	jal	factorial
 	nop
 
 	.option pic2
-	sw	$v0,64($fp)
-	lw	$s1,56($fp)
-	lw	$s0,64($fp)
+	sw	$v0,112($fp)
+	lw	$s1,104($fp)
+	lw	$s0,112($fp)
 	sub	$s2,$s1,$s0
-	sw	$s2,68($fp)
+	sw	$s2,116($fp)
 	li	$s0,1
-	sw	$s0,72($fp)
-	lw	$a0,72($fp)
+	sw	$s0,120($fp)
+	lw	$a0,120($fp)
 
 	.option pic0
 	jal	factorial
 	nop
 
 	.option pic2
-	sw	$v0,76($fp)
-	lw	$s1,68($fp)
-	lw	$s0,76($fp)
+	sw	$v0,124($fp)
+	lw	$s1,116($fp)
+	lw	$s0,124($fp)
 	sub	$s2,$s1,$s0
-	sw	$s2,80($fp)
+	sw	$s2,128($fp)
 	li	$s0,0
-	sw	$s0,84($fp)
-	lw	$a0,84($fp)
+	sw	$s0,132($fp)
+	lw	$a0,132($fp)
 
 	.option pic0
 	jal	factorial
 	nop
 
 	.option pic2
-	sw	$v0,88($fp)
-	lw	$s1,80($fp)
-	lw	$s0,88($fp)
+	sw	$v0,136($fp)
+	lw	$s1,128($fp)
+	lw	$s0,136($fp)
 	sub	$s2,$s1,$s0
-	sw	$s2,92($fp)
-	lw	$v0,92($fp)
+	sw	$s2,140($fp)
+	lw	$v0,140($fp)
 	b	mainEND
 	nop
 mainEND:
@@ -213,7 +213,7 @@ mainEND:
 	lw	$s1,40($sp)
 	lw	$s0,44($sp)
 	j	$31
-	addiu	$sp,$sp,96
+	addiu	$sp,$sp,144
 
 	.set	macro
 	.set	reorder

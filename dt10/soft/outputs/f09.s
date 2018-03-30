@@ -14,11 +14,11 @@
 	.ent	function
 	.type	function, @function
 function:
-	.frame	$fp,140,$31
+	.frame	$fp,188,$31
 	.set	noreorder
 	.set	nomacro
 	addiu	$t1,$sp,0
-	addiu	$sp,$sp,-140
+	addiu	$sp,$sp,-188
 	sw	$31, 0($sp)
 	sw	$30, 4($sp)
 	sw	$29, 8($sp)
@@ -35,84 +35,84 @@ function:
 	sw	$a0,52($fp)
 	sw	$a1,56($fp)
 	lw	$s0,52($fp)
-	sw	$s0,60($fp)
-	lw	$s0,56($fp)
-	sw	$s0,64($fp)
-	lw	$s1,60($fp)
-	lw	$s0,64($fp)
-	sltu	$s0,$s1,$s0
-	andi	$s0,$s0,0x00ff
-	sw	$s0,68($fp)
-	lw	$s0,68($fp)
-	beq	$s0,$0,$IL2
-	nop
-	lw	$s0,52($fp)
-	sw	$s0,72($fp)
-	li	$s0,1
-	sw	$s0,76($fp)
-	lw	$s1,72($fp)
-	lw	$s0,76($fp)
-	sub	$s2,$s1,$s0
-	sw	$s2,80($fp)
-	lw	$s3,80($fp)
-	sw	$s3,52($fp)
-	lw	$s0,52($fp)
-	sw	$s0,84($fp)
-	lw	$s0,56($fp)
-	sw	$s0,88($fp)
-	lw	$s1,84($fp)
-	lw	$s0,88($fp)
-	slt	$s0,$s0,$s1
-	andi	$s0,$s0,0x00ff
-	sw	$s0,92($fp)
-	lw	$s0,92($fp)
-	beq	$s0,$0,$IL1
-	nop
-	lw	$s0,56($fp)
-	sw	$s0,96($fp)
-	li	$s0,3
-	sw	$s0,100($fp)
-	lw	$s1,96($fp)
-	lw	$s0,100($fp)
-	addu	$s2,$s1,$s0
-	sw	$s2,104($fp)
-	lw	$s3,104($fp)
-	sw	$s3,56($fp)
-	lw	$s0,52($fp)
 	sw	$s0,108($fp)
 	lw	$s0,56($fp)
 	sw	$s0,112($fp)
 	lw	$s1,108($fp)
 	lw	$s0,112($fp)
-	xor	$s0,$s1,$s0
-	sltu	$s0,$s0,1
+	sltu	$s0,$s1,$s0
 	andi	$s0,$s0,0x00ff
 	sw	$s0,116($fp)
 	lw	$s0,116($fp)
-	beq	$s0,$0,$IL0
+	beq	$s0,$0,$IL2
 	nop
 	lw	$s0,52($fp)
 	sw	$s0,120($fp)
-	lw	$s0,56($fp)
+	li	$s0,1
 	sw	$s0,124($fp)
 	lw	$s1,120($fp)
 	lw	$s0,124($fp)
-	mul	$s2,$s1,$s0
+	sub	$s2,$s1,$s0
 	sw	$s2,128($fp)
-	lw	$v0,128($fp)
+	lw	$s3,128($fp)
+	sw	$s3,52($fp)
+	lw	$s0,52($fp)
+	sw	$s0,132($fp)
+	lw	$s0,56($fp)
+	sw	$s0,136($fp)
+	lw	$s1,132($fp)
+	lw	$s0,136($fp)
+	slt	$s0,$s0,$s1
+	andi	$s0,$s0,0x00ff
+	sw	$s0,140($fp)
+	lw	$s0,140($fp)
+	beq	$s0,$0,$IL1
+	nop
+	lw	$s0,56($fp)
+	sw	$s0,144($fp)
+	li	$s0,3
+	sw	$s0,148($fp)
+	lw	$s1,144($fp)
+	lw	$s0,148($fp)
+	addu	$s2,$s1,$s0
+	sw	$s2,152($fp)
+	lw	$s3,152($fp)
+	sw	$s3,56($fp)
+	lw	$s0,52($fp)
+	sw	$s0,156($fp)
+	lw	$s0,56($fp)
+	sw	$s0,160($fp)
+	lw	$s1,156($fp)
+	lw	$s0,160($fp)
+	xor	$s0,$s1,$s0
+	sltu	$s0,$s0,1
+	andi	$s0,$s0,0x00ff
+	sw	$s0,164($fp)
+	lw	$s0,164($fp)
+	beq	$s0,$0,$IL0
+	nop
+	lw	$s0,52($fp)
+	sw	$s0,168($fp)
+	lw	$s0,56($fp)
+	sw	$s0,172($fp)
+	lw	$s1,168($fp)
+	lw	$s0,172($fp)
+	mul	$s2,$s1,$s0
+	sw	$s2,176($fp)
+	lw	$v0,176($fp)
 	b	functionEND
 	nop
 $IL0:
 $IL1:
 	lw	$s0,56($fp)
-	sw	$s0,132($fp)
-	lw	$v0,132($fp)
+	sw	$s0,180($fp)
+	lw	$v0,180($fp)
 	b	functionEND
 	nop
 $IL2:
 	li	$s0,13
-	sw	$s0,136($fp)
-	lw	$v0,136($fp)
+	sw	$s0,184($fp)
+	lw	$v0,184($fp)
 	b	functionEND
 	nop
 functionEND:
@@ -129,7 +129,7 @@ functionEND:
 	lw	$s1,40($sp)
 	lw	$s0,44($sp)
 	j	$31
-	addiu	$sp,$sp,140
+	addiu	$sp,$sp,188
 
 	.set	macro
 	.set	reorder
@@ -142,11 +142,11 @@ functionEND:
 	.ent	main
 	.type	main, @function
 main:
-	.frame	$fp,112,$31
+	.frame	$fp,160,$31
 	.set	noreorder
 	.set	nomacro
 	addiu	$t1,$sp,0
-	addiu	$sp,$sp,-112
+	addiu	$sp,$sp,-160
 	sw	$31, 0($sp)
 	sw	$30, 4($sp)
 	sw	$29, 8($sp)
@@ -161,70 +161,70 @@ main:
 	sw	$s0,44($sp)
 	move	$fp,$sp
 	li	$s0,0
-	sw	$s0,52($fp)
-	lw	$a0,52($fp)
-	li	$s0,0
-	sw	$s0,56($fp)
-	lw	$a1,56($fp)
-
-	.option pic0
-	jal	function
-	nop
-
-	.option pic2
-	sw	$v0,60($fp)
-	li	$s0,1
-	sw	$s0,64($fp)
-	lw	$a0,64($fp)
-	li	$s0,2
-	sw	$s0,68($fp)
-	lw	$a1,68($fp)
-
-	.option pic0
-	jal	function
-	nop
-
-	.option pic2
-	sw	$v0,72($fp)
-	lw	$s1,60($fp)
-	lw	$s0,72($fp)
-	addu	$s2,$s1,$s0
-	sw	$s2,76($fp)
-	li	$s0,4
-	sw	$s0,80($fp)
-	lw	$a0,80($fp)
-	li	$s0,3
-	sw	$s0,84($fp)
-	lw	$a1,84($fp)
-
-	.option pic0
-	jal	function
-	nop
-
-	.option pic2
-	sw	$v0,88($fp)
-	lw	$s1,76($fp)
-	lw	$s0,88($fp)
-	addu	$s2,$s1,$s0
-	sw	$s2,92($fp)
-	li	$s0,6
-	sw	$s0,96($fp)
-	lw	$a0,96($fp)
-	li	$s0,7
 	sw	$s0,100($fp)
-	lw	$a1,100($fp)
+	lw	$a0,100($fp)
+	li	$s0,0
+	sw	$s0,104($fp)
+	lw	$a1,104($fp)
 
 	.option pic0
 	jal	function
 	nop
 
 	.option pic2
-	sw	$v0,104($fp)
-	lw	$s1,92($fp)
-	lw	$s0,104($fp)
+	sw	$v0,108($fp)
+	li	$s0,1
+	sw	$s0,112($fp)
+	lw	$a0,112($fp)
+	li	$s0,2
+	sw	$s0,116($fp)
+	lw	$a1,116($fp)
+
+	.option pic0
+	jal	function
+	nop
+
+	.option pic2
+	sw	$v0,120($fp)
+	lw	$s1,108($fp)
+	lw	$s0,120($fp)
 	addu	$s2,$s1,$s0
-	sw	$s2,108($fp)
-	lw	$v0,108($fp)
+	sw	$s2,124($fp)
+	li	$s0,4
+	sw	$s0,128($fp)
+	lw	$a0,128($fp)
+	li	$s0,3
+	sw	$s0,132($fp)
+	lw	$a1,132($fp)
+
+	.option pic0
+	jal	function
+	nop
+
+	.option pic2
+	sw	$v0,136($fp)
+	lw	$s1,124($fp)
+	lw	$s0,136($fp)
+	addu	$s2,$s1,$s0
+	sw	$s2,140($fp)
+	li	$s0,6
+	sw	$s0,144($fp)
+	lw	$a0,144($fp)
+	li	$s0,7
+	sw	$s0,148($fp)
+	lw	$a1,148($fp)
+
+	.option pic0
+	jal	function
+	nop
+
+	.option pic2
+	sw	$v0,152($fp)
+	lw	$s1,140($fp)
+	lw	$s0,152($fp)
+	addu	$s2,$s1,$s0
+	sw	$s2,156($fp)
+	lw	$v0,156($fp)
 	b	mainEND
 	nop
 mainEND:
@@ -241,7 +241,7 @@ mainEND:
 	lw	$s1,40($sp)
 	lw	$s0,44($sp)
 	j	$31
-	addiu	$sp,$sp,112
+	addiu	$sp,$sp,160
 
 	.set	macro
 	.set	reorder

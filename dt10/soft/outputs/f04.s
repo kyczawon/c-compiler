@@ -14,11 +14,11 @@
 	.ent	main
 	.type	main, @function
 main:
-	.frame	$fp,112,$31
+	.frame	$fp,160,$31
 	.set	noreorder
 	.set	nomacro
 	addiu	$t1,$sp,0
-	addiu	$sp,$sp,-112
+	addiu	$sp,$sp,-160
 	sw	$31, 0($sp)
 	sw	$30, 4($sp)
 	sw	$29, 8($sp)
@@ -33,50 +33,50 @@ main:
 	sw	$s0,44($sp)
 	move	$fp,$sp
 	li	$s0,1
-	sw	$s0,52($fp)
-	li	$s0,2
-	sw	$s0,56($fp)
-	lw	$s1,52($fp)
-	lw	$s0,56($fp)
-	mul	$s2,$s1,$s0
-	sw	$s2,60($fp)
-	li	$s0,3
-	sw	$s0,64($fp)
-	li	$s0,4
-	sw	$s0,68($fp)
-	lw	$s1,64($fp)
-	lw	$s0,68($fp)
-	mul	$s2,$s1,$s0
-	sw	$s2,72($fp)
-	lw	$s1,60($fp)
-	lw	$s0,72($fp)
-	addu	$s2,$s1,$s0
-	sw	$s2,76($fp)
-	li	$s0,5
-	sw	$s0,80($fp)
-	li	$s0,6
-	sw	$s0,84($fp)
-	lw	$s1,80($fp)
-	lw	$s0,84($fp)
-	mul	$s2,$s1,$s0
-	sw	$s2,88($fp)
-	lw	$s1,76($fp)
-	lw	$s0,88($fp)
-	addu	$s2,$s1,$s0
-	sw	$s2,92($fp)
-	li	$s0,7
-	sw	$s0,96($fp)
-	li	$s0,8
 	sw	$s0,100($fp)
-	lw	$s1,96($fp)
-	lw	$s0,100($fp)
-	mul	$s2,$s1,$s0
-	sw	$s2,104($fp)
-	lw	$s1,92($fp)
+	li	$s0,2
+	sw	$s0,104($fp)
+	lw	$s1,100($fp)
 	lw	$s0,104($fp)
-	addu	$s2,$s1,$s0
+	mul	$s2,$s1,$s0
 	sw	$s2,108($fp)
-	lw	$v0,108($fp)
+	li	$s0,3
+	sw	$s0,112($fp)
+	li	$s0,4
+	sw	$s0,116($fp)
+	lw	$s1,112($fp)
+	lw	$s0,116($fp)
+	mul	$s2,$s1,$s0
+	sw	$s2,120($fp)
+	lw	$s1,108($fp)
+	lw	$s0,120($fp)
+	addu	$s2,$s1,$s0
+	sw	$s2,124($fp)
+	li	$s0,5
+	sw	$s0,128($fp)
+	li	$s0,6
+	sw	$s0,132($fp)
+	lw	$s1,128($fp)
+	lw	$s0,132($fp)
+	mul	$s2,$s1,$s0
+	sw	$s2,136($fp)
+	lw	$s1,124($fp)
+	lw	$s0,136($fp)
+	addu	$s2,$s1,$s0
+	sw	$s2,140($fp)
+	li	$s0,7
+	sw	$s0,144($fp)
+	li	$s0,8
+	sw	$s0,148($fp)
+	lw	$s1,144($fp)
+	lw	$s0,148($fp)
+	mul	$s2,$s1,$s0
+	sw	$s2,152($fp)
+	lw	$s1,140($fp)
+	lw	$s0,152($fp)
+	addu	$s2,$s1,$s0
+	sw	$s2,156($fp)
+	lw	$v0,156($fp)
 	b	mainEND
 	nop
 mainEND:
@@ -93,7 +93,7 @@ mainEND:
 	lw	$s1,40($sp)
 	lw	$s0,44($sp)
 	j	$31
-	addiu	$sp,$sp,112
+	addiu	$sp,$sp,160
 
 	.set	macro
 	.set	reorder

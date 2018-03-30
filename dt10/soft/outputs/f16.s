@@ -14,11 +14,11 @@
 	.ent	main
 	.type	main, @function
 main:
-	.frame	$fp,72,$31
+	.frame	$fp,120,$31
 	.set	noreorder
 	.set	nomacro
 	addiu	$t1,$sp,0
-	addiu	$sp,$sp,-72
+	addiu	$sp,$sp,-120
 	sw	$31, 0($sp)
 	sw	$30, 4($sp)
 	sw	$29, 8($sp)
@@ -33,33 +33,33 @@ main:
 	sw	$s0,44($sp)
 	move	$fp,$sp
 	li	$s0,0
-	sw	$s0,52($fp)
-	lw	$s0,52($fp)
+	sw	$s0,100($fp)
+	lw	$s0,100($fp)
 	beq	$s0,$0,$IL0
 	nop
 	li	$s0,5
-	sw	$s0,56($fp)
-	lw	$s0,56($fp)
+	sw	$s0,104($fp)
+	lw	$s0,104($fp)
 	beq	$s0,$0,$IEL0
 	nop
 	li	$s0,10
-	sw	$s0,60($fp)
-	lw	$v0,60($fp)
+	sw	$s0,108($fp)
+	lw	$v0,108($fp)
 	b	mainEND
 	nop
 	beq	$0,$0,$IEL1
 	nop
 $IEL0:
 	li	$s0,13
-	sw	$s0,64($fp)
-	lw	$v0,64($fp)
+	sw	$s0,112($fp)
+	lw	$v0,112($fp)
 	b	mainEND
 	nop
 $IEL1:
 $IL0:
 	li	$s0,11
-	sw	$s0,68($fp)
-	lw	$v0,68($fp)
+	sw	$s0,116($fp)
+	lw	$v0,116($fp)
 	b	mainEND
 	nop
 mainEND:
@@ -76,7 +76,7 @@ mainEND:
 	lw	$s1,40($sp)
 	lw	$s0,44($sp)
 	j	$31
-	addiu	$sp,$sp,72
+	addiu	$sp,$sp,120
 
 	.set	macro
 	.set	reorder

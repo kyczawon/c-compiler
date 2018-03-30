@@ -989,9 +989,7 @@ public:
             dst<<"\tlw\t$s1,"<<context.get_current_mem()<<"($fp)"<<std::endl;
             dst<<"\tli\t$s2,"<<context.get_size(context.get_arr_type(id))<<std::endl;
             dst<<"\tmul\t$s1,$s1,$s2"<<std::endl;
-            dst<<"\tli\t$s2,"<<context.get_binding(id)<<std::endl;
-            dst<<"\taddu\t$t0,$s1,$s2"<<std::endl;
-            dst<<"\taddu\t$t0,$fp,$t0"<<std::endl;
+            context.load_array(id, "t0",dst);
             dst<<"\tsw\t$s3,($t0)"<<std::endl;
         } else context.set_binding(id, "s3", dst, 0);
     }

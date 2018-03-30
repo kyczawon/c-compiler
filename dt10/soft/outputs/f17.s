@@ -14,11 +14,11 @@
 	.ent	main
 	.type	main, @function
 main:
-	.frame	$fp,160,$31
+	.frame	$fp,208,$31
 	.set	noreorder
 	.set	nomacro
 	addiu	$t1,$sp,0
-	addiu	$sp,$sp,-160
+	addiu	$sp,$sp,-208
 	sw	$31, 0($sp)
 	sw	$30, 4($sp)
 	sw	$29, 8($sp)
@@ -33,100 +33,101 @@ main:
 	sw	$s0,44($sp)
 	move	$fp,$sp
 	li	$s0,2
-	sw	$s0,64($fp)
+	sw	$s0,112($fp)
+	lw	$s0,112($fp)
 	sw	$s0,60($fp)
 	li	$s0,0
-	sw	$s0,68($fp)
-	lw	$s3,68($fp)
+	sw	$s0,116($fp)
+	lw	$s3,116($fp)
 	sw	$s3,52($fp)
 	li	$s0,0
-	sw	$s0,72($fp)
-	lw	$s3,72($fp)
+	sw	$s0,120($fp)
+	lw	$s3,120($fp)
 	sw	$s3,56($fp)
 	b	$WL4
 	nop
 $WL3:
 	li	$s0,0
-	sw	$s0,76($fp)
-	lw	$s3,76($fp)
+	sw	$s0,124($fp)
+	lw	$s3,124($fp)
 	sw	$s3,56($fp)
 	b	$WL1
 	nop
 $WL0:
 	lw	$s0,60($fp)
-	sw	$s0,80($fp)
+	sw	$s0,128($fp)
 	lw	$s0,56($fp)
-	sw	$s0,84($fp)
-	lw	$s1,80($fp)
-	lw	$s0,84($fp)
+	sw	$s0,132($fp)
+	lw	$s1,128($fp)
+	lw	$s0,132($fp)
 	addu	$s2,$s1,$s0
-	sw	$s2,88($fp)
-	lw	$s3,88($fp)
+	sw	$s2,136($fp)
+	lw	$s3,136($fp)
 	sw	$s3,60($fp)
 	lw	$s0,56($fp)
-	sw	$s0,92($fp)
+	sw	$s0,140($fp)
 	li	$s0,1
-	sw	$s0,96($fp)
-	lw	$s1,92($fp)
-	lw	$s0,96($fp)
+	sw	$s0,144($fp)
+	lw	$s1,140($fp)
+	lw	$s0,144($fp)
 	addu	$s2,$s1,$s0
-	sw	$s2,100($fp)
-	lw	$s3,100($fp)
+	sw	$s2,148($fp)
+	lw	$s3,148($fp)
 	sw	$s3,56($fp)
 $WL1:
 	lw	$s0,56($fp)
-	sw	$s0,104($fp)
+	sw	$s0,152($fp)
 	lw	$s0,52($fp)
-	sw	$s0,108($fp)
-	lw	$s1,104($fp)
-	lw	$s0,108($fp)
+	sw	$s0,156($fp)
+	lw	$s1,152($fp)
+	lw	$s0,156($fp)
 	xor	$s0,$s1,$s0
 	sltu	$s0,$0,$s0
 	andi	$s0,$s0,0x00ff
-	sw	$s0,112($fp)
-	lw	$s0,112($fp)
+	sw	$s0,160($fp)
+	lw	$s0,160($fp)
 	bne	$s0,$0,$WL0
 	nop
 $WL2:
 	lw	$s0,52($fp)
-	sw	$s0,116($fp)
+	sw	$s0,164($fp)
 	li	$s0,2
-	sw	$s0,120($fp)
-	lw	$s1,116($fp)
-	lw	$s0,120($fp)
+	sw	$s0,168($fp)
+	lw	$s1,164($fp)
+	lw	$s0,168($fp)
 	addu	$s2,$s1,$s0
-	sw	$s2,124($fp)
-	lw	$s3,124($fp)
+	sw	$s2,172($fp)
+	lw	$s3,172($fp)
 	sw	$s3,52($fp)
 $WL4:
 	lw	$s0,52($fp)
-	sw	$s0,128($fp)
+	sw	$s0,176($fp)
 	li	$s0,6
-	sw	$s0,132($fp)
-	lw	$s1,128($fp)
-	lw	$s0,132($fp)
+	sw	$s0,180($fp)
+	lw	$s1,176($fp)
+	lw	$s0,180($fp)
 	sltu	$s0,$s1,$s0
 	andi	$s0,$s0,0x00ff
-	sw	$s0,136($fp)
-	lw	$s0,136($fp)
+	sw	$s0,184($fp)
+	lw	$s0,184($fp)
 	bne	$s0,$0,$WL3
 	nop
 $WL5:
 	lw	$s0,60($fp)
-	sw	$s0,140($fp)
+	sw	$s0,188($fp)
 	lw	$s0,52($fp)
-	sw	$s0,144($fp)
-	lw	$s1,140($fp)
-	lw	$s0,144($fp)
+	sw	$s0,192($fp)
+	lw	$s1,188($fp)
+	lw	$s0,192($fp)
 	sub	$s2,$s1,$s0
-	sw	$s2,148($fp)
+	sw	$s2,196($fp)
 	lw	$s0,56($fp)
-	sw	$s0,152($fp)
-	lw	$s1,148($fp)
-	lw	$s0,152($fp)
+	sw	$s0,200($fp)
+	lw	$s1,196($fp)
+	lw	$s0,200($fp)
 	sub	$s2,$s1,$s0
-	sw	$s2,156($fp)
-	lw	$v0,156($fp)
+	sw	$s2,204($fp)
+	lw	$v0,204($fp)
 	b	mainEND
 	nop
 mainEND:
@@ -143,7 +144,7 @@ mainEND:
 	lw	$s1,40($sp)
 	lw	$s0,44($sp)
 	j	$31
-	addiu	$sp,$sp,160
+	addiu	$sp,$sp,208
 
 	.set	macro
 	.set	reorder

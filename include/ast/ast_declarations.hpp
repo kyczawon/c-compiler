@@ -424,7 +424,7 @@ public:
 
     virtual void code_gen(std::ostream &dst, Context &context, const std::string &type) const override
     {
-        dst<<"\t.comm\t"<<id<<",4,4\n";
+        dst<<"\t.comm\t"<<id<<","<<context.get_size(type)<<","<<context.get_size(type)<<"\n";
         if (list != nullptr) {
             const List* declarations = dynamic_cast<const List *>(list);
             declarations->code_gen(dst, context,type);
@@ -491,7 +491,7 @@ public:
 
     virtual void code_gen(std::ostream &dst, Context &context, const std::string &type) const override
     {
-        dst<<"\t.comm\t"<<id<<",4,4\n";
+        dst<<"\t.comm\t"<<id<<","<<context.get_size(type)<<","<<context.get_size(type)<<"\n";
         if (list != nullptr) {
             const List* declarations = dynamic_cast<const List *>(list);
             declarations->code_gen(dst, context,type);
@@ -516,7 +516,7 @@ public:
 
     virtual void translate(int level, std::ostream &dst) const override
     {
-        throw std::runtime_error("GlobalPointerDeclarationList::translate is not implemented.");
+        throw std::runtime_error("GlobalPointerDeclarationList2::translate is not implemented.");
     }
 
     virtual void code_gen(std::ostream &dst, Context &context, const std::string &type) const override
@@ -554,7 +554,7 @@ public:
 
     virtual void translate(int level, std::ostream &dst) const override
     {
-        throw std::runtime_error("GlobalPointerDeclarationList::translate is not implemented.");
+        throw std::runtime_error("GlobalPointerDeclarationList3::translate is not implemented.");
     }
 
     virtual void code_gen(std::ostream &dst, Context &context, const std::string &type) const override
@@ -576,27 +576,57 @@ public:
     }
 };
 
+class GlobalInitParams : public Node
+{
+protected:
+    NodePtr list;
+    int value;
+public:
+    GlobalInitParams(NodePtr _list, int _value)
+            : list(_list),
+            value(_value)
+        {}
+    virtual void translate(int level, std::ostream &dst) const override
+    {
+        throw std::runtime_error("GlobalInitParams::translate is not implemented.");
+    }
+
+    //undefined behaviour
+    virtual void code_gen(std::ostream &dst, Context &context) const override
+    {
+        if (list != nullptr) {
+            const GlobalInitParams* params = dynamic_cast<const GlobalInitParams *>(list);
+            params->code_gen(dst, context);
+        }
+        dst<<"\t.word\t"<<value<<std::endl;
+    }
+};
+
 class GlobalArrayDeclarationList : public List
 {
 private:
     std::string id;
+    int size;
     NodePtr list;
 public:
-    GlobalArrayDeclarationList(NodePtr _list, const std::string &_id)
+    GlobalArrayDeclarationList(NodePtr _list, const std::string &_id, const int _size)
         : list(_list),
-        id(_id)
+        id (_id),
+        size(_size)
     {
         getGlobalsArray().push_back(id);
     }
 
     virtual void translate(int level, std::ostream &dst) const override
     {
-        dst<<id<<"=0";
+        throw std::runtime_error("GlobalArrayDeclarationList::translate is not implemented.");
     }
 
     virtual void code_gen(std::ostream &dst, Context &context, const std::string &type) const override
     {
-        dst<<"\t.comm\t"<<id<<",4,4\n";
+        context.add_arr_type(type, id, size);
+        int tot = size*context.get_size(type);
+        dst<<"\t.comm\t"<<id<<","<<tot<<","<<context.get_size(type)<<"\n";
         if (list != nullptr) {
             const List* declarations = dynamic_cast<const List *>(list);
             declarations->code_gen(dst, context,type);
@@ -608,24 +638,26 @@ class GlobalArrayDeclarationList2 : public List
 {
 private:
     std::string id;
-    NodePtr list;
-    int value;
+    NodePtr list, init;
+    int size;
 public:
-    GlobalArrayDeclarationList2(NodePtr _list, const std::string &_id, const int _value)
+    GlobalArrayDeclarationList2(NodePtr _list, const std::string &_id, int _size, NodePtr _init)
         : list(_list),
         id(_id),
-        value(_value)
+        size(_size),
+        init(_init)
     {
         getGlobalsArray().push_back(id);
     }
 
     virtual void translate(int level, std::ostream &dst) const override
     {
-        dst<<id<<"="<<value;
+        throw std::runtime_error("GlobalArrayDeclarationList2::translate is not implemented.");
     }
 
     virtual void code_gen(std::ostream &dst, Context &context, const std::string &type) const override
     {
+        context.add_arr_type(type, id, size);
         dst<<"\t.globl\t"<<id<<std::endl;
         if (context.is_first_global) {
             dst<<"\t.data"<<std::endl;
@@ -633,9 +665,10 @@ public:
         }
         dst<<"\t.align\t2"<<std::endl;
         dst<<"\t.type\t"<<id<<", @object"<<std::endl;
-        dst<<"\t.size\t"<<id<<", "<<context.get_size(type)<<std::endl;
+        int tot = context.get_size(type)*size;
+        dst<<"\t.size\t"<<id<<", "<<tot<<std::endl;
         dst<<id<<":"<<std::endl;
-        dst<<"\t.word\t"<<(int)value<<std::endl;
+        init->code_gen(dst,context);
         if (list != nullptr) {
             const List* declarations = dynamic_cast<const List *>(list);
             declarations->code_gen(dst, context,type);
